@@ -29,7 +29,8 @@ if (isset($_SESSION['prontoFront']['token'])) {
                 <h5 class="titulo-tabs-user">Selecciona tu método de envío</h5>
             </div>
         </div>
-        <form class="formCheckout " action="checkout-pago" method="post" >
+        <form class="formCheckout " action="checkout_2.php" method="post" >
+        <!-- checkout-pago -->   
         <!-- FORM METODO ENVIO -->
         <div class="row metodo-envio">
             <div class="col-md-6 ">
@@ -94,6 +95,32 @@ if (isset($_SESSION['prontoFront']['token'])) {
 
         </div>
 
+        <!-- Cartel Factura A -->
+        <div class="row metodo-envio mt-4">
+            <div class="col-md-12">
+                <div class="shadow-sm p-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="factura_a" id="facturaA" value="1">
+                        <label class="form-check-label text-bold" for="facturaA">
+                            Necesito Factura A
+                        </label>
+                    </div>
+                    <div id="datosFacturaA" class="mt-3" style="display: none;">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="cuit">CUIT</label>
+                                <input type="text" class="form-control" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="razon_social">Razón Social</label>
+                                <input type="text" class="form-control" id="razon_social" name="razon_social" placeholder="Razón Social">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id='collapsediv1' class="row metodo-envio collapse in">
             <div class="col-md-12">
                 <h5 class="titulo-tabs-user">Datos de Envío</h5>
@@ -101,9 +128,9 @@ if (isset($_SESSION['prontoFront']['token'])) {
             <div class="col-md-6 d-block d-md-flex">
                 <div class="shadow-sm p-5 w-100">
                     <?php if (isset($_SESSION['prontoFront']['token'])) { ?>
-                    <div class="form-check form-check-inline d-flex align-items-baseline">
-                        <input class="form-check-input" type="radio" name="envio" id="inlineRadio1" value="domicilio">
-                        <label class="form-check-label ml-0 ml-md-5" for="inlineRadio1">
+                    <input type="hidden" name="envio" value="domicilio">
+                    <div class="d-flex align-items-baseline">
+                        <label class="ml-0">
                         	<span class="text-bold">Mi direccion</span>
                             <h5 class="mt-3">Direccion</h5>
                             <p class="text-muted"><?php echo $rowc['direccion'].', '.$rowc['ciudad']?></p>
@@ -115,7 +142,7 @@ if (isset($_SESSION['prontoFront']['token'])) {
                             <p class="text-muted"><?php echo $rowc['telefono'];?></p>
                         </label>
                     </div>
-                    <div class="ml-0 ml-md-5 pl-0 pl-md-3">
+                    <div class="ml-0">
                     	<label for="validationTextarea">Observaciones</label>
                         <textarea class="form-control" name="observaciones" placeholder="" rows="5"></textarea>
                     </div>
@@ -127,11 +154,17 @@ if (isset($_SESSION['prontoFront']['token'])) {
 
             <div class="col-md-6 mt-4 mt-md-0">
                 <div class="shadow-sm p-5">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="envio" id="inlineRadio2" value="regalo">
-                        <label class="form-check-label ml-0 ml-md-5" for="inlineRadio2">Enviar como
-                            Regalo</label>
+                    <div class="mb-3">
+                        <label class="text-bold">Datos de Facturación</label>
                     </div>
+                    <?php if (isset($_SESSION['prontoFront']['token'])) { ?>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="copiarDatos">
+                        <label class="form-check-label" for="copiarDatos">
+                            Copiar mis datos de usuario
+                        </label>
+                    </div>
+                    <?php } ?>
 
                         <div class="form-row">
                             <div class="form-group col-md-12">
@@ -322,13 +355,47 @@ $('.contenedor-input > input[data-toggle="collapse"]').click(function(e) {
 <script src="assets/js/starter.js"></script>
 <script>
 	$(function(){
-		$('#inlineRadio2').click(function(){
-			$(".form-rosa").attr("required", "true");
-			$(".form-rosa").prop('required',true);
+		// Checkbox para copiar datos de usuario
+		$('#copiarDatos').change(function(){
+			if($(this).is(':checked')){
+				<?php if (isset($_SESSION['prontoFront']['token'])) { ?>
+				$('input[name="nombre"]').val('<?php echo $rowc['nombre']; ?>');
+				$('input[name="apellido"]').val('<?php echo $rowc['apellido']; ?>');
+				$('input[name="DNI"]').val('<?php echo $rowc['dni']; ?>');
+				$('input[name="direccion"]').val('<?php echo $rowc['direccion']; ?>');
+				$('input[name="email"]').val('<?php echo $rowc['email']; ?>');
+				$('select[name="provincia"]').val('<?php echo $rowc['provincia']; ?>');
+				$('input[name="ciudad"]').val('<?php echo $rowc['ciudad']; ?>');
+				$('input[name="CP"]').val('<?php echo $rowc['cp']; ?>');
+				$('input[name="telefono"]').val('<?php echo $rowc['telefono']; ?>');
+				<?php } ?>
+			} else {
+				$('input[name="nombre"]').val('');
+				$('input[name="apellido"]').val('');
+				$('input[name="DNI"]').val('');
+				$('input[name="direccion"]').val('');
+				$('input[name="email"]').val('');
+				$('select[name="provincia"]').val('Seleccione...');
+				$('input[name="ciudad"]').val('');
+				$('input[name="CP"]').val('');
+				$('input[name="telefono"]').val('');
+				$('input[name="celular"]').val('');
+			}
 		});
-		$('#inlineRadio1').click(function(){
-			$(".form-rosa").attr("required", "false");
-			$(".form-rosa").prop('required',false);
+
+		// Toggle para mostrar/ocultar datos de Factura A
+		$('#facturaA').change(function(){
+			if($(this).is(':checked')){
+				$('#datosFacturaA').slideDown();
+				$('#cuit').prop('required', true);
+				$('#razon_social').prop('required', true);
+			} else {
+				$('#datosFacturaA').slideUp();
+				$('#cuit').prop('required', false);
+				$('#razon_social').prop('required', false);
+				$('#cuit').val('');
+				$('#razon_social').val('');
+			}
 		});
 	});
 </script>

@@ -133,12 +133,31 @@ function crearPedido($param)
     $entrega = $param['entrega'];
     $envio = $param['envio'];
     $desc = $param['desc'];
-    $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc')";
+
+    // Datos de Factura A
+    $factura_a = 0;
+    $cuit = '';
+    $razon_social = '';
+    if(isset($param['facturacion'])){
+        $factura_a = isset($param['facturacion']['factura_a']) ? $param['facturacion']['factura_a'] : 0;
+        $cuit = isset($param['facturacion']['cuit']) ? $param['facturacion']['cuit'] : '';
+        $razon_social = isset($param['facturacion']['razon_social']) ? $param['facturacion']['razon_social'] : '';
+    }
+
+    $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion`, `factura_a`, `cuit`, `razon_social` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc','$factura_a','$cuit','$razon_social')";
     $res = $conectar->query($sql);
     if ($res) {
         $respuesta->success = true;
         $idpedido = $conectar->insert_id;
         $respuesta->pedido = $idpedido;
+
+        // Guardar datos de facturación si existen
+        if(isset($param['facturacion'])){
+            $fac = $param['facturacion'];
+            $sqlFac = "INSERT INTO `facturacion`(`pedido_id`, `nombre`, `apellido`, `dni`, `email`, `direccion`, `provincia`, `ciudad`, `cp`, `telefono`, `celular`)
+                       VALUES ('$idpedido','".$fac['nombre']."','".$fac['apellido']."','".$fac['dni']."','".$fac['email']."','".$fac['direccion']."','".$fac['provincia']."','".$fac['ciudad']."','".$fac['cp']."','".$fac['telefono']."','".$fac['celular']."')";
+            $conectar->query($sqlFac);
+        }
     } else {
         $respuesta->success = false;
         $respuesta->error = $conectar->error;

@@ -15,7 +15,6 @@ if (isset($_POST['entrega'])) {
         }
         $costoenvio=0;
     }
-    
         
     $_SESSION['prontoFront']['envio']['costo']=$costoenvio;
     $_SESSION['prontoFront']['envio']['nombre']=$_POST['nombre'];
@@ -29,6 +28,23 @@ if (isset($_POST['entrega'])) {
     $_SESSION['prontoFront']['envio']['telefono']=$_POST['telefono'];
     $_SESSION['prontoFront']['envio']['celular']=$_POST['celular'];
     $_SESSION['prontoFront']['envio']['obs']=$_POST['observaciones']??'';
+
+    // Guardar datos de facturación
+    $_SESSION['prontoFront']['facturacion']['nombre']=$_POST['nombre'];
+    $_SESSION['prontoFront']['facturacion']['apellido']=$_POST['apellido'];
+    $_SESSION['prontoFront']['facturacion']['dni']=$_POST['DNI'];
+    $_SESSION['prontoFront']['facturacion']['email']=$_POST['email'];
+    $_SESSION['prontoFront']['facturacion']['direccion']=$_POST['direccion'];
+    $_SESSION['prontoFront']['facturacion']['provincia']=$_POST['provincia'];
+    $_SESSION['prontoFront']['facturacion']['ciudad']=$_POST['ciudad'];
+    $_SESSION['prontoFront']['facturacion']['cp']=$_POST['CP'];
+    $_SESSION['prontoFront']['facturacion']['telefono']=$_POST['telefono']??'';
+    $_SESSION['prontoFront']['facturacion']['celular']=$_POST['celular']??'';
+
+    // Guardar datos de Factura A
+    $_SESSION['prontoFront']['facturacion']['factura_a']=isset($_POST['factura_a']) ? 1 : 0;
+    $_SESSION['prontoFront']['facturacion']['cuit']=$_POST['cuit']??'';
+    $_SESSION['prontoFront']['facturacion']['razon_social']=$_POST['razon_social']??'';
     
     $costototal=$_SESSION['prontoFront']['monto'];
     $cart=$_SESSION['pronto']['cart'];

@@ -32,6 +32,7 @@
                             <span class="d-block">WhatsApp 2213581837</span>
                             <span class="d-block">Ventas web</span>
                             <span class="d-block">WhatsApp 2216976559</span>
+                            <span class="d-block">Mail prontophotenlinea@gmail.com</span>
                         </div>
                     </div>
                 </div>

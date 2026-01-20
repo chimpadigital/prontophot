@@ -51,6 +51,10 @@ $param['valor']=$monto;
 $param['metodo']=$metodo;
 $param['desc']=$desc;
 
+// Agregar datos de facturación si existen
+if(isset($_SESSION['prontoFront']['facturacion'])){
+    $param['facturacion']=$_SESSION['prontoFront']['facturacion'];
+}
 
 $pedido=crearPedido($param);
 
