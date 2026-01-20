@@ -26,7 +26,7 @@ if ($result->num_rows > 0) {
     echo "El usuario con email '$email' ya existe en la base de datos.<br>";
 } else {
     // Insertar usuario
-    $sql = "INSERT INTO usuarios (nombre, apellido, dni, email, passwd, direccion, provincia, ciudad, cp, telefono, code, activo, nivel, creado)
+    $sql = "INSERT INTO clientes (nombre, apellido, dni, email, passwd, direccion, provincia, ciudad, cp, telefono, code, activo, nivel, creado)
             VALUES ('$nombre', '$apellido', '$dni', '$email', '$passwd', '$direccion', '$provincia', '$ciudad', '$cp', '$telefono', '$code', $activo, $nivel, '$creado')";
 
     if ($conectar->query($sql) === TRUE) {
