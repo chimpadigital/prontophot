@@ -5,7 +5,6 @@ require __DIR__."/vendor/autoload.php";
 use \Firebase\JWT\JWT;
 //inicio seguridad
 function creaToken($id,$nivel){
-    
     $secret_key = "prontoPhot";
     $issuer_claim = "prontophot"; // this can be the servername
     $audience_claim = "prontophot";

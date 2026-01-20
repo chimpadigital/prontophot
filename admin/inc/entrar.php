@@ -14,10 +14,12 @@ if ($res) {
         $codificado = $row['passwd'];
         $iguales = password_verify($original, $codificado);
         if ($iguales) {
+            $respuesta->sid = session_id();
             $respuesta->success=true;
             $id=$row['id'];
             $nivel=$row['nivel'];
-            $_SESSION['pronto']['token']=creaToken($id, $nivel);
+            $_SESSION['pronto']['token'] = creaToken($id, $nivel);
+            session_write_close();
         }else{
             $respuesta->success=false;
             $respuesta->msg="Clave Incorrecta";

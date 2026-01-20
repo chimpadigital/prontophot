@@ -1,0 +1,28 @@
+[14-Jan-2026 15:06:13 UTC] PHP Fatal error:  Array and string offset access syntax with curly braces is no longer supported in F:\laragon\www\prontophot\inc\funciones.inc.php on line 232
+[14-Jan-2026 15:06:26 UTC] PHP Fatal error:  Array and string offset access syntax with curly braces is no longer supported in F:\laragon\www\prontophot\inc\funciones.inc.php on line 232
+[14-Jan-2026 15:08:18 UTC] PHP Fatal error:  Array and string offset access syntax with curly braces is no longer supported in F:\laragon\www\prontophot\inc\funciones.inc.php on line 232
+[15-Jan-2026 16:04:27 UTC] PHP Fatal error:  Array and string offset access syntax with curly braces is no longer supported in F:\laragon\www\prontophot\inc\funciones.inc.php on line 232
+[19-Jan-2026 15:01:10 UTC] PHP Warning:  Undefined variable $cant in F:\laragon\www\prontophot\miCarro.php on line 40
+[19-Jan-2026 15:01:10 UTC] PHP Warning:  Undefined variable $total in F:\laragon\www\prontophot\miCarro.php on line 97
+[19-Jan-2026 15:01:10 UTC] PHP Warning:  Undefined variable $total in F:\laragon\www\prontophot\miCarro.php on line 100
+[19-Jan-2026 15:01:10 UTC] PHP Warning:  Undefined variable $total in F:\laragon\www\prontophot\miCarro.php on line 101
+[19-Jan-2026 15:01:29 UTC] PHP Warning:  Undefined variable $cant in F:\laragon\www\prontophot\miCarro.php on line 40
+[19-Jan-2026 15:01:29 UTC] PHP Warning:  Undefined variable $total in F:\laragon\www\prontophot\miCarro.php on line 97
+[19-Jan-2026 15:01:29 UTC] PHP Warning:  Undefined variable $total in F:\laragon\www\prontophot\miCarro.php on line 100
+[19-Jan-2026 15:01:29 UTC] PHP Warning:  Undefined variable $total in F:\laragon\www\prontophot\miCarro.php on line 101
+[19-Jan-2026 15:02:20 UTC] PHP Warning:  Undefined variable $cant in F:\laragon\www\prontophot\miCarro.php on line 40
+[19-Jan-2026 15:02:20 UTC] PHP Warning:  Undefined variable $total in F:\laragon\www\prontophot\miCarro.php on line 97
+[19-Jan-2026 15:02:20 UTC] PHP Warning:  Undefined variable $total in F:\laragon\www\prontophot\miCarro.php on line 100
+[19-Jan-2026 15:02:20 UTC] PHP Warning:  Undefined variable $total in F:\laragon\www\prontophot\miCarro.php on line 101
+[19-Jan-2026 15:02:44 UTC] PHP Warning:  Undefined variable $cant in F:\laragon\www\prontophot\miCarro.php on line 40
+[19-Jan-2026 15:02:44 UTC] PHP Warning:  Undefined variable $total in F:\laragon\www\prontophot\miCarro.php on line 97
+[19-Jan-2026 15:02:44 UTC] PHP Warning:  Undefined variable $total in F:\laragon\www\prontophot\miCarro.php on line 100
+[19-Jan-2026 15:02:44 UTC] PHP Warning:  Undefined variable $total in F:\laragon\www\prontophot\miCarro.php on line 101
+[19-Jan-2026 18:33:21 UTC] PHP Warning:  Undefined variable $query in F:\laragon\www\prontophot\producto.php on line 13
+[19-Jan-2026 18:33:21 UTC] PHP Deprecated:  mysqli::query(): Passing null to parameter #1 ($query) of type string is deprecated in F:\laragon\www\prontophot\producto.php on line 13
+[19-Jan-2026 18:33:21 UTC] PHP Fatal error:  Uncaught ValueError: mysqli::query(): Argument #1 ($query) cannot be empty in F:\laragon\www\prontophot\producto.php:13
+Stack trace:
+#0 F:\laragon\www\prontophot\producto.php(13): mysqli->query('')
+#1 {main}
+  thrown in F:\laragon\www\prontophot\producto.php on line 13
+[19-Jan-2026 18:38:00 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at F:\laragon\www\prontophot\header.php:24) in F:\laragon\www\prontophot\checkout_2.php on line 55

@@ -22,7 +22,7 @@
 <body>
     <!-- NAV -->
     <div class="contenedor-top-bar d-none d-md-block">
-        <div class="container">
+        <div class="">
             <nav>
                 <ul class="nav justify-content-end">
                     <li class="nav-item">

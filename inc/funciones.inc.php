@@ -225,11 +225,26 @@ function dispo($valor){
         return gettext('SI');
     }
 }
+
+/*
+obsoleto php 7.3
 function generarCodigo($longitud) {
     $key = '';
     $pattern = '1234567890abcdefghijklmnopqrstuvwxyz';
     $max = strlen($pattern)-1;
     for($i=0;$i < $longitud;$i++) $key .= $pattern{mt_rand(0,$max)};
+    return $key;
+}*/
+
+function generarCodigo($longitud) {
+    $key = '';
+    $pattern = '1234567890abcdefghijklmnopqrstuvwxyz';
+    $max = strlen($pattern) - 1;
+
+    for ($i = 0; $i < $longitud; $i++) {
+        $key .= $pattern[mt_rand(0, $max)];
+    }
+
     return $key;
 }
 

@@ -15,7 +15,6 @@ while ($dato=$res->fetch_assoc()) {
     $array[$formato][$i]['precio']=$dato['precio'];
 }
 $ultima=$ulti->format('d-m-Y H:i');
-//print_r($array);
 ?>
 <style>
 .table td{
@@ -282,6 +281,30 @@ $(function(){
                                                     <td class="text-center">$<input type="text" pattern="[0-9.]+" class="precio" name="15x20_p[5]" value="<?php echo $array['15x20']['5']['precio'];?>"></td>
                                                     <td class="text-center">$<input type="text" pattern="[0-9.]+" class="precio" name="20x30_p[5]" value="<?php echo $array['20x30']['5']['precio'];?>"></td>
                                                     <td class="text-center">$<input type="text" pattern="[0-9.]+" class="precio" name="25x38_p[5]" value="<?php echo $array['25x38']['5']['precio'];?>"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    <!-- </div> -->
+                                    <!-- <div class="table-responsive"> -->
+                                        <table class="table table-bordered tabla-precios border-black">
+                                            <tbody>
+                                                <tr>
+                                                    <th class="bg-danger text-white rounded-th-top">Cantidad</th>
+                                                    <td><input type="text" pattern="[0-9.]+" class="cantidad" name="polaroid_d[6]" value="<?php echo $array['polaroid']['6']['desde'];?>"> a <input type="text" pattern="[0-9.]+" class="cantidad" name="polaroid_h[6]" value="<?php echo $array['polaroid']['6']['hasta'];?>"></td>
+                                                    <td><input type="text" pattern="[0-9.]+" class="cantidad" name="10x15_d[6]" value="<?php echo $array['10x15']['5']['desde'];?>"> a <input type="text" pattern="[0-9.]+" class="cantidad" name="10x15_h[6]" value="<?php echo $array['10x15']['6']['hasta'];?>"></td>
+                                                    <td><input type="text" pattern="[0-9.]+" class="cantidad" name="13x18_d[6]" value="<?php echo $array['13x18']['6']['desde'];?>"> a <input type="text" pattern="[0-9.]+" class="cantidad" name="13x18_h[6]" value="<?php echo $array['13x18']['6']['hasta'];?>"></td>
+                                                    <td><input type="text" pattern="[0-9.]+" class="cantidad" name="15x20_d[6]" value="<?php echo $array['15x20']['6']['desde'];?>"> a <input type="text" pattern="[0-9.]+" class="cantidad" name="15x20_h[6]" value="<?php echo $array['15x20']['6']['hasta'];?>"></td>
+                                                    <td><input type="text" pattern="[0-9.]+" class="cantidad" name="20x30_d[6]" value="<?php echo $array['20x30']['6']['desde'];?>"> a <input type="text" pattern="[0-9.]+" class="cantidad" name="20x30_h[6]" value="<?php echo $array['20x30']['6']['hasta'];?>"></td>
+                                                    <td><input type="text" pattern="[0-9.]+" class="cantidad" name="25x38_d[6]" value="<?php echo $array['25x38']['6']['desde'];?>"> a <input type="text" pattern="[0-9.]+" class="cantidad" name="25x38_h[6]" value="<?php echo $array['25x38']['6']['hasta'];?>"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="bg-black text-white rounded-th-bot">Precio</th>
+                                                    <td class="text-center">$<input type="text" pattern="[0-9.]+" class="precio" name="polaroid_p[6]" value="<?php echo $array['polaroid']['6']['precio'];?>"></td>
+                                                    <td class="text-center">$<input type="text" pattern="[0-9.]+" class="precio" name="10x15_p[6]" value="<?php echo $array['10x15']['6']['precio'];?>"></td>
+                                                    <td class="text-center">$<input type="text" pattern="[0-9.]+" class="precio" name="13x18_p[6]" value="<?php echo $array['13x18']['6']['precio'];?>"></td>
+                                                    <td class="text-center">$<input type="text" pattern="[0-9.]+" class="precio" name="15x20_p[6]" value="<?php echo $array['15x20']['6']['precio'];?>"></td>
+                                                    <td class="text-center">$<input type="text" pattern="[0-9.]+" class="precio" name="20x30_p[6]" value="<?php echo $array['20x30']['6']['precio'];?>"></td>
+                                                    <td class="text-center">$<input type="text" pattern="[0-9.]+" class="precio" name="25x38_p[6]" value="<?php echo $array['25x38']['6']['precio'];?>"></td>
                                                 </tr>
                                             </tbody>
                                         </table>

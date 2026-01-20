@@ -16,44 +16,80 @@ $prod=$producto->fetch_assoc();
 $id=$prod['id'];
 $imagenes=$conectar->query("SELECT * FROM imagenes WHERE id_producto='$id'");
 
-$colores=array();
-if ($prod['color_rojo']=='1') {
-    $item['nombre']='Rojo';
-    $item['clase']='color_rojo';
-    $colores[]=$item;
+// Obtener colores únicos de las imágenes
+$coloresQuery = $conectar->query("SELECT DISTINCT color FROM imagenes WHERE id_producto='$id' AND color IS NOT NULL AND color != '' AND color != '#000000'");
+$colores = array();
+while($colorRow = $coloresQuery->fetch_assoc()){
+    if(!empty($colorRow['color'])){
+        $colores[] = $colorRow['color'];
+    }
 }
-if ($prod['color_naranja']=='1') {
-    $item['nombre']='Naranja';
-    $item['clase']='color_naranja';
-    $colores[]=$item;
+
+// Obtener el coeficiente de impuestos
+$taxQuery = $conectar->query("SELECT coeficiente FROM tax WHERE id = 1");
+$taxData = $taxQuery->fetch_assoc();
+$taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
+
+// Calcular precios
+$precioLista = $prod['precio'];
+$descuento_porcentaje = isset($prod['descuento_final']) ? $prod['descuento_final'] : 0;
+$precioFinal = $precioLista - ($precioLista * $descuento_porcentaje / 100);
+$precioConImpuestos = $precioFinal / $taxCoeficiente;
+
+// Procesar video si existe
+$videoHTML = '';
+$tieneVideo = false;
+if(!empty($prod['video'])){
+    $tieneVideo = true;
+    $videoUrl = $prod['video'];
+
+    // Detectar si es un video de YouTube
+    if(strpos($videoUrl, 'youtube.com') !== false || strpos($videoUrl, 'youtu.be') !== false){
+        // Extraer ID de YouTube
+        $videoId = '';
+        if(preg_match('/youtube\.com\/watch\?v=([^\&\?\/]+)/', $videoUrl, $matches)){
+            $videoId = $matches[1];
+        } elseif(preg_match('/youtu\.be\/([^\&\?\/]+)/', $videoUrl, $matches)){
+            $videoId = $matches[1];
+        } elseif(preg_match('/youtube\.com\/embed\/([^\&\?\/]+)/', $videoUrl, $matches)){
+            $videoId = $matches[1];
+        }
+
+        if($videoId){
+            $videoHTML = '<div class="embed-responsive embed-responsive-16by9">
+                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/'.$videoId.'" allowfullscreen></iframe>
+            </div>';
+        }
+    } else {
+        // Video local
+        $videoHTML = '<video controls class="w-100" style="max-height: 500px;">
+            <source src="'.$videoUrl.'" type="video/mp4">
+            Tu navegador no soporta la reproducción de videos.
+        </video>';
+    }
 }
-if ($prod['color_azul']=='1') {
-    $item['nombre']='Azul';
-    $item['clase']='color_azul';
-    $colores[]=$item;
-}
-if ($prod['color_celeste']=='1') {
-    $item['nombre']='Celeste';
-    $item['clase']='color_celeste';
-    $colores[]=$item;
-}
-if ($prod['color_violeta']=='1') {
-    $item['nombre']='Violeta';
-    $item['clase']='color_violeta';
-    $colores[]=$item;
-}
-if ($prod['color_verde']=='1') {
-    $item['nombre']='Verde';
-    $item['clase']='color_verde';
-    $colores[]=$item;
-}
-if ($prod['color_amarillo']=='1') {
-    $item['nombre']='Amarillo';
-    $item['clase']='color_amarillo';
-    $colores[]=$item;
+
+// Obtener cuotas disponibles
+$cuotasQuery = $conectar->query("SELECT * FROM cuotas WHERE producto_id = '$id' ORDER BY cantidad ASC");
+$cuotas = array();
+while($cuotaRow = $cuotasQuery->fetch_assoc()){
+    $cuotas[] = $cuotaRow;
 }
 
 ?>
+<style>
+.color-selector.current {
+    border: 3px solid #da0000 !important;
+    box-shadow: 0 0 5px rgba(218, 0, 0, 0.5);
+}
+.color-selector {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.color-selector:hover {
+    transform: scale(1.1);
+}
+</style>
 <div class="container">
     <div class="row">
         <div class="col-md-12">
@@ -77,7 +113,17 @@ if ($prod['color_amarillo']=='1') {
         </div>
         <div class="col-md-1">
             <div id="sync2" class="owl-carousel owl-theme d-none d-md-block">
-            	<?php while($rowi=$imagenes->fetch_assoc()){?>
+            	<?php
+                // Mostrar video en miniatura si existe
+                if($tieneVideo){
+                    echo '<div class="mb-2 shadow-sm" style="position: relative;">
+                        <div style="background: #000; padding: 10px; text-align: center; color: #fff; font-size: 10px;">
+                            <i class="fa fa-play-circle" style="font-size: 20px;"></i><br>Video
+                        </div>
+                    </div>';
+                }
+
+                while($rowi=$imagenes->fetch_assoc()){?>
                 <div class="mb-2 shadow-sm">
                 	<img class="img-fluid w-100" src="<?php echo $rowi['imagen'];?>" alt="">
                 </div>
@@ -87,7 +133,12 @@ if ($prod['color_amarillo']=='1') {
         <div class="col-md-7">
             <div class="shadow-sm">
                 <div id="sync1" class="owl-carousel owl-theme">
-                	<?php 
+                	<?php
+                    // Mostrar video primero si existe
+                    if($tieneVideo){
+                        echo '<div class="item">'.$videoHTML.'</div>';
+                    }
+
                 	$imagenes->data_seek(0);
                 	while($rowi=$imagenes->fetch_assoc()){?>
                     <div class="item">
@@ -100,15 +151,31 @@ if ($prod['color_amarillo']=='1') {
         <div class="col-md-4">
             <div>
                 <h5 class="titulo-tabs-user mt-5 mt-md-0"><?php echo $prod['nombre']; ?></h5>
-                <h5 class="titulo-tabs-user mt-5 mt-md-0">$ <?php echo $prod['precio']; ?></h5>
-                <p class="text-bold">Colores</p>
+
+                <?php if($descuento_porcentaje > 0): ?>
+                    <h5 class="titulo-tabs-user" style="text-decoration: line-through; color: #999;">$ <?php echo number_format($precioLista, 2); ?></h5>
+                    <h5 class="titulo-tabs-user text-danger">$ <?php echo number_format($precioFinal, 2); ?></h5>
+                    <p class="text-muted small"><?php echo $descuento_porcentaje; ?>% de descuento</p>
+                <?php else: ?>
+                    <h5 class="titulo-tabs-user">$ <?php echo number_format($precioLista, 2); ?></h5>
+                <?php endif; ?>
+
+                <p class="text-muted small">Precio sin impuestos nacionales: <strong>$<?php echo number_format($precioConImpuestos, 2); ?></strong></p>
+
+                <?php if(count($colores) > 0): ?>
+                <p class="text-bold">Colores Disponibles</p>
                 <div class="my-2">
-                <?php foreach ($colores as $key=>$color){?>
-                    <button class="btn btn-link p-0 btn-selector" data-color="<?php echo $color['nombre'];?>" title="Color <?php echo $color['nombre'];?>" type="button"><span class="dot mr-2 color-selector <?php echo $color['clase'];?> <?php if($key=='0'){echo 'current';}?>"></span></button>
-                	<input type="hidden" id="color" name="color" value="<?php if($key=='0'){echo $color['nombre'];}?>">
-                <?php } ?>
-                 
+                <?php foreach ($colores as $key => $color): ?>
+                    <button class="btn btn-link p-0 btn-selector" data-color="<?php echo $color; ?>" title="Color" type="button">
+                        <span class="dot mr-2 color-selector <?php if($key == 0){echo 'current';}?>" style="background-color: <?php echo $color; ?>; width: 30px; height: 30px; display: inline-block; border-radius: 50%; border: 2px solid #ddd;"></span>
+                    </button>
+                    <?php if($key == 0): ?>
+                    <input type="hidden" id="color" name="color" value="<?php echo $color; ?>">
+                    <?php endif; ?>
+                <?php endforeach; ?>
                 </div>
+                <?php endif; ?>
+
                 <p class="text-bold">Dimensiones</p>
                 <div class="d-flex">
                 	<div class="col border text-center">Alto <br> <?php echo $prod['alto'];?></div>
@@ -121,7 +188,7 @@ if ($prod['color_amarillo']=='1') {
                 </div>
 
                 <div class="mt-5">
-                    <button type="button" id="success"  class="btn bg-danger text-white btn-bg-red addtoCart" data-precio="<?php echo $prod['precio'];?>" data-categoria='<?php echo $prod['id_categoria']; ?>' data-id="<?php echo $prod['id'];?>"><svg class="mr-1" xmlns="http://www.w3.org/2000/svg" width="16.528" height="16.528" viewBox="0 0 16.528 16.528"> <path id="Icon_material-shopping-cart" data-name="Icon material-shopping-cart" d="M6.458,16.222a1.653,1.653,0,1,0,1.653,1.653A1.651,1.651,0,0,0,6.458,16.222ZM1.5,3V4.653H3.153l2.975,6.272L5.012,12.95a1.6,1.6,0,0,0-.207.793A1.658,1.658,0,0,0,6.458,15.4h9.917V13.743H6.805a.2.2,0,0,1-.207-.207l.025-.1.744-1.347h6.157a1.645,1.645,0,0,0,1.446-.851l2.958-5.363a.807.807,0,0,0,.1-.4.829.829,0,0,0-.826-.826H4.979L4.2,3ZM14.722,16.222a1.653,1.653,0,1,0,1.653,1.653A1.651,1.651,0,0,0,14.722,16.222Z" transform="translate(-1.5 -3)" fill="#fff" /></svg>
+                    <button type="button" id="success"  class="btn bg-danger text-white btn-bg-red addtoCart" data-precio="<?php echo $precioFinal;?>" data-categoria='<?php echo $prod['id_categoria']; ?>' data-id="<?php echo $prod['id'];?>"><svg class="mr-1" xmlns="http://www.w3.org/2000/svg" width="16.528" height="16.528" viewBox="0 0 16.528 16.528"> <path id="Icon_material-shopping-cart" data-name="Icon material-shopping-cart" d="M6.458,16.222a1.653,1.653,0,1,0,1.653,1.653A1.651,1.651,0,0,0,6.458,16.222ZM1.5,3V4.653H3.153l2.975,6.272L5.012,12.95a1.6,1.6,0,0,0-.207.793A1.658,1.658,0,0,0,6.458,15.4h9.917V13.743H6.805a.2.2,0,0,1-.207-.207l.025-.1.744-1.347h6.157a1.645,1.645,0,0,0,1.446-.851l2.958-5.363a.807.807,0,0,0,.1-.4.829.829,0,0,0-.826-.826H4.979L4.2,3ZM14.722,16.222a1.653,1.653,0,1,0,1.653,1.653A1.651,1.651,0,0,0,14.722,16.222Z" transform="translate(-1.5 -3)" fill="#fff" /></svg>
                         Agregar Pedido
                     </button>
                 </div>
@@ -184,7 +251,7 @@ if ($prod['color_amarillo']=='1') {
     <a class="d-md-none d-lg-none d-block text-center wp" href="https://api.whatsapp.com/send?phone=+5492216784142  &amp;text=Buenos%20días,%20quiero%20mas%20info%20">
          <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path></svg>
  </a>
-<a class="d-xs-none d-sm-none d-md-block text-center wp" target="_blank" href="https://web.whatsapp.com/send?phone=+5492216784142  &amp;text=Buenos%20días,%20quiero%20mas%20info">
+<a class="d-xs-none d-sm-none d-md-block text-center wp" target="_blank" href="https://wa.me/542216976559? &amp;text=Buenos%20días,%20quiero%20mas%20info">
        <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path></svg>
 </a>
 </footer>

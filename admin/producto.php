@@ -15,17 +15,22 @@ if (isset($_SESSION['prontoFront']['token'])) {
 }
 ?>
 <?php include ('header.php'); ?>
-<?php 
+<?php
 include __DIR__.'/conexion/conectar.inc.php';
 global $conectar;
 $categorias=$conectar->query("SELECT * FROM categorias");
+
+// Obtener el coeficiente de impuestos
+$taxQuery = $conectar->query("SELECT coeficiente FROM tax WHERE id = 1");
+$taxData = $taxQuery->fetch_assoc();
+$taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
 
 if (isset($_GET['id'])) {
     $id=$_GET['id'];
     $prod=$conectar->query("SELECT * FROM productos WHERE id='$id'");
     $row=$prod->fetch_assoc();
     $imagenes=$conectar->query("SELECT * FROM imagenes WHERe id_producto='$id'");
-    
+
 }else{
     header("Location: ../");
     exit();
@@ -113,7 +118,12 @@ if (isset($_GET['id'])) {
                                             <a class="text-center" href="#">
                                             	<img class="w-100 img-admin-producto" id="img-previa<?php echo $i;?>" src="../<?php echo $rowi['imagen'];?>">
                                             </a>
-                                                
+
+                                            <div class="form-group mt-2">
+                                                <label for="color-imagen-existente-<?php echo $rowi['id'];?>">Color (opcional)</label>
+                                                <input type="color" name="color_imagen_existente[<?php echo $rowi['id'];?>]" class="form-control" id="color-imagen-existente-<?php echo $rowi['id'];?>" value="<?php echo !empty($rowi['color']) ? $rowi['color'] : '#000000'; ?>" style="height: 40px;">
+                                            </div>
+
                                             <div class="btn-grupo d-flex flex-column flex-md-row">
                                                 <button type="button" data-id="<?php echo $rowi['id'];?>" data-parent="imagen<?php echo $i;?>" class="btn btn-bg-transparent ml-auto text-black btn-removerimg">Eliminar Foto</button></a>
                                             </div>
@@ -130,6 +140,47 @@ if (isset($_GET['id'])) {
                                 </div>
                             </div>
                             <!-- FIN CARGA IMAGENES -->
+                             <p class="subtitulo-form">Video del Producto</p>
+
+                                    <div class="form-row">
+                                        <div class="col-md-12 mb-3">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="video_tipo" id="videoTipoArchivo" value="archivo" <?php echo (!empty($row['video']) && strpos($row['video'], 'http') === false) ? 'checked' : ''; ?>>
+                                                <label class="form-check-label" for="videoTipoArchivo">Subir Archivo</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="video_tipo" id="videoTipoUrl" value="url" <?php echo (!empty($row['video']) && strpos($row['video'], 'http') !== false) ? 'checked' : ''; ?>>
+                                                <label class="form-check-label" for="videoTipoUrl">URL</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="video_tipo" id="videoTipoNinguno" value="ninguno" <?php echo empty($row['video']) ? 'checked' : ''; ?>>
+                                                <label class="form-check-label" for="videoTipoNinguno">Sin Video</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <?php if (!empty($row['video'])): ?>
+                                    <div class="form-row">
+                                        <div class="col-md-12 mb-3">
+                                            <p><strong>Video actual:</strong> <?php echo basename($row['video']); ?></p>
+                                        </div>
+                                    </div>
+                                    <?php endif; ?>
+
+                                    <div class="form-row" id="videoArchivoContainer" style="display:<?php echo (!empty($row['video']) && strpos($row['video'], 'http') === false) ? 'block' : 'none'; ?>;">
+                                        <div class="col-md-12 mb-3">
+                                            <label for="videoArchivo">Archivo de Video</label>
+                                            <input type="file" accept="video/*" name="video_archivo" class="form-control-file" id="videoArchivo">
+                                            <small class="form-text text-muted">Dejar vacío para mantener el video actual</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row" id="videoUrlContainer" style="display:<?php echo (!empty($row['video']) && strpos($row['video'], 'http') !== false) ? 'block' : 'none'; ?>;">
+                                        <div class="col-md-12 mb-3">
+                                            <label for="videoUrl">URL del Video</label>
+                                            <input type="text" name="video_url" class="form-control" id="videoUrl" placeholder="https://ejemplo.com/video.mp4" value="<?php echo (strpos($row['video'], 'http') !== false) ? $row['video'] : ''; ?>">
+                                        </div>
+                                    </div>
                             <!-- FORM CARGA PRODUCTO -->
                             <div class="row">
                             	<div class="col-12 w-100 mt-5">
@@ -240,22 +291,82 @@ if (isset($_GET['id'])) {
 
                                     <div class="form-row mt-5">
 
-                                        <div class="col-md-4 mb-3">
+                                        <div class="col-md-6 mb-3">
                                             <label for="validationCustom08">Stock</label>
                                             <input type="text" name="stock" class="form-control" value="<?php echo $row['stock']; ?>" id="validationCustom08">
 
                                         </div>
-                                        <div class="col-md-4 mb-3">
+                                        <div class="col-md-6 mb-3">
                                             <label for="validationCustom09">Código de Descuento</label>
-                                            <input type="text" name="descuento" class="form-control" value="<?php echo $row['descuento']; ?>" id="validationCustom09">
-
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label for="validationCustom10">Precio</label>
-                                            <input type="text" name="precio" class="form-control" value="<?php echo $row['precio']; ?>" id="validationCustom10" required>
+                                            <input type="text" name="codigo_descuento" class="form-control" value="<?php echo $row['descuento']; ?>" id="validationCustom09">
 
                                         </div>
                                     </div>
+
+                                    <p class="subtitulo-form">Precios</p>
+
+                                    <div class="form-row">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="validationCustom10">Precio de Lista</label>
+                                            <input type="number" step="0.01" name="precio" class="form-control" value="<?php echo $row['precio']; ?>" id="validationCustom10" required>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="descuentoPorcentaje">Descuento (%)</label>
+                                            <input type="number" step="0.01" min="0" max="100" name="descuento_final" class="form-control" id="descuentoPorcentaje" value="<?php echo isset($row['descuento_final']) ? $row['descuento_final'] : 0; ?>">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="precioFinal">Precio Final</label>
+                                            <?php
+                                                $precioLista = $row['precio'];
+                                                $descuento_porcentaje = isset($row['descuento_final']) ? $row['descuento_final'] : 0;
+                                                $precioFinal = $precioLista - ($precioLista * $descuento_porcentaje / 100);
+                                            ?>
+                                            <input type="text" class="form-control" id="precioFinal" value="<?php echo number_format($precioFinal, 2); ?>" readonly style="background-color: #e9ecef;">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="col-md-12 mb-3">
+                                            <small class="form-text text-muted">
+                                                Precio final con impuestos nacionales: <strong>$<span id="precioConImpuesto"><?php echo number_format($precioFinal * $taxCoeficiente, 2); ?></span></strong>
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <p class="subtitulo-form">Cuotas Disponibles (Opcional)</p>
+
+                                    <div class="form-row">
+                                        <div class="col-md-12 mb-3">
+                                            <button type="button" class="btn btn-sm btn-info" id="btnAgregarCuota">
+                                                <i class="fa fa-plus"></i> Agregar Cuota
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="listaCuotas" class="mb-3">
+                                        <?php
+                                        // Cargar cuotas existentes
+                                        $cuotasExistentes = $conectar->query("SELECT * FROM cuotas WHERE producto_id = '$id'");
+                                        while($cuotaRow = $cuotasExistentes->fetch_assoc()){
+                                            $precioPorCuota = ($cuotaRow['precio'] * (1 + ($cuotaRow['interes'] / 100))) / $cuotaRow['cantidad'];
+                                        ?>
+                                        <div class="card mb-2" data-cuota-id="<?php echo $cuotaRow['id']; ?>">
+                                            <div class="card-body p-2">
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-8">
+                                                        <strong><?php echo $cuotaRow['cantidad']; ?> cuotas</strong> de $<?php echo number_format($precioPorCuota, 2); ?>
+                                                        (<?php echo $cuotaRow['sin_interes'] ? 'Sin interés' : $cuotaRow['interes'] . '% de interés'; ?>)
+                                                    </div>
+                                                    <div class="col-md-4 text-right">
+                                                        <button type="button" class="btn btn-sm btn-danger btn-eliminar-cuota-existente" data-id="<?php echo $cuotaRow['id']; ?>">Eliminar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php } ?>
+                                    </div>
+
+                                    
 
                                     <div class="d-flex my-3 justify-content-center">
                                     	<input type="hidden" name="id" value="<?php echo $row['id'];?>">
@@ -279,6 +390,27 @@ if (isset($_GET['id'])) {
 </div>        
 <script>
 $(function(){
+	var taxCoeficiente = <?php echo $taxCoeficiente; ?>;
+
+	// Función para calcular precios
+	function calcularPrecios(){
+		var precioLista = parseFloat($('#validationCustom10').val()) || 0;
+		var descuento = parseFloat($('#descuentoPorcentaje').val()) || 0;
+
+		// Calcular precio final: precio - (precio * descuento / 100)
+		var precioFinal = precioLista - (precioLista * descuento / 100);
+		$('#precioFinal').val(precioFinal.toFixed(2));
+
+		// Calcular precio con impuestos sobre el precio final
+		var precioConImpuesto = (precioFinal / taxCoeficiente).toFixed(2);
+		$('#precioConImpuesto').text(precioConImpuesto);
+	}
+
+	// Calcular cuando cambia el precio de lista o el descuento
+	$('#validationCustom10, #descuentoPorcentaje').on('input', function(){
+		calcularPrecios();
+	});
+
 	$('#updateProducto').submit(function(e){
 		e.preventDefault();
 		if (!confirm("Esta seguro de que desea guardar el producto?")) 
@@ -355,15 +487,145 @@ $(function(){
 		var tmppath = URL.createObjectURL(event.target.files[0]);
 		$('#'+id).attr('src',tmppath);
 	});
-	
+
+	$('input[name="video_tipo"]').change(function(){
+		if($(this).val() === 'archivo'){
+			$('#videoArchivoContainer').show();
+			$('#videoUrlContainer').hide();
+			$('#videoUrl').val('');
+		} else if($(this).val() === 'url'){
+			$('#videoArchivoContainer').hide();
+			$('#videoUrlContainer').show();
+			$('#videoArchivo').val('');
+		} else {
+			$('#videoArchivoContainer').hide();
+			$('#videoUrlContainer').hide();
+			$('#videoArchivo').val('');
+			$('#videoUrl').val('');
+		}
+	});
+
+	// Manejo de cuotas
+	var cuotasArray = [];
+	var cuotaIndex = 0;
+
+	$('#btnAgregarCuota').click(function(){
+		$('#modalCuota').modal('show');
+		$('#formCuota')[0].reset();
+		$('#cuotaPrecio').val($('#precioFinal').val());
+	});
+
+	$('#formCuota').submit(function(e){
+		e.preventDefault();
+		var cantidad = $('#cuotaCantidad').val();
+		var precio = parseFloat($('#cuotaPrecio').val()) || 0;
+		var interes = parseFloat($('#cuotaInteres').val()) || 0;
+		var sinInteres = interes === 0 ? 1 : 0;
+
+		var precioConInteres = precio * (1 + (interes / 100));
+		var precioPorCuota = precioConInteres / cantidad;
+
+		var cuota = {
+			index: cuotaIndex++,
+			cantidad: cantidad,
+			precio: precio,
+			interes: interes,
+			sin_interes: sinInteres,
+			precio_por_cuota: precioPorCuota.toFixed(2)
+		};
+
+		cuotasArray.push(cuota);
+		renderizarCuotasNuevas();
+		$('#modalCuota').modal('hide');
+	});
+
+	$(document).on('click', '.btn-eliminar-cuota', function(){
+		var index = $(this).data('index');
+		cuotasArray = cuotasArray.filter(function(c){ return c.index !== index; });
+		renderizarCuotasNuevas();
+	});
+
+	$(document).on('click', '.btn-eliminar-cuota-existente', function(){
+		if (!confirm("¿Está seguro de que desea eliminar esta cuota?")) {
+			return false;
+		}
+		var id = $(this).data('id');
+		var card = $(this).closest('.card');
+
+		$.post('inc/borrar_item.php', {id: id, tabla: 'cuotas'}, function(data){
+			if(data.success){
+				card.fadeOut(function(){ $(this).remove(); });
+			}
+		}, 'json');
+	});
+
+	$(document).on('click', '.btn-ver-detalle-cuota', function(){
+		var index = $(this).data('index');
+		var cuota = cuotasArray.find(function(c){ return c.index === index; });
+		if(cuota){
+			mostrarDetalleCuota(cuota);
+		}
+	});
+
+	function renderizarCuotasNuevas(){
+		$('.cuota-nueva').remove();
+		var html = '';
+		cuotasArray.forEach(function(cuota){
+			html += '<div class="card mb-2 cuota-nueva">';
+			html += '<div class="card-body p-2">';
+			html += '<div class="row align-items-center">';
+			html += '<div class="col-md-8">';
+			html += '<strong>' + cuota.cantidad + ' cuotas</strong> de $' + cuota.precio_por_cuota;
+			html += ' (' + (cuota.sin_interes ? 'Sin interés' : cuota.interes + '% de interés') + ')';
+			html += '<input type="hidden" name="cuotas_nuevas[' + cuota.index + '][cantidad]" value="' + cuota.cantidad + '">';
+			html += '<input type="hidden" name="cuotas_nuevas[' + cuota.index + '][precio]" value="' + cuota.precio + '">';
+			html += '<input type="hidden" name="cuotas_nuevas[' + cuota.index + '][interes]" value="' + cuota.interes + '">';
+			html += '<input type="hidden" name="cuotas_nuevas[' + cuota.index + '][sin_interes]" value="' + cuota.sin_interes + '">';
+			html += '</div>';
+			html += '<div class="col-md-4 text-right">';
+			html += '<button type="button" class="btn btn-sm btn-primary btn-ver-detalle-cuota" data-index="' + cuota.index + '">Ver Detalle</button> ';
+			html += '<button type="button" class="btn btn-sm btn-danger btn-eliminar-cuota" data-index="' + cuota.index + '">Eliminar</button>';
+			html += '</div>';
+			html += '</div>';
+			html += '</div>';
+			html += '</div>';
+		});
+		$('#listaCuotas').append(html);
+	}
+
+	function mostrarDetalleCuota(cuota){
+		var precioTotal = cuota.precio * (1 + (cuota.interes / 100));
+		var precioPorCuota = precioTotal / cuota.cantidad;
+
+		var html = '<table class="table table-sm">';
+		html += '<thead><tr><th>Cuota</th><th>Precio</th><th>Interés</th></tr></thead>';
+		html += '<tbody>';
+		for(var i = 1; i <= cuota.cantidad; i++){
+			html += '<tr>';
+			html += '<td>Cuota ' + i + '</td>';
+			html += '<td>$' + precioPorCuota.toFixed(2) + '</td>';
+			html += '<td>' + (cuota.sin_interes ? 'Sin interés' : cuota.interes + '%') + '</td>';
+			html += '</tr>';
+		}
+		html += '<tr class="font-weight-bold">';
+		html += '<td>Total</td>';
+		html += '<td>$' + precioTotal.toFixed(2) + '</td>';
+		html += '<td></td>';
+		html += '</tr>';
+		html += '</tbody></table>';
+
+		$('#detalleCuotaContent').html(html);
+		$('#modalDetalleCuota').modal('show');
+	}
+
 });
 
 function agregaImg(){
-	var divs = document.getElementsByClassName("divImagen"); 
+	var divs = document.getElementsByClassName("divImagen");
 	var num = divs.length;
 	var n=(num+1);
-	
-	var img='<div class="col-sm-6 text-center divImagen" id="imagen'+n+'">'+'<a class="text-center" href="#">'+'<img class="w-100 img-admin-producto" id="img-previa'+n+'" src="../img/placeholder.png">'+'</a>'+'<div class="btn-grupo d-flex flex-column flex-md-row">'+'<button type="button" class="btn bg-danger text-white btn-bg-red btn-archivo mr-auto" data-input="input-archivo'+n+'">Subir Foto</button>'+'<button type="button" data-parent="imagen'+n+'" class="btn btn-bg-transparent text-black btn-eliminar">Eliminar Foto</button>'+'</div><input type="file" accept="image/*" name="imagen[]" data-id="img-previa'+n+'" class="imagenFile" id="input-archivo'+n+'"></div>';
+
+	var img='<div class="col-sm-6 text-center divImagen" id="imagen'+n+'">'+'<a class="text-center" href="#">'+'<img class="w-100 img-admin-producto" id="img-previa'+n+'" src="../img/placeholder.png">'+'</a>'+'<div class="form-group mt-2">'+'<label for="color-imagen-'+n+'">Color (opcional)</label>'+'<input type="color" name="color_imagen[]" class="form-control" id="color-imagen-'+n+'" value="#000000" style="height: 40px;">'+'</div>'+'<div class="btn-grupo d-flex flex-column flex-md-row">'+'<button type="button" class="btn bg-danger text-white btn-bg-red btn-archivo mr-auto" data-input="input-archivo'+n+'">Subir Foto</button>'+'<button type="button" data-parent="imagen'+n+'" class="btn btn-bg-transparent text-black btn-eliminar">Eliminar Foto</button>'+'</div><input type="file" accept="image/*" name="imagen[]" data-id="img-previa'+n+'" class="imagenFile" id="input-archivo'+n+'"></div>';
 	$('#listaImagenes').append(img);
 }
                                 // Example starter JavaScript for disabling form submissions if there are invalid fields
@@ -384,4 +646,59 @@ function agregaImg(){
                                         });
                                     }, false);
                                 })();
-                                </script>        
+</script>
+
+<!-- Modal para agregar cuota -->
+<div class="modal fade" id="modalCuota" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Cuota</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="formCuota">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="cuotaCantidad">Cantidad de Cuotas</label>
+                        <input type="number" class="form-control" id="cuotaCantidad" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cuotaPrecio">Precio Base (Precio Final)</label>
+                        <input type="number" step="0.01" class="form-control" id="cuotaPrecio" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="cuotaInteres">Interés (%)</label>
+                        <input type="number" step="0.01" class="form-control" id="cuotaInteres" value="0" min="0">
+                        <small class="form-text text-muted">Dejar en 0 para cuotas sin interés</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver detalle de cuota -->
+<div class="modal fade" id="modalDetalleCuota" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalle de Cuotas</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="detalleCuotaContent">
+                <!-- El contenido se carga dinámicamente -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>        
