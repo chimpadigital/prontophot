@@ -39,13 +39,21 @@ if (isset($_SESSION['pronto']['cart'])) {
                             <div class="wish-list">
                             	<?php if ($cant>0) { ?>
                             	<h5 class="mb-4">Pedido (<span><?php echo $cant;?></span> artículo/s)</h5>
-								<?php 
+								<?php
 								$total=0;
 								foreach($carro as $id=>$datos){
-								$res=$conectar->query("SELECT p.nombre,p.descripcion, p.precio,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
+								$res=$conectar->query("SELECT p.nombre,p.descripcion, p.precio, p.descuento_final,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
 								$row=$res->fetch_assoc();
 								$cant=$datos['cantidad'];
-								$precio=($cant * $row['precio']);
+
+								// Calcular precio con descuento si existe
+								$precioUnitario = $row['precio'];
+								$descuento = isset($row['descuento_final']) && $row['descuento_final'] > 0 ? $row['descuento_final'] : 0;
+								if($descuento > 0){
+									$precioUnitario = $row['precio'] - ($row['precio'] * $descuento / 100);
+								}
+
+								$precio=($cant * $precioUnitario);
 								$total=$total+$precio;
 								?>
                                 <div class="row mb-4">
