@@ -1,5 +1,5 @@
 <?php
-include __DIR__.'/../conexion/conectar.inc.php';
+include_once __DIR__.'/../../conexion/conectar.inc.php';
 global $conectar;
 
 echo "<h3>Creando tabla 'tax'...</h3>";

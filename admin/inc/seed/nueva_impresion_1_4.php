@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/../conexion/conectar.inc.php';
+include_once __DIR__.'/../../conexion/conectar.inc.php';
 global $conectar;
 
 // Array con los datos a insertar
