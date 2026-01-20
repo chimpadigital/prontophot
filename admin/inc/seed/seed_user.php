@@ -19,7 +19,7 @@ $nivel = 1;
 $creado = date('Y-m-d H:i:s');
 
 // Verificar si el usuario ya existe
-$checkSql = "SELECT * FROM usuarios WHERE email = '$email'";
+$checkSql = "SELECT * FROM clientes WHERE email = '$email'";
 $result = $conectar->query($checkSql);
 
 if ($result->num_rows > 0) {
