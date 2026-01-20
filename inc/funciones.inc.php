@@ -202,7 +202,8 @@ function setUrl($url){
     $nuevo=str_replace('-', ' ', $url);
     return $nuevo;
 }
-function montoPlan($plan){
+
+/* function montoPlan($plan){
     switch ($plan){
         case '1':
             return PLAN_1;
@@ -217,7 +218,8 @@ function montoPlan($plan){
             return PLAN_4;
         break;    
     }
-}
+} */
+
 function dispo($valor){
     if ($valor=='0') {
         return gettext('NO');
@@ -225,11 +227,14 @@ function dispo($valor){
         return gettext('SI');
     }
 }
-function generarCodigo($longitud) {
+function generarCodigo($longitud)
+{
     $key = '';
     $pattern = '1234567890abcdefghijklmnopqrstuvwxyz';
-    $max = strlen($pattern)-1;
-    for($i=0;$i < $longitud;$i++) $key .= $pattern{mt_rand(0,$max)};
+    $max = strlen($pattern) - 1;
+    for ($i = 0; $i < $longitud; $i++) {
+        $key .= $pattern[mt_rand(0, $max)];
+    }
     return $key;
 }
 
