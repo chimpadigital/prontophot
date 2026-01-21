@@ -1,4 +1,4 @@
-<?php include ('header.php'); 
+<?php include ('header.php');
 
 if (isset($_SESSION['prontoFront']['token'])) {
     $dato=verificarToken($_SESSION['prontoFront']['token'], 'Pronto');
@@ -7,9 +7,12 @@ if (isset($_SESSION['prontoFront']['token'])) {
         $cliente=$conectar->query("SELECT * FROM clientes WHERE id='$id'");
         $rowc=$cliente->fetch_assoc();
     }else{
-        
+
     }
 }
+
+// Obtener métodos de envío
+$metodos_envio = $conectar->query("SELECT * FROM metodos_envio ORDER BY id ASC");
 ?>
 
 <div class="">
@@ -72,24 +75,26 @@ if (isset($_SESSION['prontoFront']['token'])) {
                 <div class="mx-1 shadow-sm p-3 p-md-5">
                     <p class="text-bold m-0 text-danger">Envío a Domicilio</p>
                     <span class="text-muted descripcion-pequeña">(disponible para pedidos superiores a $1000)*</span>
-                    <div class="form-check mb-3 mt-3 contenedor-input">
-                        <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="entrega" id="CascoUrbano" value="urbano">
-                        <label class="form-check-label d-flex flex-row" for="CascoUrbano">
+                    <?php
+                    $metodo_counter = 0;
+                    while($metodo = $metodos_envio->fetch_assoc()){
+                        $metodo_counter++;
+                    ?>
+                    <div class="form-check mb-3 <?php echo $metodo_counter == 1 ? 'mt-3' : ''; ?> contenedor-input">
+                        <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="entrega" id="metodo_envio_<?php echo $metodo['id']; ?>" value="envio_<?php echo $metodo['id']; ?>" data-metodo-id="<?php echo $metodo['id']; ?>" data-costo="<?php echo $metodo['valor']; ?>">
+                        <label class="form-check-label d-flex flex-row" for="metodo_envio_<?php echo $metodo['id']; ?>">
                             <div>
-                                <p class="d-inline-block m-0">Casco Urbano La Plata</p>
-                                <span class="d-block text-bold">$250</span>
+                                <p class="d-inline-block m-0"><?php echo $metodo['nombre']; ?></p>
+                                <?php if($metodo['valor'] > 0){ ?>
+                                <span class="d-block text-bold">$<?php echo $metodo['valor']; ?></span>
+                                <?php } ?>
+                                <?php if(!empty($metodo['descripcion'])){ ?>
+                                <span class="d-block text-muted descripcion-pequeña"><?php echo $metodo['descripcion']; ?></span>
+                                <?php } ?>
                             </div>
                         </label>
                     </div>
-
-                    <div class="form-check mb-3 contenedor-input">
-                        <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="entrega" id="alRecibir" value="recibir">
-                        <label class="form-check-label d-flex flex-row" for="alRecibir">
-                            <div>
-                                <p class="d-inline-block m-0">Abonas al recibir/Correo <br>(fuera del casco urbano)</p>
-                            </div>
-                        </label>
-                    </div>
+                    <?php } ?>
                 </div>
             </div>
 

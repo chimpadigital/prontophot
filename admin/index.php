@@ -116,7 +116,11 @@ $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
 
                                             <div class="form-group mt-2 d-flex align-items-center">
                                                 <label style="margin-right: 10px; margin-bottom: 0px;" for="color-imagen-1">Color (opcional)</label>
-                                                <input type="color" name="color_imagen[]" class="form-control" id="color-imagen-1" value="#000000" style="padding: 0px 2px; height: 39px; width: 39px;">
+                                                <input type="color" name="color_imagen[]" class="form-control color-input" id="color-imagen-1" value="#000000" style="padding: 0px 2px; height: 39px; width: 39px;">
+                                                <div class="form-check ml-2">
+                                                    <input class="form-check-input sin-color-check" type="checkbox" id="sin-color-1">
+                                                    <label class="form-check-label" for="sin-color-1">Sin color</label>
+                                                </div>
                                             </div>
 
                                         	<input type="file" name="imagen[]" accept="image/*" data-id="img-previa1" class="imagenFile" id="input-archivo1">
@@ -368,14 +372,35 @@ $(function(){
 		calcularPrecios();
 	});
 
+	// Manejar checkbox "sin color"
+	$(document).on('change', '.sin-color-check', function() {
+		var colorInput = $(this).closest('.form-group').find('.color-input');
+		if ($(this).is(':checked')) {
+			colorInput.prop('disabled', true);
+			colorInput.css('opacity', '0.5');
+		} else {
+			colorInput.prop('disabled', false);
+			colorInput.css('opacity', '1');
+		}
+	});
+
 	$('#nuevoProducto').submit(function(e){
 		e.preventDefault();
 		$('.btn-cargar-producto').prop('disabled',true);
 		$('.btn-cargar-producto').html('<i class="fa fa-spin fa-spinner" aria-hidden="true"></i>');
-		if (!confirm("Esta seguro de que desea guardar el producto?")) 
+		if (!confirm("Esta seguro de que desea guardar el producto?"))
     		{	return false; }
-    	else { 
+    	else {
     		var data = new FormData(this);
+
+    		// Reemplazar valores de color con null si "sin color" está marcado
+    		$('.sin-color-check:checked').each(function() {
+    			var colorInput = $(this).closest('.form-group').find('.color-input');
+    			var name = colorInput.attr('name');
+    			data.delete(name);
+    			data.append(name, '');
+    		});
+
     		$.ajax({
     			type: 'POST',
     			url: $(this).attr('action'),
@@ -391,9 +416,9 @@ $(function(){
 						alert('Producto agregado');
 						location.reload();
         			}
-    			    	
-    			}          
-    		});	
+
+    			}
+    		});
     	}
 	});
 
@@ -539,7 +564,7 @@ function agregaImg(){
 	var num = divs.length;
 	var n=(num+1);
 
-	var img='<div class="col-sm-6 text-center divImagen" id="imagen'+n+'">'+'<a class="text-center" href="#">'+'<img class="w-100 img-admin-producto" id="img-previa'+n+'" src="../img/placeholder.png">'+'</a>'+'<div class="btn-grupo d-flex flex-column flex-md-row">'+'<button type="button" class="btn bg-danger text-white btn-bg-red btn-archivo mr-auto" data-input="input-archivo'+n+'">Subir Foto</button>'+'<button type="button" data-parent="imagen'+n+'" class="btn btn-bg-transparent text-black btn-eliminar">Eliminar Foto</button>'+'</div>'+'<div class="form-group mt-2 align-items-center d-flex">'+'<label style="margin-bottom: 0px; margin-right: 10px;" for="color-imagen-'+n+'">Color (opcional)</label>'+'<input type="color" name="color_imagen[]" class="form-control" id="color-imagen-'+n+'" value="#000000" style="padding: 0px 2px; height: 39px; width: 39px;">'+'<input type="file" accept="image/*" name="imagen[]" data-id="img-previa'+n+'" class="imagenFile" id="input-archivo'+n+'"></div>';
+	var img='<div class="col-sm-6 text-center divImagen" id="imagen'+n+'">'+'<a class="text-center" href="#">'+'<img class="w-100 img-admin-producto" id="img-previa'+n+'" src="../img/placeholder.png">'+'</a>'+'<div class="btn-grupo d-flex flex-column flex-md-row">'+'<button type="button" class="btn bg-danger text-white btn-bg-red btn-archivo mr-auto" data-input="input-archivo'+n+'">Subir Foto</button>'+'<button type="button" data-parent="imagen'+n+'" class="btn btn-bg-transparent text-black btn-eliminar">Eliminar Foto</button>'+'</div>'+'<div class="form-group mt-2 align-items-center d-flex">'+'<label style="margin-bottom: 0px; margin-right: 10px;" for="color-imagen-'+n+'">Color (opcional)</label>'+'<input type="color" name="color_imagen[]" class="form-control color-input" id="color-imagen-'+n+'" value="#000000" style="padding: 0px 2px; height: 39px; width: 39px;">'+'<div class="form-check ml-2">'+'<input class="form-check-input sin-color-check" type="checkbox" id="sin-color-'+n+'">'+'<label class="form-check-label" for="sin-color-'+n+'">Sin color</label>'+'</div>'+'</div><input type="file" accept="image/*" name="imagen[]" data-id="img-previa'+n+'" class="imagenFile" id="input-archivo'+n+'"></div>';
 	$('#listaImagenes').append(img);
 }
                                 // Example starter JavaScript for disabling form submissions if there are invalid fields

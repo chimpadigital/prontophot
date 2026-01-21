@@ -36,6 +36,7 @@ $param['email']=$_SESSION['prontoFront']['envio']['email'];
 $param['valor']=$monto;
 $param['metodo']=$metodo;
 $param['desc']=$desc;
+$param['metodo_envio_id']=$_SESSION['prontoFront']['envio']['metodo_envio_id'] ?? null;
 $pedido=crearPedido($param);
 
 if($pedido->success){

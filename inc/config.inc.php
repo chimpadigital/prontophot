@@ -10,6 +10,6 @@ define('MAIL_PORT','587');
 //define('MAIL_TO','hola@prontophot.com');
 define('MAIL_TO','prontophotenlinea@gmail.com');
 //define('URL_SITIO','https://prontophot.com/');
-//define('URL_SITIO','http://localhost/prontophot/');
-define('URL_SITIO','https://prontophot.manada.me/');
+define('URL_SITIO','http://localhost/prontophot/');
+//define('URL_SITIO','https://prontophot.manada.me/');
 define('COSTO_ENVIO','250'); 

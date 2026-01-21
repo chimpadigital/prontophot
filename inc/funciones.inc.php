@@ -133,6 +133,7 @@ function crearPedido($param)
     $entrega = $param['entrega'];
     $envio = $param['envio'];
     $desc = $param['desc'];
+    $metodo_envio_id = isset($param['metodo_envio_id']) ? $param['metodo_envio_id'] : null;
 
     // Datos de Factura A
     $factura_a = 0;
@@ -144,7 +145,12 @@ function crearPedido($param)
         $razon_social = isset($param['facturacion']['razon_social']) ? $param['facturacion']['razon_social'] : '';
     }
 
-    $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion`, `factura_a`, `cuit`, `razon_social` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc','$factura_a','$cuit','$razon_social')";
+    // Construir SQL con o sin metodo_envio_id
+    if ($metodo_envio_id !== null) {
+        $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion`, `factura_a`, `cuit`, `razon_social`, `metodo_envio_id` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc','$factura_a','$cuit','$razon_social','$metodo_envio_id')";
+    } else {
+        $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion`, `factura_a`, `cuit`, `razon_social` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc','$factura_a','$cuit','$razon_social')";
+    }
     $res = $conectar->query($sql);
     if ($res) {
         $respuesta->success = true;

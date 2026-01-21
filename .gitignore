@@ -1,5 +1,7 @@
 admin/conexion/conectar.inc.php
 conexion/conectar.inc.php
 admin/inc/seguridad.log
+admin/inc/error.log
 inc/seguridad.log
 seguridad.log
+error.log

@@ -1,22 +1,40 @@
 <?php include ('header.php'); ?>
-<?php 
+<?php
 if (isset($_POST['entrega'])) {
     $costoenvio=0;
     $enviotag='';
+    $metodo_envio_id = null;
+
     $_SESSION['prontoFront']['envio']['tipo']=$_POST['entrega'];
     $_SESSION['prontoFront']['envio']['envio']=$_POST['envio']??'';
-    if ($_POST['entrega']=='urbano') {
-        $costoenvio=250;
-        $enviotag='$ 250';
-    }else{
-        if($_POST['entrega']=='recibir'){
-            $enviotag='Abona al recibir';
-            
+
+    // Verificar si se seleccionó un método de envío dinámico
+    if (strpos($_POST['entrega'], 'envio_') === 0) {
+        // Extraer el ID del método de envío
+        $metodo_envio_id = str_replace('envio_', '', $_POST['entrega']);
+
+        // Obtener datos del método de envío desde la base de datos
+        $metodo_query = $conectar->query("SELECT * FROM metodos_envio WHERE id='$metodo_envio_id'");
+        if($metodo_row = $metodo_query->fetch_assoc()){
+            $costoenvio = $metodo_row['valor'];
+            $enviotag = $metodo_row['valor'] > 0 ? '$ ' . $metodo_row['valor'] : 'Sin cargo';
         }
-        $costoenvio=0;
+    } else {
+        // Compatibilidad con los valores antiguos hardcodeados
+        if ($_POST['entrega']=='urbano') {
+            $costoenvio=250;
+            $enviotag='$ 250';
+        }else{
+            if($_POST['entrega']=='recibir'){
+                $enviotag='Abona al recibir';
+
+            }
+            $costoenvio=0;
+        }
     }
-        
+
     $_SESSION['prontoFront']['envio']['costo']=$costoenvio;
+    $_SESSION['prontoFront']['envio']['metodo_envio_id']=$metodo_envio_id;
     $_SESSION['prontoFront']['envio']['nombre']=$_POST['nombre'];
     $_SESSION['prontoFront']['envio']['apellido']=$_POST['apellido'];
     $_SESSION['prontoFront']['envio']['dni']=$_POST['DNI'];
