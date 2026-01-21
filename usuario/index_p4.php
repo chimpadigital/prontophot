@@ -473,7 +473,7 @@ if (isset($_GET['payment_id'])) {
                                 	    $telefono=$pedido['clientetelefono'];
                                 	}else{
                                 	    $titulo='Enviar como regalo';
-                                	    $nombre=$pedido['enombre'];
+                                	    $nombre=$pedido['nombre'];
                                 	    $dni=$pedido['dni'];
                                 	    $direccion=$pedido['direccion'];
                                 	    $provincia=$pedido['provincia'];

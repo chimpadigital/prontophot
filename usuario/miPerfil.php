@@ -8,7 +8,7 @@ $datos=$usuario->fetch_assoc();
 ?>
 <div class="container-fluid bg-black border-top border-white">
     <div class="row">
-        <div class="col-4 bg-black py-4 px-3 d-none d-md-block">
+        <div class="col-2 bg-black py-4 px-3 d-none d-md-block">
             <div class="align-items-end d-flex flex-column justify-items-end mt-3 mb-4">
                 <a href="/"><img class="logo-blanco" src="../assets/img/logo-pronto-white.svg" alt=""></a>
             </div>
@@ -24,7 +24,7 @@ $datos=$usuario->fetch_assoc();
         </div>
         <!-- FIN COL-4  -->
 
-        <div class="col-md-8 bg-white p-5 rounded-lg columna-content-admin">
+        <div class="col-md-10 bg-white p-5 rounded-lg columna-content-admin min-vh-100">
             <div class="row mt-0 mt-md-5">
                 <div class="col-md-12">
                     <h5 class="titulo-tabs-user">Mis Datos</h5>

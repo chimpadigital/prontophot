@@ -1,0 +1,4 @@
+[21-Jan-2026 01:42:04 UTC] PHP Warning:  file_put_contents(F:\laragon\www\prontophot\inc/../img/tmp/69702eec536a9.png): Failed to open stream: No such file or directory in F:\laragon\www\prontophot\inc\upload.php on line 24
+[21-Jan-2026 01:45:00 UTC] PHP Warning:  file_put_contents(F:\laragon\www\prontophot\inc/../img/tmp/69702f9c393ad.png): Failed to open stream: No such file or directory in F:\laragon\www\prontophot\inc\upload.php on line 24
+[21-Jan-2026 01:48:07 UTC] PHP Warning:  file_put_contents(F:\laragon\www\prontophot\inc/../img/tmp/6970305766075.png): Failed to open stream: No such file or directory in F:\laragon\www\prontophot\inc\upload.php on line 24
+[21-Jan-2026 01:49:44 UTC] PHP Warning:  file_put_contents(F:\laragon\www\prontophot\inc/../img/tmp/697030b8dba33.png): Failed to open stream: No such file or directory in F:\laragon\www\prontophot\inc\upload.php on line 24

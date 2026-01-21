@@ -35,7 +35,7 @@ if (isset($_POST['tipoenvio'])) {
         $tamano=$impresion['tamano'];
         $cant=$impresion['cantidad'];
         
-        $calc=$conectar->query("SELECT * FROM `impresiones` WHERE formato='$tamano' AND desde<='$cant' AND hasta>='$cant' ORDER BY fecha DESC LIMIT 1");
+        $calc=$conectar->query("SELECT * FROM `impresiones` WHERE formato='$tamano' AND desde<='$cant' AND hasta>='$cant' ORDER BY id DESC LIMIT 1");
         $row=$calc->fetch_assoc();
         $p=$row['precio'];
         $idimp=$row['id'];

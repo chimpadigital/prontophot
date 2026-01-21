@@ -58,7 +58,7 @@ $(function(){
 </script>
 <div class="container-fluid bg-black border-top border-white">
     <div class="row">
-        <div class="col-4 bg-black py-4 px-3 d-none d-md-block">
+        <div class="col-2 bg-black py-4 px-3 d-none d-md-block">
             <div class="align-items-end d-flex flex-column justify-items-end mt-3 mb-4">
                 <a href="\"><img class="logo-blanco" src="assets\img\logo-pronto-white.svg" alt=""></a>
             </div>
@@ -86,7 +86,7 @@ $(function(){
         </div>
         <!-- FIN COL-4  -->
 
-        <div class="col-md-8 bg-white p-5 rounded-lg columna-content-admin">
+        <div class="col-md-10 bg-white p-5 rounded-lg columna-content-admin">
 
             <div class="tab-content" id="v-pills-tabContent">
                 <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
@@ -94,11 +94,11 @@ $(function(){
                     <!-- TABS PRODUCTOS -->
                     <ul class="nav nav-tabs tab-cargar-productos tabs-admin" id="tabProductos" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="cargarProducto" href="index.php">Cargar
+                            <a class="nav-link " id="cargarProducto" href="index.php">Cargar
                                 Producto Nuevo</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="productosCargados" href="productos_cargados.php">Productos ya
+                            <a class="nav-link " id="productosCargados" href="productos_cargados.php">Productos ya
                                 Cargados</a>
                         </li>
                         <li class="nav-item" role="presentation">
@@ -107,6 +107,9 @@ $(function(){
                         <li class="nav-item" role="presentation2">
                             <a class="nav-link" id="valoresImpresion" href="productos_valoresImpresion.php">Valores
                                 Impresión</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="impuestos" href="productos_impuestos.php">Impuestos</a>
                         </li>
                     </ul>
                     <!-- FIN TABS PRODUCTOS -->
