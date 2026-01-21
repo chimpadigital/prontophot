@@ -84,6 +84,9 @@ $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
                         <li class="nav-item" role="presentation">
                             <a class="nav-link" id="impuestos" href="productos_impuestos.php">Impuestos</a>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="metodosEnvio" href="productos_metodos_envio.php">Métodos de Envío</a>
+                        </li>
                     </ul>
                     <!-- FIN TABS PRODUCTOS -->
 
