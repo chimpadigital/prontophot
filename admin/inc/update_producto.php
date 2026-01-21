@@ -42,6 +42,8 @@ if(isset($_POST['video_tipo'])){
         if(move_uploaded_file($_FILES['video_archivo']['tmp_name'], "$dir/$name")){
             $videoUpdate = ",`video`='img/videos/".$name."'";
         }
+    } else {
+        $videoUpdate = ",`video`=NULL";
     }
 }
 
