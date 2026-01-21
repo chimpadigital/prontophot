@@ -1,8 +1,0 @@
-[21-Jan-2026 02:17:47 UTC] PHP Fatal error:  Uncaught Exception: cURL extension not found. You need to enable cURL in your php.ini or another configuration you have. in F:\laragon\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Http\CurlRequest.php:28
-Stack trace:
-#0 F:\laragon\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\RestClient.php(37): MercadoPago\Http\CurlRequest->__construct()
-#1 F:\laragon\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\SDK.php(31): MercadoPago\RestClient->__construct()
-#2 F:\laragon\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\SDK.php(43): MercadoPago\SDK::initialize()
-#3 F:\laragon\www\prontophot\inc\crear_pago.php(9): MercadoPago\SDK::setAccessToken('APP_USR-4558041...')
-#4 {main}
-  thrown in F:\laragon\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Http\CurlRequest.php on line 28
