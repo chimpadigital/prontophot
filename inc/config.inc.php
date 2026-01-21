@@ -12,4 +12,4 @@ define('MAIL_TO','prontophotenlinea@gmail.com');
 //define('URL_SITIO','https://prontophot.com/');
 //define('URL_SITIO','http://localhost/prontophot/');
 define('URL_SITIO','https://prontophot.manada.me/');
-define('COSTO_ENVIO','250');
+define('COSTO_ENVIO','250'); 
