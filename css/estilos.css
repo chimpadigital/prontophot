@@ -103,7 +103,7 @@ hr.solid {
     display: flex;
     align-items: center;   /* centra vertical */
     justify-content: center; /* centra horizontal */
-    min-height: 500px;     /* ajustá según tu diseño */
+    min-height: 635px;     /* ajustá según tu diseño */
 }
 
 .tag-percent {
