@@ -196,10 +196,12 @@ while ($cuotaRow = $cuotasQuery->fetch_assoc()) {
                     <div class="my-2">
                         <span>
                             <?php foreach ($cuotas as $index => $cuota):
-                            $montoCuota = ($precioFinal * (1 + $cuota['interes'] / 100)) / $cuota['cantidad'];
-                            if($cuota['interes'] <= 0):
-                            echo $cuota['cantidad'].' cuotas sin interés de $'.$montoCuota;
-                            break; endif; endforeach; ?>
+                                $montoCuota = ($precioFinal * (1 + $cuota['interes'] / 100)) / $cuota['cantidad'];
+                                if ($cuota['interes'] <= 0):
+                                    echo $cuota['cantidad'] . ' cuotas sin interés de $' . $montoCuota;
+                                    break;
+                                endif;
+                            endforeach; ?>
                         </span>
                         <button type="button" class="btn btn-link p-0 text-danger" data-toggle="modal" data-target="#cuotasModal">
                             Ver cuotas disponibles
@@ -330,9 +332,9 @@ while ($cuotaRow = $cuotasQuery->fetch_assoc()) {
                             <div class="card">
                                 <div class="card-header" id="heading<?php echo $index; ?>">
                                     <h2 class="mb-0">
-                                        <button class="btn btn-link text-danger btn-block text-left" type="button" 
-                                        style="padding: 0px;"
-                                        data-toggle="collapse" data-target="#collapse<?php echo $index; ?>" aria-expanded="<?php echo $index == 0 ? 'true' : 'false'; ?>" aria-controls="collapse<?php echo $index; ?>">
+                                        <button class="btn btn-link text-danger btn-block text-left" type="button"
+                                            style="padding: 0px;"
+                                            data-toggle="collapse" data-target="#collapse<?php echo $index; ?>" aria-expanded="<?php echo $index == 0 ? 'true' : 'false'; ?>" aria-controls="collapse<?php echo $index; ?>">
                                             <?php echo $cuota['cantidad']; ?> cuotas
                                             <i class="fa fa-chevron-down float-right mt-1"></i>
                                         </button>
@@ -395,7 +397,7 @@ while ($cuotaRow = $cuotasQuery->fetch_assoc()) {
     });
 </script>
 
-<script src="assets/js/starter.js"></script>
+<script src="assets/js/starter.js?v=2"></script>
 <script>
     $(function() {
         // Cargar datos de imágenes por color
@@ -464,7 +466,7 @@ while ($cuotaRow = $cuotasQuery->fetch_assoc()) {
                 dots: false,
                 loop: false,
                 responsiveRefreshRate: 200,
-                navText: ['<svg width="100%" height="100%" viewBox="0 0 11 20"><path style="fill:none;stroke-width: 1px;stroke: #000;" d="M9.554,1.001l-8.607,8.607l8.607,8.606"/></svg>', '<svg width="100%" height="100%" viewBox="0 0 11 20" version="1.1"><path style="fill:none;stroke-width: 1px;stroke: #000;" d="M1.054,18.214l8.606-8.606l-8.606-8.607"/></svg>'],
+                navText: ['<svg width="100%" height="100%" viewBox="0 0 11 20"><path style="pointer-events: none; fill:none;stroke-width: 1px;stroke: #000;" d="M9.554,1.001l-8.607,8.607l8.607,8.606"/></svg>', '<svg width="100%" height="100%" viewBox="0 0 11 20" version="1.1"><path style="fill:none;stroke-width: 1px;stroke: #000;" d="M1.054,18.214l8.606-8.606l-8.606-8.607"/></svg>'],
             }).on('changed.owl.carousel', syncPosition);
 
             sync2.on('initialized.owl.carousel', function() {
@@ -481,26 +483,9 @@ while ($cuotaRow = $cuotasQuery->fetch_assoc()) {
             }).on('changed.owl.carousel', syncPosition2);
 
             function syncPosition(el) {
-                var count = el.item.count - 1;
-                var current = Math.round(el.item.index - (el.item.count / 2) - .5);
-
-                if (current < 0) {
-                    current = count;
-                }
-                if (current > count) {
-                    current = 0;
-                }
-
-                var owl2 = sync2.data('owl.carousel');
-
-                if (owl2) {
-                    if (current > end) {
-                        owl2.to(current, 100, true);
-                    }
-                    if (current < start) {
-                        owl2.to(current - onscreen, 100, true);
-                    }
-                }
+                var index = el.item.index;
+                $('#sync2 .owl-item').removeClass('current');
+                $('#sync2 .owl-item').eq(index).addClass('current');
             }
 
             function syncPosition2(el) {
@@ -509,6 +494,12 @@ while ($cuotaRow = $cuotasQuery->fetch_assoc()) {
                     sync1.data('owl.carousel').to(number, 100, true);
                 }
             }
+
+            $('#sync2').on('click', '.owl-item', function(e) {
+                e.preventDefault();
+                var index = $(this).index();
+                $('#sync1').trigger('to.owl.carousel', [index, 300, true]);
+            });
 
             var owl2 = sync2.data('owl.carousel');
 
@@ -520,6 +511,7 @@ while ($cuotaRow = $cuotasQuery->fetch_assoc()) {
                     owl2.to(current - onscreen, 100, true);
                 }
             }
+
         }
 
         var syncedSecondary = true;

@@ -182,32 +182,9 @@ $(document).ready(function () {
 		}).on('changed.owl.carousel', syncPosition2);
 
 	function syncPosition(el) {
-		//if you set loop to false, you have to restore this next line
-		//var current = el.item.index;
-
-		//if you disable loop you have to comment this block
-		var count = el.item.count - 1;
-		var current = Math.round(el.item.index - (el.item.count / 2) - .5);
-
-		if (current < 0) {
-			current = count;
-		}
-		if (current > count) {
-			current = 0;
-		}
-
-		//end block
-
-		var owl2 = sync2.data('owl.carousel');
-
-		if (owl2) {
-			if (current > end) {
-				owl2.to(current, 100, true);
-			}
-			if (current < start) {
-				owl2.to(current - onscreen, 100, true);
-			}
-		}
+		var index = el.item.index;
+		$('#sync2 .owl-item').removeClass('current');
+		$('#sync2 .owl-item').eq(index).addClass('current');
 	}
 
 	function syncPosition2(el) {
@@ -217,10 +194,10 @@ $(document).ready(function () {
 		}
 	}
 
-	sync2.on("click", ".owl-item", function (e) {
+	$('#sync2').on('click', '.owl-item', function (e) {
 		e.preventDefault();
-		var number = $(this).index();
-		sync1.data('owl.carousel').to(number, 300, true);
+		var index = $(this).index();
+		$('#sync1').trigger('to.owl.carousel', [index, 300, true]);
 	});
 });
 
