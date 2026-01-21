@@ -108,8 +108,10 @@ hr.solid {
 
 .tag-percent {
   font-size: 1.3rem;
-  padding: 1px;
-  color: #008000;
+  font-weight: 600;
+  padding: 1px 2px 0;
+  color: #00a650;
+  background-color: #e6f7ef;
 }
 
 .bi {

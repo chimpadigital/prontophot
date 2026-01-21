@@ -330,7 +330,9 @@ while ($cuotaRow = $cuotasQuery->fetch_assoc()) {
                             <div class="card">
                                 <div class="card-header" id="heading<?php echo $index; ?>">
                                     <h2 class="mb-0">
-                                        <button class="btn btn-link text-danger btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse<?php echo $index; ?>" aria-expanded="<?php echo $index == 0 ? 'true' : 'false'; ?>" aria-controls="collapse<?php echo $index; ?>">
+                                        <button class="btn btn-link text-danger btn-block text-left" type="button" 
+                                        style="padding: 0px;"
+                                        data-toggle="collapse" data-target="#collapse<?php echo $index; ?>" aria-expanded="<?php echo $index == 0 ? 'true' : 'false'; ?>" aria-controls="collapse<?php echo $index; ?>">
                                             <?php echo $cuota['cantidad']; ?> cuotas
                                             <i class="fa fa-chevron-down float-right mt-1"></i>
                                         </button>
