@@ -39,9 +39,9 @@ foreach ($imagenesPorColor as $color => $imgs) {
 }
 
 // Si no hay colores, usar todas las imágenes
-if (empty($primerColor)) {
+//if (empty($primerColor)) {
     $primerColor = 'sin_color';
-}
+//}
 
 // Obtener el coeficiente de impuestos
 $taxQuery = $conectar->query("SELECT coeficiente FROM tax WHERE id = 1");

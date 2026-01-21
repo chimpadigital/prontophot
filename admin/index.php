@@ -107,15 +107,18 @@ $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
                                             	<img class="w-100 img-admin-producto" id="img-previa1" src="../img/placeholder.png">
                                             </a>
 
-                                            <div class="form-group mt-2">
-                                                <label for="color-imagen-1">Color (opcional)</label>
-                                                <input type="color" name="color_imagen[]" class="form-control" id="color-imagen-1" value="#000000" style="height: 40px;">
-                                            </div>
+                                            
 
                                             <div class="btn-grupo d-flex flex-column flex-md-row">
                                                 <button type="button" class="btn bg-danger text-white btn-bg-red btn-archivo mr-auto" data-input="input-archivo1">Subir Foto</button>
                                                 <button type="button" data-parent="imagen1" class="btn btn-bg-transparent text-black btn-eliminar">Eliminar Foto</button></a>
                                             </div>
+
+                                            <div class="form-group mt-2 d-flex align-items-center">
+                                                <label style="margin-right: 10px; margin-bottom: 0px;" for="color-imagen-1">Color (opcional)</label>
+                                                <input type="color" name="color_imagen[]" class="form-control" id="color-imagen-1" value="#000000" style="padding: 0px 2px; height: 39px; width: 39px;">
+                                            </div>
+
                                         	<input type="file" name="imagen[]" accept="image/*" data-id="img-previa1" class="imagenFile" id="input-archivo1">
                                         </div>
                                         
@@ -536,7 +539,7 @@ function agregaImg(){
 	var num = divs.length;
 	var n=(num+1);
 
-	var img='<div class="col-sm-6 text-center divImagen" id="imagen'+n+'">'+'<a class="text-center" href="#">'+'<img class="w-100 img-admin-producto" id="img-previa'+n+'" src="../img/placeholder.png">'+'</a>'+'<div class="form-group mt-2">'+'<label for="color-imagen-'+n+'">Color (opcional)</label>'+'<input type="color" name="color_imagen[]" class="form-control" id="color-imagen-'+n+'" value="#000000" style="height: 40px;">'+'</div>'+'<div class="btn-grupo d-flex flex-column flex-md-row">'+'<button type="button" class="btn bg-danger text-white btn-bg-red btn-archivo mr-auto" data-input="input-archivo'+n+'">Subir Foto</button>'+'<button type="button" data-parent="imagen'+n+'" class="btn btn-bg-transparent text-black btn-eliminar">Eliminar Foto</button>'+'</div><input type="file" accept="image/*" name="imagen[]" data-id="img-previa'+n+'" class="imagenFile" id="input-archivo'+n+'"></div>';
+	var img='<div class="col-sm-6 text-center divImagen" id="imagen'+n+'">'+'<a class="text-center" href="#">'+'<img class="w-100 img-admin-producto" id="img-previa'+n+'" src="../img/placeholder.png">'+'</a>'+'<div class="btn-grupo d-flex flex-column flex-md-row">'+'<button type="button" class="btn bg-danger text-white btn-bg-red btn-archivo mr-auto" data-input="input-archivo'+n+'">Subir Foto</button>'+'<button type="button" data-parent="imagen'+n+'" class="btn btn-bg-transparent text-black btn-eliminar">Eliminar Foto</button>'+'</div>'+'<div class="form-group mt-2 align-items-center d-flex">'+'<label style="margin-bottom: 0px; margin-right: 10px;" for="color-imagen-'+n+'">Color (opcional)</label>'+'<input type="color" name="color_imagen[]" class="form-control" id="color-imagen-'+n+'" value="#000000" style="padding: 0px 2px; height: 39px; width: 39px;">'+'<input type="file" accept="image/*" name="imagen[]" data-id="img-previa'+n+'" class="imagenFile" id="input-archivo'+n+'"></div>';
 	$('#listaImagenes').append(img);
 }
                                 // Example starter JavaScript for disabling form submissions if there are invalid fields

@@ -119,14 +119,21 @@ if (isset($_GET['id'])) {
                                             	<img class="w-100 img-admin-producto" id="img-previa<?php echo $i;?>" src="../<?php echo $rowi['imagen'];?>">
                                             </a>
 
-                                            <div class="form-group mt-2">
-                                                <label for="color-imagen-existente-<?php echo $rowi['id'];?>">Color (opcional)</label>
-                                                <input type="color" name="color_imagen_existente[<?php echo $rowi['id'];?>]" class="form-control" id="color-imagen-existente-<?php echo $rowi['id'];?>" value="<?php echo !empty($rowi['color']) ? $rowi['color'] : '#000000'; ?>" style="height: 40px;">
-                                            </div>
-
                                             <div class="btn-grupo d-flex flex-column flex-md-row">
                                                 <button type="button" data-id="<?php echo $rowi['id'];?>" data-parent="imagen<?php echo $i;?>" class="btn btn-bg-transparent ml-auto text-black btn-removerimg">Eliminar Foto</button></a>
                                             </div>
+
+                                            <div class="form-group mt-2 d-flex align-items-center">
+                                                <label style="margin-bottom: 0px!important; margin-right: 10px;" class=" d-flex" for="color-imagen-existente-<?php echo $rowi['id'];?>">Color (opcional)</label>
+
+                                                <input type="color" 
+                                                name="color_imagen_existente[<?php echo $rowi['id'];?>]" 
+                                                class="form-control" 
+                                                id="color-imagen-existente-<?php echo $rowi['id'];?>" 
+                                                value="<?php echo !empty($rowi['color']) ? $rowi['color'] : '#000000'; ?>" 
+                                                style="padding: 0px 2px; height: 39px; width: 39px;">
+                                            </div>
+
                                         </div>
                                     <?php $i++; }?>        
                             		</div>
@@ -437,7 +444,6 @@ $(function(){
 
 	$('.agregaImagen').click(function(e){
 		e.preventDefault();
-		
 		agregaImg();
 	});
 
@@ -625,7 +631,7 @@ function agregaImg(){
 	var num = divs.length;
 	var n=(num+1);
 
-	var img='<div class="col-sm-6 text-center divImagen" id="imagen'+n+'">'+'<a class="text-center" href="#">'+'<img class="w-100 img-admin-producto" id="img-previa'+n+'" src="../img/placeholder.png">'+'</a>'+'<div class="form-group mt-2">'+'<label for="color-imagen-'+n+'">Color (opcional)</label>'+'<input type="color" name="color_imagen[]" class="form-control" id="color-imagen-'+n+'" value="#000000" style="height: 40px;">'+'</div>'+'<div class="btn-grupo d-flex flex-column flex-md-row">'+'<button type="button" class="btn bg-danger text-white btn-bg-red btn-archivo mr-auto" data-input="input-archivo'+n+'">Subir Foto</button>'+'<button type="button" data-parent="imagen'+n+'" class="btn btn-bg-transparent text-black btn-eliminar">Eliminar Foto</button>'+'</div><input type="file" accept="image/*" name="imagen[]" data-id="img-previa'+n+'" class="imagenFile" id="input-archivo'+n+'"></div>';
+	var img='<div class="col-sm-6 text-center divImagen" id="imagen'+n+'">'+'<a class="text-center" href="#">'+'<img class="w-100 img-admin-producto" id="img-previa'+n+'" src="../img/placeholder.png">'+'</a>'+'<div class="btn-grupo d-flex flex-column flex-md-row"><button type="button" class="btn bg-danger text-white btn-bg-red btn-archivo mr-auto" data-input="input-archivo'+n+'">Subir Foto</button>'+'<button type="button" data-parent="imagen'+n+'" class="btn btn-bg-transparent text-black btn-eliminar">Eliminar Foto</button>'+'</div><input type="file" accept="image/*" name="imagen[]" data-id="img-previa'+n+'" class="imagenFile" id="input-archivo'+n+'">'+'<div class="form-group d-flex align-items-center">'+'<label style="margin-bottom: 0px; margin-right: 10px; " for="color-imagen-'+n+'">Color (opcional)</label>'+'<input type="color" name="color_imagen[]" class="form-control" id="color-imagen-'+n+'" value="#000000" style="padding: 0px 2px; height: 39px; width: 39px;">'+'</div>'+'<div class="btn-grupo d-flex flex-column flex-md-row"></div>';
 	$('#listaImagenes').append(img);
 }
                                 // Example starter JavaScript for disabling form submissions if there are invalid fields

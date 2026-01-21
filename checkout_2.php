@@ -87,8 +87,8 @@ if (isset($_POST['entrega'])) {
         <div class="row">
             <div class="col-md-8">
                 <!-- FORM METODO PAGO -->
-
-                <div class="row shadow-sm p-3 metodo-envio d-flex align-items-center">
+                
+                <!-- <div class="row shadow-sm p-3 metodo-envio d-flex align-items-center ">
                     <div id="metodo-pago" class="col-9 col-md-10  order-md-1">
                         <div class="custom-control contenedor-input custom-radio  ">
                             <input type="radio" id="transfer" name="metodoPago" data-toggle='collapse' data-target='#collapsediv2' value="1" aria-expanded="false" class="custom-control-input metodoPago">
@@ -99,6 +99,7 @@ if (isset($_POST['entrega'])) {
                         <img class="img-fluid" src="assets/img/transferencia.svg" alt="">
                     </div>
                 </div>
+
                 <div id="collapsediv2" class="collapse in py-4">
                     <p>- Transferí la suma de tu pedido a la siguiente cuenta: <br><br>
 
@@ -120,7 +121,7 @@ if (isset($_POST['entrega'])) {
                         Paso 3:<br>
                         - Esperar nuestro contacto para la confirmación del pedido.
                     </p>
-                </div>
+                </div> -->
 
                 <div class="row shadow-sm p-3 metodo-envio d-flex align-items-center my-4">
                     <div class="col-9 col-md-10  order-md-1">
@@ -134,6 +135,7 @@ if (isset($_POST['entrega'])) {
                     </div>
                 </div>
 
+                <!--
                 <div class="row shadow-sm p-3 metodo-envio d-flex align-items-center">
                     <div class="col-9 col-md-10  order-md-1">
                         <div class="custom-control contenedor-input custom-radio ">
@@ -145,6 +147,7 @@ if (isset($_POST['entrega'])) {
                         <img class="img-fluid" src="assets/img/returarSucursal.svg" alt="">
                     </div>
                 </div>
+            -->
 
             </div>
 
