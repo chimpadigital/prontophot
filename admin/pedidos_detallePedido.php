@@ -9,6 +9,10 @@ $row=$pedidos->fetch_assoc();
 $imagenes=$conectar->query("SELECT * FROM pedidos_imagenes WHERE id_pedido='$id'");
 $productos=$conectar->query("SELECT pd.cantidad,p.*,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$id'");
 
+// Obtener datos de facturación
+$facturacion = $conectar->query("SELECT * FROM facturacion WHERE pedido_id='$id'");
+$rowf = $facturacion->fetch_assoc();
+
 function zipFilesAndDownload($file_names,$archive_file_name,$file_path)
 {
     $zip = new \ZipArchive();
@@ -21,9 +25,9 @@ function zipFilesAndDownload($file_names,$archive_file_name,$file_path)
         $file=$file_path.$files;
         $zip->addFile($file_path.$files, "imagenes".DIRECTORY_SEPARATOR.$files);
     }
-    $zip->close();
-   
+    $zip->close();   
 }
+
 $image=array();
 while ($rowi=$imagenes->fetch_assoc()) {
     $i=explode('/',$rowi['imagen']);
@@ -35,7 +39,12 @@ while ($rowi=$imagenes->fetch_assoc()) {
 $archivo='pedido_'.$row['id'].'.zip';
 $path="../img/impresiones/";
 
-zipFilesAndDownload($image, $archivo, $path);
+try {
+    //code...
+    zipFilesAndDownload($image, $archivo, $path);
+} catch (\Throwable $th) {
+    //throw $th;
+}
 
 ?>
 <div class="container-fluid bg-black border-top border-white">
@@ -239,6 +248,53 @@ zipFilesAndDownload($image, $archivo, $path);
                         </div>
                     </div>
 
+                    <?php if($rowf): ?>
+                    <div class="row align-items-lg-center mt-5">
+                        <div class="col-md-9 p-0">
+                            <h4 class="text-bold">Datos de Facturación</h4>
+                        </div>
+                        <div class="col-md-3 text-left text-lg-right p-0 mt-2 mt-md-0">
+                            <button type="button" id="imprimirFacturacion" class="btn bg-success text-white btn-bg-green">Imprimir</button>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4 datos-facturacion">
+                        <div class="col-md-8 p-4 shadowBox" id="datosFacturacion">
+                            <h5>Datos del Comprador</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Nombre y Apellido:</strong> <?php echo $rowf['nombre'] . ' ' . $rowf['apellido']; ?></p>
+                                    <p><strong>DNI:</strong> <?php echo $rowf['dni']; ?></p>
+                                    <p><strong>Email:</strong> <?php echo $rowf['email']; ?></p>
+                                    <p><strong>Dirección:</strong> <?php echo $rowf['direccion']; ?></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Ciudad:</strong> <?php echo $rowf['ciudad']; ?></p>
+                                    <p><strong>Provincia:</strong> <?php echo $rowf['provincia']; ?></p>
+                                    <p><strong>CP:</strong> <?php echo $rowf['cp']; ?></p>
+                                    <p><strong>Teléfono:</strong> <?php echo $rowf['telefono']; ?></p>
+                                    <?php if(!empty($rowf['celular'])): ?>
+                                    <p><strong>Celular:</strong> <?php echo $rowf['celular']; ?></p>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <?php if($rowf['factura_a'] == 1): ?>
+                            <hr class="my-3">
+                            <h5 class="text-danger">Requiere Factura A</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>CUIT:</strong> <?php echo $rowf['cuit']; ?></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Razón Social:</strong> <?php echo $rowf['razon_social']; ?></p>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                     <div class="row align-items-lg-center mt-5">
                         <div class="col-md-12 p-0">
                             <h4 class="text-bold">Estado del pedido</h4>
@@ -306,6 +362,13 @@ $(function(){
 		    importCSS: true
 		});
 	});
-	
+
+	$('#imprimirFacturacion').click(function(e){
+		e.preventDefault();
+		$('#datosFacturacion').printThis({
+		    importCSS: true
+		});
+	});
+
 });
 </script>

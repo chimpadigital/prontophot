@@ -66,7 +66,11 @@ if (isset($_SESSION['pronto']['cart'])) {
                                         <div class="d-flex justify-content-between">
                                             <div>
                                                 <h5><?php echo $row['nombre']; ?></h5>
-                                                <p class="mb-3 text-muted text-uppercase small"><?php echo $row['descripcion'].'<br>';?>Color : <?php echo $datos['color']?><br>Cantidad : <?php echo $datos['cantidad']; ?></p>
+                                                <p class="mb-3 text-muted text-uppercase small"><?php echo $row['descripcion'].'<br>';?>
+                                                <span class="d-flex align-items-center">
+                                                    Color : <span class="dot" style="background-color:  <?php echo $datos['color']?>; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span> 
+                                                </span>   
+                                                Cantidad : <?php echo $datos['cantidad']; ?></p>
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center">

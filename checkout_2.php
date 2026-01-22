@@ -1,12 +1,22 @@
-<?php include ('header.php'); ?>
+<?php include('header.php'); ?>
 <?php
+// Obtener datos del cliente logueado
+if (isset($_SESSION['prontoFront']['token'])) {
+    $dato = verificarToken($_SESSION['prontoFront']['token'], 'Pronto');
+    if ($dato->success) {
+        $id = $dato->id;
+        $cliente = $conectar->query("SELECT * FROM clientes WHERE id='$id'");
+        $rowc = $cliente->fetch_assoc();
+    }
+}
+
 if (isset($_POST['entrega'])) {
-    $costoenvio=0;
-    $enviotag='';
+    $costoenvio = 0;
+    $enviotag = '';
     $metodo_envio_id = null;
 
-    $_SESSION['prontoFront']['envio']['tipo']=$_POST['entrega'];
-    $_SESSION['prontoFront']['envio']['envio']=$_POST['envio']??'';
+    $_SESSION['prontoFront']['envio']['tipo'] = $_POST['entrega'];
+    $_SESSION['prontoFront']['envio']['envio'] = $_POST['envio'] ?? '';
 
     // Verificar si se seleccionó un método de envío dinámico
     if (strpos($_POST['entrega'], 'envio_') === 0) {
@@ -15,77 +25,59 @@ if (isset($_POST['entrega'])) {
 
         // Obtener datos del método de envío desde la base de datos
         $metodo_query = $conectar->query("SELECT * FROM metodos_envio WHERE id='$metodo_envio_id'");
-        if($metodo_row = $metodo_query->fetch_assoc()){
+        if ($metodo_row = $metodo_query->fetch_assoc()) {
             $costoenvio = $metodo_row['valor'];
             $enviotag = $metodo_row['valor'] > 0 ? '$ ' . $metodo_row['valor'] : 'Sin cargo';
         }
     } else {
         // Compatibilidad con los valores antiguos hardcodeados
-        if ($_POST['entrega']=='urbano') {
-            $costoenvio=250;
-            $enviotag='$ 250';
-        }else{
-            if($_POST['entrega']=='recibir'){
-                $enviotag='Abona al recibir';
-
+        if ($_POST['entrega'] == 'urbano') {
+            $costoenvio = 250;
+            $enviotag = '$ 250';
+        } else {
+            if ($_POST['entrega'] == 'recibir') {
+                $enviotag = 'Abona al recibir';
             }
-            $costoenvio=0;
+            $costoenvio = 0;
         }
     }
 
-    $_SESSION['prontoFront']['envio']['costo']=$costoenvio;
-    $_SESSION['prontoFront']['envio']['metodo_envio_id']=$metodo_envio_id;
-    $_SESSION['prontoFront']['envio']['nombre']=$_POST['nombre'];
-    $_SESSION['prontoFront']['envio']['apellido']=$_POST['apellido'];
-    $_SESSION['prontoFront']['envio']['dni']=$_POST['DNI'];
-    $_SESSION['prontoFront']['envio']['direccion']=$_POST['direccion'];
-    $_SESSION['prontoFront']['envio']['email']=$_POST['email'];
-    $_SESSION['prontoFront']['envio']['provincia']=$_POST['provincia'];
-    $_SESSION['prontoFront']['envio']['ciudad']=$_POST['ciudad'];
-    $_SESSION['prontoFront']['envio']['cp']=$_POST['CP'];
-    $_SESSION['prontoFront']['envio']['telefono']=$_POST['telefono'];
-    $_SESSION['prontoFront']['envio']['celular']=$_POST['celular'];
-    $_SESSION['prontoFront']['envio']['obs']=$_POST['observaciones']??'';
+    $_SESSION['prontoFront']['envio']['costo'] = $costoenvio;
+    $_SESSION['prontoFront']['envio']['metodo_envio_id'] = $metodo_envio_id;
+    $_SESSION['prontoFront']['envio']['nombre'] = $rowc['nombre'];
+    $_SESSION['prontoFront']['envio']['apellido'] = $rowc['apellido'];
+    $_SESSION['prontoFront']['envio']['dni'] = $rowc['dni'];
+    $_SESSION['prontoFront']['envio']['direccion'] = $rowc['direccion'];
+    $_SESSION['prontoFront']['envio']['email'] = $rowc['email'];
+    $_SESSION['prontoFront']['envio']['provincia'] = $rowc['provincia'];
+    $_SESSION['prontoFront']['envio']['ciudad'] = $rowc['ciudad'];
+    $_SESSION['prontoFront']['envio']['cp'] = $rowc['cp'];
+    $_SESSION['prontoFront']['envio']['telefono'] = $rowc['telefono'] ?? '';
+    $_SESSION['prontoFront']['envio']['celular'] = $rowc['celular'] ?? '';
+    $_SESSION['prontoFront']['envio']['obs'] = $rowc['observaciones'] ?? '';
 
-    // Guardar datos de facturación
-    $_SESSION['prontoFront']['facturacion']['nombre']=$_POST['nombre'];
-    $_SESSION['prontoFront']['facturacion']['apellido']=$_POST['apellido'];
-    $_SESSION['prontoFront']['facturacion']['dni']=$_POST['DNI'];
-    $_SESSION['prontoFront']['facturacion']['email']=$_POST['email'];
-    $_SESSION['prontoFront']['facturacion']['direccion']=$_POST['direccion'];
-    $_SESSION['prontoFront']['facturacion']['provincia']=$_POST['provincia'];
-    $_SESSION['prontoFront']['facturacion']['ciudad']=$_POST['ciudad'];
-    $_SESSION['prontoFront']['facturacion']['cp']=$_POST['CP'];
-    $_SESSION['prontoFront']['facturacion']['telefono']=$_POST['telefono']??'';
-    $_SESSION['prontoFront']['facturacion']['celular']=$_POST['celular']??'';
-
-    // Guardar datos de Factura A
-    $_SESSION['prontoFront']['facturacion']['factura_a']=isset($_POST['factura_a']) ? 1 : 0;
-    $_SESSION['prontoFront']['facturacion']['cuit']=$_POST['cuit']??'';
-    $_SESSION['prontoFront']['facturacion']['razon_social']=$_POST['razon_social']??'';
-    
-    $costototal=$_SESSION['prontoFront']['monto'];
-    $cart=$_SESSION['pronto']['cart'];
-    $c=0;
-    $t=0;
-    foreach ($cart as $id=>$item){
-        $cat=$item['cat'];
-        $pre=$item['precio'];
-        $cant=$item['cantidad'];
-        $sub=($pre*$cant);
-        $t=$t+$sub;
+    $costototal = $_SESSION['prontoFront']['monto'];
+    $cart = $_SESSION['pronto']['cart'];
+    $c = 0;
+    $t = 0;
+    foreach ($cart as $id => $item) {
+        $cat = $item['cat'];
+        $pre = $item['precio'];
+        $cant = $item['cantidad'];
+        $sub = ($pre * $cant);
+        $t = $t + $sub;
     }
-    if(isset($_SESSION['prontoFront']['cupon'])){
-        $desc=$_SESSION['prontoFront']['cupon']['valor'];
-        $md=($costototal*$desc)/100;
-        $cupon='<span class="badge badge-info"><small>Cupon '.$_SESSION["prontoFront"]["cupon"]["nombre"].'</small></span>';
-    }else{
-        $md=0;
-        $cupon='';
-    } 
-    $total=$costoenvio+$t;
-    $_SESSION['prontoFront']['valor']=$total;
-}else{
+    if (isset($_SESSION['prontoFront']['cupon'])) {
+        $desc = $_SESSION['prontoFront']['cupon']['valor'];
+        $md = ($costototal * $desc) / 100;
+        $cupon = '<span class="badge badge-info"><small>Cupon ' . $_SESSION["prontoFront"]["cupon"]["nombre"] . '</small></span>';
+    } else {
+        $md = 0;
+        $cupon = '';
+    }
+    $total = $costoenvio + $t;
+    $_SESSION['prontoFront']['valor'] = $total;
+} else {
     header('Location: revelado-paso2');
     exit();
 }
@@ -105,7 +97,7 @@ if (isset($_POST['entrega'])) {
         <div class="row">
             <div class="col-md-8">
                 <!-- FORM METODO PAGO -->
-                
+
                 <!-- <div class="row shadow-sm p-3 metodo-envio d-flex align-items-center ">
                     <div id="metodo-pago" class="col-9 col-md-10  order-md-1">
                         <div class="custom-control contenedor-input custom-radio  ">
@@ -157,7 +149,9 @@ if (isset($_POST['entrega'])) {
                 <div class="row shadow-sm p-3 metodo-envio d-flex align-items-center">
                     <div class="col-9 col-md-10  order-md-1">
                         <div class="custom-control contenedor-input custom-radio ">
-                            <input type="radio" id="retiroSucursal" <?php if($_SESSION['prontoFront']['envio']['tipo']=='urbano' OR $_SESSION['prontoFront']['envio']['tipo']=='sucursal' OR $_SESSION['prontoFront']['envio']['tipo']=='recibir'){echo 'disabled';}?> name="metodoPago" class="custom-control-input no-transfer metodoPago" value="3">
+                            <input type="radio" id="retiroSucursal" <?php if ($_SESSION['prontoFront']['envio']['tipo'] == 'urbano' or $_SESSION['prontoFront']['envio']['tipo'] == 'sucursal' or $_SESSION['prontoFront']['envio']['tipo'] == 'recibir') {
+                                                                        echo 'disabled';
+                                                                    } ?> name="metodoPago" class="custom-control-input no-transfer metodoPago" value="3">
                             <label class="custom-control-label" for="retiroSucursal">Pagar al retirar por una sucursal</label>
                         </div>
                     </div>
@@ -166,6 +160,111 @@ if (isset($_POST['entrega'])) {
                     </div>
                 </div>
             -->
+
+                <!-- Formulario de Facturación -->
+                <div class="row shadow-sm p-3 p-md-4 mt-4">
+                    <div class="col-md-12">
+                        <h5 class="titulo-tabs-user mb-4">Datos de Facturación</h5>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="fac_nombre">Nombre *</label>
+                                <input type="text" class="form-control" id="fac_nombre" name="fac_nombre" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['nombre'] : ''; ?>" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="fac_apellido">Apellido *</label>
+                                <input type="text" class="form-control" id="fac_apellido" name="fac_apellido" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['apellido'] : ''; ?>" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="fac_dni">DNI *</label>
+                                <input type="text" class="form-control" id="fac_dni" name="fac_dni" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['dni'] : ''; ?>" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="fac_email">Email *</label>
+                                <input type="email" class="form-control" id="fac_email" name="fac_email" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['email'] : ''; ?>" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="fac_direccion">Dirección *</label>
+                                <input type="text" class="form-control" id="fac_direccion" name="fac_direccion" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['direccion'] : ''; ?>" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="fac_provincia">Provincia *</label>
+                                <select name="fac_provincia" id="fac_provincia" class="form-control" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="Buenos Aires" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Buenos Aires') ? 'selected' : ''; ?>>Buenos Aires</option>
+                                    <option value="CABA" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'CABA') ? 'selected' : ''; ?>>CABA</option>
+                                    <option value="Catamarca" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Catamarca') ? 'selected' : ''; ?>>Catamarca</option>
+                                    <option value="Chaco" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Chaco') ? 'selected' : ''; ?>>Chaco</option>
+                                    <option value="Chubut" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Chubut') ? 'selected' : ''; ?>>Chubut</option>
+                                    <option value="Cordoba" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Cordoba') ? 'selected' : ''; ?>>Cordoba</option>
+                                    <option value="Corrientes" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Corrientes') ? 'selected' : ''; ?>>Corrientes</option>
+                                    <option value="Entre Rios" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Entre Rios') ? 'selected' : ''; ?>>Entre Rios</option>
+                                    <option value="Formosa" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Formosa') ? 'selected' : ''; ?>>Formosa</option>
+                                    <option value="Jujuy" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Jujuy') ? 'selected' : ''; ?>>Jujuy</option>
+                                    <option value="La Pampa" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'La Pampa') ? 'selected' : ''; ?>>La Pampa</option>
+                                    <option value="La Rioja" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'La Rioja') ? 'selected' : ''; ?>>La Rioja</option>
+                                    <option value="Mendoza" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Mendoza') ? 'selected' : ''; ?>>Mendoza</option>
+                                    <option value="Misiones" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Misiones') ? 'selected' : ''; ?>>Misiones</option>
+                                    <option value="Neuquen" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Neuquen') ? 'selected' : ''; ?>>Neuquen</option>
+                                    <option value="Rio Negro" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Rio Negro') ? 'selected' : ''; ?>>Rio Negro</option>
+                                    <option value="Salta" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Salta') ? 'selected' : ''; ?>>Salta</option>
+                                    <option value="San Juan" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'San Juan') ? 'selected' : ''; ?>>San Juan</option>
+                                    <option value="San Luis" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'San Luis') ? 'selected' : ''; ?>>San Luis</option>
+                                    <option value="Santa Cruz" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Santa Cruz') ? 'selected' : ''; ?>>Santa Cruz</option>
+                                    <option value="Santa Fe" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Santa Fe') ? 'selected' : ''; ?>>Santa Fe</option>
+                                    <option value="Santiago del Estero" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Santiago del Estero') ? 'selected' : ''; ?>>Santiago del Estero</option>
+                                    <option value="Tierra del Fuego" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Tierra del Fuego') ? 'selected' : ''; ?>>Tierra del Fuego</option>
+                                    <option value="Tucuman" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Tucuman') ? 'selected' : ''; ?>>Tucuman</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="fac_ciudad">Ciudad *</label>
+                                <input type="text" class="form-control" id="fac_ciudad" name="fac_ciudad" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['ciudad'] : ''; ?>" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="fac_cp">CP *</label>
+                                <input type="text" class="form-control" id="fac_cp" name="fac_cp" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cp'] : ''; ?>" required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="fac_telefono">Teléfono</label>
+                                <input type="text" class="form-control" id="fac_telefono" name="fac_telefono" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['telefono'] : ''; ?>">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="fac_celular">Celular</label>
+                                <input type="text" class="form-control" id="fac_celular" name="fac_celular" value="">
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="factura_a" id="facturaA" value="1">
+                            <label class="form-check-label text-bold" for="facturaA">
+                                Necesito Factura A
+                            </label>
+                        </div>
+                        <div id="datosFacturaA" style="display: none;">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="cuit">CUIT</label>
+                                    <input type="text" class="form-control" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="razon_social">Razón Social</label>
+                                    <input type="text" class="form-control" id="razon_social" name="razon_social" placeholder="Razón Social">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
 
@@ -176,53 +275,57 @@ if (isset($_POST['entrega'])) {
                         <hr class="divisor-resumen-compra">
                     </div>
                     <div class="col-md-12">
-                    	<?php 
-                    	$carro=$_SESSION['pronto']['cart'];
-                    	$total=0;
-                    	$prod='';
-                    	$porc=0;
-                    	$subd=0;
-                    	foreach($carro as $id=>$datos){
-                    	    $res=$conectar->query("SELECT p.nombre,p.descripcion, p.precio,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
-                    	    $row=$res->fetch_assoc();
-                    	    $cant=$datos['cantidad'];
-                    	    $cat=$datos['cat'];
-                    	    $precio=($cant * $row['precio']);
-                    	    
-                    	    $prod.=$row['nombre'].', '.$datos['color'].' x '.$datos['cantidad'].'<br>';
-                    	    if(isset($_SESSION['prontoFront']['cupon'])){
-                    	        if ($_SESSION['prontoFront']['cupon']['categoria']==$cat) {
-                    	            $porc=intval($_SESSION['prontoFront']['cupon']['valor']);
-                    	            $sub=($precio*$porc)/100;
-                    	            $subd=$subd+$sub;
-                    	            
-                    	        }
-                    	    }
-                    	    $total=$total+$precio;
-                    	    
-                    	?>
-                        
-                    	<?php } ?>
-                    	<p class="descrip-pedido m-0 py-3"><?php echo $prod; ?></p>
-                    	<input type="hidden" id="chk-desc" value="<?php echo $prod;?>" >
+                        <?php
+                        $carro = $_SESSION['pronto']['cart'];
+                        $total = 0;
+                        $prod = '';
+                        $resumen = '';
+                        $porc = 0;
+                        $subd = 0;
+                        foreach ($carro as $id => $datos) {
+                            $res = $conectar->query("SELECT p.nombre,p.descripcion, p.precio,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
+                            $row = $res->fetch_assoc();
+                            $cant = $datos['cantidad'];
+                            $cat = $datos['cat'];
+                            $precio = ($cant * $row['precio']);
+
+                            $prod .= $row['nombre'] . ', ' . $datos['color'] . ' x ' . $datos['cantidad'] . '<br>';
+
+                            $resumen .= $row['nombre'] . ', <span class="dot" style="background-color: ' . $datos['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span> x ' . $datos['cantidad'] . '<br>';
+
+                            if (isset($_SESSION['prontoFront']['cupon'])) {
+                                if ($_SESSION['prontoFront']['cupon']['categoria'] == $cat) {
+                                    $porc = intval($_SESSION['prontoFront']['cupon']['valor']);
+                                    $sub = ($precio * $porc) / 100;
+                                    $subd = $subd + $sub;
+                                }
+                            }
+
+                            $total = $total + $precio;
+
+                        ?>
+
+                        <?php } ?>
+                        <span class="descrip-pedido m-0 py-3 d-flex align-items-center"><?php echo $resumen; ?></span>
+                        <input type="hidden" id="chk-desc" value="<?php echo $prod; ?>">
                         <hr class="divisor-resumen-compra">
                     </div>
                     <div class="col-md-12">
                         <h5 class="subtitulo-tabs-user pt-3">Ingresa cupon de descuento</h5>
                         <div class="input-group mb-3">
-                          <input type="text" class="form-control" data-seccion="1" id="codDescuento" placeholder="" >
-                          <div class="input-group-append">
-                            <button class="btn btn-outline-secondary btn-sm"  id="btnDescuento" style="padding:.25rem .5rem;" type="button">Aplicar</button>
-                          </div>
+                            <input type="text" class="form-control" data-seccion="1" id="codDescuento" placeholder="">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary btn-sm" id="btnDescuento" style="padding:.25rem .5rem;" type="button">Aplicar</button>
+                            </div>
                         </div>
                         <hr class="divisor-resumen-compra">
                     </div>
                     <div class="col-md-12 totales">
-                        <p class="m-0 mb-2">Sub-Total $ <?php echo $total;?></p>
-                        <p class="m-0 mb-2">Envio  <?php echo $enviotag; ?></p>
+                        <p class="m-0 mb-2">Sub-Total $ <?php echo $total; ?></p>
+                        <p class="m-0 mb-2">Envio <?php echo $enviotag; ?></p>
                         <p class="m-0 mb-2">Cupón de descuento $ <?php echo $subd; ?></p>
                         <?php echo $cupon; ?>
-                        <p class="m-0 text-bold mb-4">TOTAL $ <?php echo $total+$costoenvio-$subd; ?></p>
+                        <p class="m-0 text-bold mb-4">TOTAL $ <?php echo $total + $costoenvio - $subd; ?></p>
                     </div>
                 </div>
                 <div class="row p-0">
@@ -274,89 +377,136 @@ if (isset($_POST['entrega'])) {
         </div>
     </div>
     <a class="d-md-none d-lg-none d-block text-center wp" href="https://api.whatsapp.com/send?phone=+5492216784142  &amp;text=Buenos%20días,%20quiero%20mas%20info%20">
-         <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path></svg>
- </a>
-<a class="d-xs-none d-sm-none d-md-block text-center wp" target="_blank" href="https://wa.me/542216976559? &amp;text=Buenos%20días,%20quiero%20mas%20info">
-       <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path></svg>
-</a>
+        <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path>
+        </svg>
+    </a>
+    <a class="d-xs-none d-sm-none d-md-block text-center wp" target="_blank" href="https://wa.me/542216976559? &amp;text=Buenos%20días,%20quiero%20mas%20info">
+        <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path>
+        </svg>
+    </a>
 </footer>
 
 <!--Eliminar esto para que funciona el dropdown, pero deja de funcionar la animacion del menu hamburguesa-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous">
 </script>
-<script type="text/javascript" src="https://www.mercadopago.com/org-img/jsapi/mptools/buttons/render.js"></script> 
+<script type="text/javascript" src="https://www.mercadopago.com/org-img/jsapi/mptools/buttons/render.js"></script>
 <script>
-// Look for .hamburger
-var hamburger = document.querySelector(".hamburger");
-// On click
-hamburger.addEventListener("click", function() {
-    // Toggle class "is-active"
-    hamburger.classList.toggle("is-active");
-    // Do something else, like open/close menu
-});
+    // Look for .hamburger
+    var hamburger = document.querySelector(".hamburger");
+    // On click
+    hamburger.addEventListener("click", function() {
+        // Toggle class "is-active"
+        hamburger.classList.toggle("is-active");
+        // Do something else, like open/close menu
+    });
 </script>
 
 <script>
-$(".no-transfer").click(function() {
-    $("#collapsediv2").collapse('hide');
-})
+    $(".no-transfer").click(function() {
+        $("#collapsediv2").collapse('hide');
+    })
 
-// Cuando hacemos click verifica si tiene la clase "show" y si es asi, no colapsa nada. Caso contrario colapsa el div.
-$('.contenedor-input > input[data-toggle="collapse"]').click(function(e) {
-    target = $("#collapsediv2");
-    if ($(target).hasClass('show')) {
-        // e.preventDefault(); Esto en el caso que el link lleve a alguna seccion.
-        e.stopPropagation()
-    }
-})
+    // Cuando hacemos click verifica si tiene la clase "show" y si es asi, no colapsa nada. Caso contrario colapsa el div.
+    $('.contenedor-input > input[data-toggle="collapse"]').click(function(e) {
+        target = $("#collapsediv2");
+        if ($(target).hasClass('show')) {
+            // e.preventDefault(); Esto en el caso que el link lleve a alguna seccion.
+            e.stopPropagation()
+        }
+    })
 </script>
 
 <script src="assets/js/starter.js"></script>
 <script>
-$(function(){
-	$('.metodoPago').change(function(){
-		var meto=$(this).val();
-		if(meto!='2'){
-			$('.btn-pagar').html('Finalizar pedido');
-		}else{
-			$('.btn-pagar').html('Pagar');
-		}
-	});
-	$('.btn-pagar').click(function(e){
-		e.preventDefault();
-		var metodo=$(".metodoPago:checked").val();
-		var desc='Compra '+$('#chk-desc').val();
-		$(this).html('<i class="fa fa-spin fa-spinner" aria-hidden="true"></i>');
-		$(this).prop('disabled',true);
-		if(metodo=='2'){
-			$.post('inc/crear_pago2.php',{metodo:metodo,desc:desc},function(data){
-				$(this).html('Pagar');
-				$(this).prop('disabled',false);
-				$MPC.openCheckout ({
-				    url: data.url,
-				    mode: "modal",
-				    onreturn: function(data) {
-					    if(data.collection_status== 'approved'){
-					    	window.location.href = "checkout-resultado";
-				    	}else{
-							alert('Error al realizar el pago, intente nuevamente');
-					    }
-					}
-				});
-			
-			},'json');	
-		}else{
-			$.post('inc/crear_pedido2.php',{metodo:metodo,desc:desc},function(data){
-				if(data.success){
-					$(this).html('Pagar');
-					window.location.href = "checkout-resultado?pedido="+data.pedido;
-				}
-			},'json');
-		}
-	});
-	
-});
+    $(function() {
+        // Toggle para mostrar/ocultar datos de Factura A
+        $('#facturaA').change(function() {
+            if ($(this).is(':checked')) {
+                $('#datosFacturaA').slideDown();
+                $('#cuit').prop('required', true);
+                $('#razon_social').prop('required', true);
+            } else {
+                $('#datosFacturaA').slideUp();
+                $('#cuit').prop('required', false);
+                $('#razon_social').prop('required', false);
+                $('#cuit').val('');
+                $('#razon_social').val('');
+            }
+        });
+
+        $('.metodoPago').change(function() {
+            var meto = $(this).val();
+            if (meto != '2') {
+                $('.btn-pagar').html('Finalizar pedido');
+            } else {
+                $('.btn-pagar').html('Pagar');
+            }
+        });
+
+        $('.btn-pagar').click(function(e) {
+            e.preventDefault();
+            var metodo = $(".metodoPago:checked").val();
+            var desc = 'Compra ' + $('#chk-desc').val();
+
+            // Recopilar datos de facturación
+            var facturacionData = {
+                nombre: $('#fac_nombre').val(),
+                apellido: $('#fac_apellido').val(),
+                dni: $('#fac_dni').val(),
+                email: $('#fac_email').val(),
+                direccion: $('#fac_direccion').val(),
+                provincia: $('#fac_provincia').val(),
+                ciudad: $('#fac_ciudad').val(),
+                cp: $('#fac_cp').val(),
+                telefono: $('#fac_telefono').val(),
+                celular: $('#fac_celular').val(),
+                factura_a: $('#facturaA').is(':checked') ? 1 : 0,
+                cuit: $('#cuit').val(),
+                razon_social: $('#razon_social').val()
+            };
+
+            $(this).html('<i class="fa fa-spin fa-spinner" aria-hidden="true"></i>');
+            $(this).prop('disabled', true);
+
+            if (metodo == '2') {
+                $.post('inc/crear_pago2.php', {
+                    metodo: metodo,
+                    desc: desc,
+                    facturacion: facturacionData
+                }, function(data) {
+                    $('.btn-pagar').html('Pagar');
+                    $('.btn-pagar').prop('disabled', false);
+                    $MPC.openCheckout({
+                        url: data.url,
+                        mode: "modal",
+                        onreturn: function(data) {
+                            if (data.collection_status == 'approved') {
+                                window.location.href = "checkout-resultado";
+                            } else {
+                                alert('Error al realizar el pago, intente nuevamente');
+                            }
+                        }
+                    });
+
+                }, 'json');
+            } else {
+                $.post('inc/crear_pedido2.php', {
+                    metodo: metodo,
+                    desc: desc,
+                    facturacion: facturacionData
+                }, function(data) {
+                    if (data.success) {
+                        $('.btn-pagar').html('Pagar');
+                        window.location.href = "checkout-resultado?pedido=" + data.pedido;
+                    }
+                }, 'json');
+            }
+        });
+
+    });
 </script>
 </body>
 

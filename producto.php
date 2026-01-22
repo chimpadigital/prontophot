@@ -397,7 +397,7 @@ while ($cuotaRow = $cuotasQuery->fetch_assoc()) {
     });
 </script>
 
-<script src="assets/js/starter.js?v=2"></script>
+<script src="assets/js/starter.js?v=4"></script>
 <script>
     $(function() {
         // Cargar datos de imágenes por color

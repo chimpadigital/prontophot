@@ -100,37 +100,11 @@ $metodos_envio = $conectar->query("SELECT * FROM metodos_envio ORDER BY id ASC")
 
         </div>
 
-        <!-- Cartel Factura A -->
-        <div class="row metodo-envio mt-4">
-            <div class="col-md-12">
-                <div class="shadow-sm p-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="factura_a" id="facturaA" value="1">
-                        <label class="form-check-label text-bold" for="facturaA">
-                            Necesito Factura A
-                        </label>
-                    </div>
-                    <div id="datosFacturaA" class="mt-3" style="display: none;">
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="cuit">CUIT</label>
-                                <input type="text" class="form-control" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="razon_social">Razón Social</label>
-                                <input type="text" class="form-control" id="razon_social" name="razon_social" placeholder="Razón Social">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div id='collapsediv1' class="row metodo-envio collapse in">
             <div class="col-md-12">
                 <h5 class="titulo-tabs-user">Datos de Envío</h5>
             </div>
-            <div class="col-md-6 d-block d-md-flex">
+            <div class="col-md-12 d-block d-md-flex">
                 <div class="shadow-sm p-5 w-100">
                     <?php if (isset($_SESSION['prontoFront']['token'])) { ?>
                     <input type="hidden" name="envio" value="domicilio">
@@ -154,107 +128,6 @@ $metodos_envio = $conectar->query("SELECT * FROM metodos_envio ORDER BY id ASC")
                     <?php }else{?>
                     <button type="button" data-toggle="modal" data-target="#iniciar-sesion" class="btn btn-outline-primary btn-bg-white ">Iniciar Sesión</button>
                     <?php }?>
-                </div>
-            </div>
-
-            <div class="col-md-6 mt-4 mt-md-0">
-                <div class="shadow-sm p-5">
-                    <div class="mb-3">
-                        <label class="text-bold">Datos de Facturación</label>
-                    </div>
-                    <?php if (isset($_SESSION['prontoFront']['token'])) { ?>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="copiarDatos">
-                        <label class="form-check-label" for="copiarDatos">
-                            Copiar mis datos de usuario
-                        </label>
-                    </div>
-                    <?php } ?>
-
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="nombre">Nombre</label>
-                                <input type="text" class="form-control form-rosa" name="nombre">
-                            </div>
-                            <div class="form-group col-md-12">
-                                <label for="apellido">Apellido</label>
-                                <input type="text" class="form-control form-rosa" name="apellido">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="DNI">DNI</label>
-                                <input type="text" class="form-control form-rosa" name="DNI">
-                            </div>
-                            <div class="form-group col-md-12">
-                                <label for="Dirección">Dirección</label>
-                                <input type="text" class="form-control form-rosa" name="direccion">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="inputEmail4">Email</label>
-                                <input type="email" class="form-control form-rosa" name="email">
-                            </div>
-                            <div class="form-group col-md-12">
-                                <label for="Provincia">Provincia</label>
-                                <select name="provincia" class="form-control form-rosa">
-                                    <option selected>Seleccione...</option>
-                                    <option value="Buenos Aires">Buenos Aires</option>
-                                    <option value="CABA">CABA</option>
-                                    <option value="Catamarca">Catamarca</option>
-                                    <option value="Chaco">Chaco</option>
-                                    <option value="Chubut">Chubut</option>
-                                    <option value="Cordoba">Cordoba</option>
-                                    <option value="Corrientes">Corrientes</option>
-                                    <option value="Entre Rios">Entre Rios</option>
-                                    <option value="Formosa">Formosa</option>
-                                    <option value="Jujuy">Jujuy</option>
-                                    <option value="La Pampa">La Pampa</option>
-                                    <option value="La Rioja">La Rioja</option>
-                                    <option value="Mendoza">Mendoza</option>
-                                    <option value="Misiones">Misiones</option>
-                                    <option value="Neuquen">Neuquen</option>
-                                    <option value="Rio Negro">Rio Negro</option>
-                                    <option value="Salta">Salta</option>
-                                    <option value="San Juan">San Juan</option>
-                                    <option value="San Luis">San Luis</option>
-                                    <option value="Santa Cruz">Santa Cruz</option>
-                                    <option value="Santa Fe">Santa Fe</option>
-                                    <option value="Santiago del Estero">Santiago del Estero</option>
-                                    <option value="Tierra del Fuego">Tierra del Fuego</option>
-                                    <option value="Tucuman">Tucuman</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="Ciudad">Ciudad</label>
-                                <input type="text" class="form-control form-rosa" name="ciudad">
-                            </div>
-                            <div class="form-group col-md-12">
-                                <label for="CP">CP</label>
-                                <input type="text" class="form-control form-rosa" name="CP">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12 position-relative">
-                                
-                                <label for="Telefono">Telefono</label>
-                                <div class="d-flex">
-                                    <input type="text" class="form-control form-rosa number" name="telefono" placeholder="Teléfono sin 15">
-                                </div>
-                                
-                            </div>
-                            <div class="form-group col-md-12 position-relative">
-                                
-                                <label for="Celular">Celular</label>
-                                <div class="d-flex">
-                                    <input type="text" class="form-control form-rosa number" name="celular" placeholder="Teléfono sin 15">
-                                </div>
-                                
-                            </div>
-                        </div>
                 </div>
             </div>
         </div>
@@ -358,52 +231,6 @@ $('.contenedor-input > input[data-toggle="collapse"]').click(function(e) {
 </script>
 
 <script src="assets/js/starter.js"></script>
-<script>
-	$(function(){
-		// Checkbox para copiar datos de usuario
-		$('#copiarDatos').change(function(){
-			if($(this).is(':checked')){
-				<?php if (isset($_SESSION['prontoFront']['token'])) { ?>
-				$('input[name="nombre"]').val('<?php echo $rowc['nombre']; ?>');
-				$('input[name="apellido"]').val('<?php echo $rowc['apellido']; ?>');
-				$('input[name="DNI"]').val('<?php echo $rowc['dni']; ?>');
-				$('input[name="direccion"]').val('<?php echo $rowc['direccion']; ?>');
-				$('input[name="email"]').val('<?php echo $rowc['email']; ?>');
-				$('select[name="provincia"]').val('<?php echo $rowc['provincia']; ?>');
-				$('input[name="ciudad"]').val('<?php echo $rowc['ciudad']; ?>');
-				$('input[name="CP"]').val('<?php echo $rowc['cp']; ?>');
-				$('input[name="telefono"]').val('<?php echo $rowc['telefono']; ?>');
-				<?php } ?>
-			} else {
-				$('input[name="nombre"]').val('');
-				$('input[name="apellido"]').val('');
-				$('input[name="DNI"]').val('');
-				$('input[name="direccion"]').val('');
-				$('input[name="email"]').val('');
-				$('select[name="provincia"]').val('Seleccione...');
-				$('input[name="ciudad"]').val('');
-				$('input[name="CP"]').val('');
-				$('input[name="telefono"]').val('');
-				$('input[name="celular"]').val('');
-			}
-		});
-
-		// Toggle para mostrar/ocultar datos de Factura A
-		$('#facturaA').change(function(){
-			if($(this).is(':checked')){
-				$('#datosFacturaA').slideDown();
-				$('#cuit').prop('required', true);
-				$('#razon_social').prop('required', true);
-			} else {
-				$('#datosFacturaA').slideUp();
-				$('#cuit').prop('required', false);
-				$('#razon_social').prop('required', false);
-				$('#cuit').val('');
-				$('#razon_social').val('');
-			}
-		});
-	});
-</script>
 </body>
 
 </html>
