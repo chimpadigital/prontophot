@@ -192,17 +192,26 @@ while ($cuotaRow = $cuotasQuery->fetch_assoc()) {
 
                 <p class="text-muted small">Precio sin impuestos nacionales: <strong>$<?php echo number_format($precioConImpuestos, 2); ?></strong></p>
 
-                <?php if (count($cuotas) > 0): ?>
+                <?php if (count($cuotas) > 0):
+                    // Buscar la cantidad más alta de cuotas sin interés
+                    $maxCuotasSinInteres = null;
+                    $montoCuotaSinInteres = 0;
+                    foreach ($cuotas as $cuota) {
+                        if ($cuota['interes'] <= 0) {
+                            if ($maxCuotasSinInteres === null || $cuota['cantidad'] > $maxCuotasSinInteres) {
+                                $maxCuotasSinInteres = $cuota['cantidad'];
+                                $montoCuotaSinInteres = $precioFinal / $cuota['cantidad'];
+                            }
+                        }
+                    }
+                ?>
                     <div class="my-2">
+                        <?php if ($maxCuotasSinInteres !== null): ?>
                         <span>
-                            <?php foreach ($cuotas as $index => $cuota):
-                                $montoCuota = ($precioFinal * (1 + $cuota['interes'] / 100)) / $cuota['cantidad'];
-                                if ($cuota['interes'] <= 0):
-                                    echo $cuota['cantidad'] . ' cuotas sin interés de $' . $montoCuota;
-                                    break;
-                                endif;
-                            endforeach; ?>
+                            <?php echo $maxCuotasSinInteres . ' cuotas sin interés de $' . number_format($montoCuotaSinInteres, 2); ?>
                         </span>
+                        <br>
+                        <?php endif; ?>
                         <button type="button" class="btn btn-link p-0 text-danger" data-toggle="modal" data-target="#cuotasModal">
                             Ver cuotas disponibles
                         </button>

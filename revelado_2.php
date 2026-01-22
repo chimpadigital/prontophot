@@ -24,9 +24,12 @@ if (isset($_SESSION['prontoFront']['token'])) {
         $cliente=$conectar->query("SELECT * FROM clientes WHERE id='$id'");
         $rowc=$cliente->fetch_assoc();
     }else{
-        
+
     }
 }
+
+// Obtener métodos de envío
+$metodos_envio = $conectar->query("SELECT * FROM metodos_envio ORDER BY id ASC");
 
 if (isset($_POST['tamanogral'])) {
     $dir = 'img/impresiones';
@@ -394,24 +397,26 @@ if (isset($_POST['tamanogral'])) {
                 <div class="mx-1 shadow-sm p-3 p-md-5 bg-white">
                     <p class="text-bold m-0 text-danger">Envío a Domicilio</p>
                     <span class="text-muted descripcion-pequeña">(disponible para pedidos superiores a $1000)*</span>
-                    <div class="form-check mb-3 mt-3 contenedor-input">
-                        <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="tipoenvio" id="CascoUrbano" value="urbano">
-                        <label class="form-check-label d-flex flex-row" for="CascoUrbano">
+                    <?php
+                    $metodo_counter = 0;
+                    while($metodo = $metodos_envio->fetch_assoc()){
+                        $metodo_counter++;
+                    ?>
+                    <div class="form-check mb-3 <?php echo $metodo_counter == 1 ? 'mt-3' : ''; ?> contenedor-input">
+                        <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="tipoenvio" id="metodo_envio_<?php echo $metodo['id']; ?>" value="envio_<?php echo $metodo['id']; ?>" data-metodo-id="<?php echo $metodo['id']; ?>" data-costo="<?php echo $metodo['valor']; ?>">
+                        <label class="form-check-label d-flex flex-row" for="metodo_envio_<?php echo $metodo['id']; ?>">
                             <div>
-                                <p class="d-inline-block m-0">Casco Urbano La Plata</p>
-                                <span class="d-block text-bold">$250</span>
+                                <p class="d-inline-block m-0"><?php echo $metodo['nombre']; ?></p>
+                                <?php if($metodo['valor'] > 0){ ?>
+                                <span class="d-block text-bold">$<?php echo $metodo['valor']; ?></span>
+                                <?php } ?>
+                                <?php if(!empty($metodo['descripcion'])){ ?>
+                                <span class="d-block text-muted descripcion-pequeña"><?php echo $metodo['descripcion']; ?></span>
+                                <?php } ?>
                             </div>
                         </label>
                     </div>
-
-                    <div class="form-check mb-3 contenedor-input">
-                        <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="tipoenvio" id="alRecibir" value="recibir">
-                        <label class="form-check-label d-flex flex-row" for="alRecibir">
-                            <div>
-                                <p class="d-inline-block m-0">Abonas al recibir/Correo <br>(fuera del casco urbano)</p>
-                            </div>
-                        </label>
-                    </div>
+                    <?php } ?>
                 </div>
             </div>
 
@@ -421,11 +426,12 @@ if (isset($_POST['tamanogral'])) {
             <div class="col-md-12">
                 <h5 class="titulo-tabs-user">Datos de Envío</h5>
             </div>
-            <div class="col-md-6 d-block d-md-flex">
+            <div class="col-md-12 d-block d-md-flex">
                 <div class="shadow-sm p-5 w-100">
-                    <div class="form-check form-check-inline d-flex align-items-baseline">
-                        <input class="form-check-input" type="radio" name="envio" id="inlineRadio1" value="domicilio">
-                        <label class="form-check-label ml-0 ml-md-5" for="inlineRadio1">
+                    <?php if (isset($_SESSION['prontoFront']['token'])) { ?>
+                    <input type="hidden" name="envio" value="domicilio">
+                    <div class="d-flex align-items-baseline">
+                        <label class="ml-0">
                         	<span class="text-bold">Mi direccion</span>
                             <h5 class="mt-3">Direccion</h5>
                             <p class="text-muted"><?php echo $rowc['direccion'].', '.$rowc['ciudad']?></p>
@@ -436,16 +442,18 @@ if (isset($_POST['tamanogral'])) {
                             <h5>Telefono / Celular</h5>
                             <p class="text-muted"><?php echo $rowc['telefono'];?></p>
                         </label>
-                        
                     </div>
-                    <div class="ml-0 ml-md-5 pl-0 pl-md-3">
+                    <div class="ml-0">
                     	<label for="validationTextarea">Observaciones</label>
-                        <textarea class="form-control " id="validationTextarea" placeholder="" rows="5"></textarea>
+                        <textarea class="form-control" name="observaciones" placeholder="" rows="5"></textarea>
                     </div>
+                    <?php }else{?>
+                    <button type="button" data-toggle="modal" data-target="#iniciar-sesion" class="btn btn-outline-primary btn-bg-white ">Iniciar Sesión</button>
+                    <?php }?>
                 </div>
             </div>
 
-            <div class="col-md-6 mt-4 mt-md-0">
+            <!-- <div class="col-md-6 mt-4 mt-md-0">
                 <div class="shadow-sm p-5">
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="envio" id="inlineRadio2" value="regalo">
@@ -536,7 +544,7 @@ if (isset($_POST['tamanogral'])) {
                         </div>
                     
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <div class="row mt-5">
@@ -639,18 +647,6 @@ $('.contenedor-input > input[data-toggle="collapse"]').click(function(e) {
 </script>
 
 <script src="assets/js/starter.js"></script>
-<script>
-	$(function(){
-		$('#inlineRadio2').click(function(){
-			$(".form-rosa").attr("required", "true");
-			$(".form-rosa").prop('required',true);
-		});
-		$('#inlineRadio1').click(function(){
-			$(".form-rosa").attr("required", "false");
-			$(".form-rosa").prop('required',false);
-		});
-	});
-</script>
 </body>
 
 </html>

@@ -1,5 +1,15 @@
 <?php include ('header.php'); ?>
-<?php 
+<?php
+// Obtener datos del cliente logueado
+if (isset($_SESSION['prontoFront']['token'])) {
+    $dato = verificarToken($_SESSION['prontoFront']['token'], 'Pronto');
+    if ($dato->success) {
+        $id = $dato->id;
+        $cliente = $conectar->query("SELECT * FROM clientes WHERE id='$id'");
+        $rowc = $cliente->fetch_assoc();
+    }
+}
+
 if (isset($_POST['tipoenvio'])) {
     $costoenvio=0;
     $enviotag='';
@@ -17,16 +27,16 @@ if (isset($_POST['tipoenvio'])) {
         $costoenvio=0;
     }
     $_SESSION['prontoFront']['envio']['costo']=$costoenvio;
-    $_SESSION['prontoFront']['envio']['nombre']=$_POST['nombre'];
-    $_SESSION['prontoFront']['envio']['apellido']=$_POST['apellido'];
-    $_SESSION['prontoFront']['envio']['dni']=$_POST['DNI'];
-    $_SESSION['prontoFront']['envio']['direccion']=$_POST['direccion'];
-    $_SESSION['prontoFront']['envio']['email']=$_POST['email'];
-    $_SESSION['prontoFront']['envio']['provincia']=$_POST['provincia'];
-    $_SESSION['prontoFront']['envio']['ciudad']=$_POST['ciudad'];
-    $_SESSION['prontoFront']['envio']['cp']=$_POST['CP'];
-    $_SESSION['prontoFront']['envio']['telefono']=$_POST['telefono'];
-    $_SESSION['prontoFront']['envio']['celular']=$_POST['celular'];
+    $_SESSION['prontoFront']['envio']['nombre']=$rowc['nombre'];
+    $_SESSION['prontoFront']['envio']['apellido']=$rowc['apellido'];
+    $_SESSION['prontoFront']['envio']['dni']=$rowc['dni'];
+    $_SESSION['prontoFront']['envio']['direccion']=$rowc['direccion'];
+    $_SESSION['prontoFront']['envio']['email']=$rowc['email'];
+    $_SESSION['prontoFront']['envio']['provincia']=$rowc['provincia'];
+    $_SESSION['prontoFront']['envio']['ciudad']=$rowc['ciudad'];
+    $_SESSION['prontoFront']['envio']['cp']=$rowc['cp'];
+    $_SESSION['prontoFront']['envio']['telefono']=$rowc['telefono'];
+    $_SESSION['prontoFront']['envio']['celular']=$rowc['celular'] ?? '';
     
     $costototal=0;
     $tama=array();
@@ -377,6 +387,111 @@ if (isset($_POST['tipoenvio'])) {
                     </div>
                 </div> -->
 
+                <!-- Formulario de Facturación -->
+                <div class="row shadow-sm p-3 p-md-4 mt-4">
+                    <div class="col-md-12">
+                        <h5 class="titulo-tabs-user mb-4">Datos de Facturación</h5>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="fac_nombre">Nombre *</label>
+                                <input type="text" class="form-control" id="fac_nombre" name="fac_nombre" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['nombre'] : ''; ?>" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="fac_apellido">Apellido *</label>
+                                <input type="text" class="form-control" id="fac_apellido" name="fac_apellido" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['apellido'] : ''; ?>" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="fac_dni">DNI *</label>
+                                <input type="text" class="form-control" id="fac_dni" name="fac_dni" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['dni'] : ''; ?>" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="fac_email">Email *</label>
+                                <input type="email" class="form-control" id="fac_email" name="fac_email" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['email'] : ''; ?>" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="fac_direccion">Dirección *</label>
+                                <input type="text" class="form-control" id="fac_direccion" name="fac_direccion" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['direccion'] : ''; ?>" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="fac_provincia">Provincia *</label>
+                                <select name="fac_provincia" id="fac_provincia" class="form-control" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="Buenos Aires" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Buenos Aires') ? 'selected' : ''; ?>>Buenos Aires</option>
+                                    <option value="CABA" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'CABA') ? 'selected' : ''; ?>>CABA</option>
+                                    <option value="Catamarca" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Catamarca') ? 'selected' : ''; ?>>Catamarca</option>
+                                    <option value="Chaco" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Chaco') ? 'selected' : ''; ?>>Chaco</option>
+                                    <option value="Chubut" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Chubut') ? 'selected' : ''; ?>>Chubut</option>
+                                    <option value="Cordoba" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Cordoba') ? 'selected' : ''; ?>>Cordoba</option>
+                                    <option value="Corrientes" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Corrientes') ? 'selected' : ''; ?>>Corrientes</option>
+                                    <option value="Entre Rios" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Entre Rios') ? 'selected' : ''; ?>>Entre Rios</option>
+                                    <option value="Formosa" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Formosa') ? 'selected' : ''; ?>>Formosa</option>
+                                    <option value="Jujuy" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Jujuy') ? 'selected' : ''; ?>>Jujuy</option>
+                                    <option value="La Pampa" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'La Pampa') ? 'selected' : ''; ?>>La Pampa</option>
+                                    <option value="La Rioja" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'La Rioja') ? 'selected' : ''; ?>>La Rioja</option>
+                                    <option value="Mendoza" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Mendoza') ? 'selected' : ''; ?>>Mendoza</option>
+                                    <option value="Misiones" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Misiones') ? 'selected' : ''; ?>>Misiones</option>
+                                    <option value="Neuquen" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Neuquen') ? 'selected' : ''; ?>>Neuquen</option>
+                                    <option value="Rio Negro" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Rio Negro') ? 'selected' : ''; ?>>Rio Negro</option>
+                                    <option value="Salta" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Salta') ? 'selected' : ''; ?>>Salta</option>
+                                    <option value="San Juan" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'San Juan') ? 'selected' : ''; ?>>San Juan</option>
+                                    <option value="San Luis" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'San Luis') ? 'selected' : ''; ?>>San Luis</option>
+                                    <option value="Santa Cruz" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Santa Cruz') ? 'selected' : ''; ?>>Santa Cruz</option>
+                                    <option value="Santa Fe" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Santa Fe') ? 'selected' : ''; ?>>Santa Fe</option>
+                                    <option value="Santiago del Estero" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Santiago del Estero') ? 'selected' : ''; ?>>Santiago del Estero</option>
+                                    <option value="Tierra del Fuego" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Tierra del Fuego') ? 'selected' : ''; ?>>Tierra del Fuego</option>
+                                    <option value="Tucuman" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Tucuman') ? 'selected' : ''; ?>>Tucuman</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="fac_ciudad">Ciudad *</label>
+                                <input type="text" class="form-control" id="fac_ciudad" name="fac_ciudad" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['ciudad'] : ''; ?>" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="fac_cp">CP *</label>
+                                <input type="text" class="form-control" id="fac_cp" name="fac_cp" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cp'] : ''; ?>" required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="fac_telefono">Teléfono</label>
+                                <input type="text" class="form-control" id="fac_telefono" name="fac_telefono" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['telefono'] : ''; ?>">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="fac_celular">Celular</label>
+                                <input type="text" class="form-control" id="fac_celular" name="fac_celular" value="">
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="factura_a" id="facturaA" value="1">
+                            <label class="form-check-label text-bold" for="facturaA">
+                                Necesito Factura A
+                            </label>
+                        </div>
+                        <div id="datosFacturaA" style="display: none;">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="cuit">CUIT</label>
+                                    <input type="text" class="form-control" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="razon_social">Razón Social</label>
+                                    <input type="text" class="form-control" id="razon_social" name="razon_social" placeholder="Razón Social">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div class="col-md-4 pl-0 pl-md-5 mb-5">
@@ -532,6 +647,21 @@ $('.contenedor-input > input[data-toggle="collapse"]').click(function(e) {
 <script src="assets/js/starter.js"></script>
 <script>
 $(function(){
+	// Toggle para mostrar/ocultar datos de Factura A
+	$('#facturaA').change(function() {
+		if ($(this).is(':checked')) {
+			$('#datosFacturaA').slideDown();
+			$('#cuit').prop('required', true);
+			$('#razon_social').prop('required', true);
+		} else {
+			$('#datosFacturaA').slideUp();
+			$('#cuit').prop('required', false);
+			$('#razon_social').prop('required', false);
+			$('#cuit').val('');
+			$('#razon_social').val('');
+		}
+	});
+
 	$('.metodoPago').change(function(){
 		var meto=$(this).val();
 		if(meto!='2'){
@@ -540,14 +670,32 @@ $(function(){
 			$('.btn-pagar').html('Pagar');
 		}
 	});
-	
+
 	$('.btn-pagar').click(function(e){
 		e.preventDefault();
 		var metodo=$(".metodoPago:checked").val();
+
+		// Recopilar datos de facturación
+		var facturacionData = {
+			nombre: $('#fac_nombre').val(),
+			apellido: $('#fac_apellido').val(),
+			dni: $('#fac_dni').val(),
+			email: $('#fac_email').val(),
+			direccion: $('#fac_direccion').val(),
+			provincia: $('#fac_provincia').val(),
+			ciudad: $('#fac_ciudad').val(),
+			cp: $('#fac_cp').val(),
+			telefono: $('#fac_telefono').val(),
+			celular: $('#fac_celular').val(),
+			factura_a: $('#facturaA').is(':checked') ? 1 : 0,
+			cuit: $('#cuit').val(),
+			razon_social: $('#razon_social').val()
+		};
+
 		$(this).html('<i class="fa fa-spin fa-spinner" aria-hidden="true"></i>');
 		$(this).prop('disabled',true);
 		if(metodo=='2'){
-			$.post('inc/crear_pago.php',{metodo:metodo,desc:'Impresion Imagenes'},function(data){
+			$.post('inc/crear_pago.php',{metodo:metodo,desc:'Impresion Imagenes',facturacion:facturacionData},function(data){
 				$(this).html('Pagar');
 				$(this).prop('disabled',false);
 				$MPC.openCheckout ({
@@ -564,10 +712,10 @@ $(function(){
 			
 			},'json');	
 		}else{
-			$.post('inc/crear_pedido.php',{metodo:metodo,desc:'Impresion Imagenes'},function(data){
+			$.post('inc/crear_pedido.php',{metodo:metodo,desc:'Impresion Imagenes',facturacion:facturacionData},function(data){
 				if(data.success){
-					$(this).html('Pagar');
-					$(this).prop('disabled',false);
+					$('.btn-pagar').html('Pagar');
+					$('.btn-pagar').prop('disabled',false);
 					window.location.href = "revelado-paso4?pedido="+data.pedido;
 				}
 			},'json');
