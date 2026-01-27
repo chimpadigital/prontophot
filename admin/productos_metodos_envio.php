@@ -39,10 +39,12 @@ $(function(){
         var id = $(this).data('id');
         var nombre = $(this).data('nombre');
         var valor = $(this).data('valor');
+        var valorGratis = $(this).data('valor-gratis');
 
         $('#metodo_id').val(id);
         $('#metodo_nombre').val(nombre);
         $('#metodo_valor').val(valor);
+        $('#metodo_valor_gratis').val(valorGratis);
 
         $('#modalEditarMetodo').modal('show');
     });
@@ -145,6 +147,7 @@ $(function(){
                                                     <th>ID</th>
                                                     <th>Nombre</th>
                                                     <th>Valor</th>
+                                                    <th>Valor Gratis</th>
                                                     <th>CP</th>
                                                     <th>Acciones</th>
                                                 </tr>
@@ -156,12 +159,14 @@ $(function(){
                                                             <td><?php echo $metodo['id']; ?></td>
                                                             <td><?php echo htmlspecialchars($metodo['nombre']); ?></td>
                                                             <td>$<?php echo number_format($metodo['valor'], 2); ?></td>
+                                                            <td>$<?php echo number_format($metodo['valor_gratis'], 2); ?></td>
                                                             <td><?php echo $metodo['cp'] ? htmlspecialchars($metodo['cp']) : 'N/A'; ?></td>
                                                             <td>
                                                                 <button class="btn btn-sm btn-primary btn-editar-metodo"
                                                                         data-id="<?php echo $metodo['id']; ?>"
                                                                         data-nombre="<?php echo htmlspecialchars($metodo['nombre']); ?>"
-                                                                        data-valor="<?php echo $metodo['valor']; ?>">
+                                                                        data-valor="<?php echo $metodo['valor']; ?>"
+                                                                        data-valor-gratis="<?php echo $metodo['valor_gratis']; ?>">
                                                                     <i class="fa fa-edit"></i> Editar
                                                                 </button>
                                                             </td>
@@ -169,7 +174,7 @@ $(function(){
                                                     <?php endwhile; ?>
                                                 <?php else: ?>
                                                     <tr>
-                                                        <td colspan="5" class="text-center">No hay métodos de envío registrados</td>
+                                                        <td colspan="6" class="text-center">No hay métodos de envío registrados</td>
                                                     </tr>
                                                 <?php endif; ?>
                                             </tbody>
@@ -208,6 +213,10 @@ $(function(){
                     <div class="form-group">
                         <label for="metodo_valor">Valor</label>
                         <input type="number" step="0.01" class="form-control" id="metodo_valor" name="valor" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="metodo_valor_gratis">Valor Gratis (monto mínimo para envío gratis)</label>
+                        <input type="number" step="0.01" class="form-control" id="metodo_valor_gratis" name="valor_gratis" required>
                     </div>
                 </div>
                 <div class="modal-footer">

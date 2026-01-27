@@ -11,5 +11,10 @@ define('MAIL_PORT','587');
 define('MAIL_TO','prontophotenlinea@gmail.com');
 //define('URL_SITIO','https://prontophot.com/');
 //define('URL_SITIO','http://localhost/prontophot/');
+//define('URL_SITIO','http://prontophot.test/');
 define('URL_SITIO','https://prontophot.manada.me/');
 define('COSTO_ENVIO','250'); 
+
+define('CODIGO_SERVICIO', '187');
+define('CODIGO_SUCURSAL', '1104190026680');
+define('API_TOKEN','UWJ1W5ZZXchvkNifYzQH0kYBSK2JCHiy6UTOrE06wq4ooN8KLCVoT2rJcr0r'); 

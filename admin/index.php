@@ -222,6 +222,10 @@ $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
                                             <label for="validationCustom06">Profundidad</label>
                                             <input type="text" name="profundidad" class="form-control" id="validationCustom06">
                                         </div>
+                                        <div class="col-md-2 mb-3 mx-0 mx-md-5">
+                                            <label for="validationCustom07">Peso</label>
+                                            <input type="number" step="0.01" name="peso" class="form-control" id="validationCustom07" placeholder="kg">
+                                        </div>
                                     </div>
 
                                     <p class="subtitulo-form">Descripción del Producto</p>
@@ -233,7 +237,7 @@ $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
                                         </div>
                                     </div>
 
-                                    <div class="form-row mt-3">
+                                    <div class="form-row mt-3 d-none">
                                         <label for="validationCustom07">Colores Disponibles</label>
                                         <div
                                             class="col-md-12 d-flex flex-row flex-wrap flex-lg-nowrap mt-2 justify-content-lg-between">                                            

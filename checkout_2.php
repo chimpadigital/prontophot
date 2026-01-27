@@ -23,11 +23,18 @@ if (isset($_POST['entrega'])) {
         // Extraer el ID del método de envío
         $metodo_envio_id = str_replace('envio_', '', $_POST['entrega']);
 
-        // Obtener datos del método de envío desde la base de datos
-        $metodo_query = $conectar->query("SELECT * FROM metodos_envio WHERE id='$metodo_envio_id'");
-        if ($metodo_row = $metodo_query->fetch_assoc()) {
-            $costoenvio = $metodo_row['valor'];
-            $enviotag = $metodo_row['valor'] > 0 ? '$ ' . $metodo_row['valor'] : 'Sin cargo';
+        // Si es Epresis (ID 2), usar el costo calculado
+        if ($metodo_envio_id == 2) {
+            $costoenvio = isset($_POST['epresis_costo']) ? floatval($_POST['epresis_costo']) : 0;
+            $enviotag = $costoenvio > 0 ? '$ ' . $costoenvio : '<span class="text-success">GRATIS</span>';
+            $_SESSION['prontoFront']['envio']['epresis_fecha'] = $_POST['epresis_fecha'] ?? '';
+        } elseif ($metodo_envio_id != 2) {
+            // Obtener datos del método de envío desde la base de datos
+            $metodo_query = $conectar->query("SELECT * FROM metodos_envio WHERE id='$metodo_envio_id'");
+            if ($metodo_row = $metodo_query->fetch_assoc()) {
+                $costoenvio = $metodo_row['valor'];
+                $enviotag = $metodo_row['valor'] > 0 ? '$ ' . $metodo_row['valor'] : 'Sin cargo';
+            }
         }
     } else {
         // Compatibilidad con los valores antiguos hardcodeados
@@ -62,9 +69,20 @@ if (isset($_POST['entrega'])) {
     $t = 0;
     foreach ($cart as $id => $item) {
         $cat = $item['cat'];
-        $pre = $item['precio'];
         $cant = $item['cantidad'];
-        $sub = ($pre * $cant);
+
+        // Obtener precio y descuento del producto
+        $prod_res = $conectar->query("SELECT precio, descuento_final FROM productos WHERE id='$id'");
+        $prod_row = $prod_res->fetch_assoc();
+        $precioUnitario = $prod_row['precio'];
+        $descuento = isset($prod_row['descuento_final']) && $prod_row['descuento_final'] > 0 ? $prod_row['descuento_final'] : 0;
+
+        // Aplicar descuento si existe
+        if($descuento > 0){
+            $precioUnitario = $prod_row['precio'] - ($prod_row['precio'] * $descuento / 100);
+        }
+
+        $sub = ($precioUnitario * $cant);
         $t = $t + $sub;
     }
     if (isset($_SESSION['prontoFront']['cupon'])) {
@@ -187,6 +205,24 @@ if (isset($_POST['entrega'])) {
                             </div>
                         </div>
                         <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="cuit">CUIT/CUIL</label>
+                                <input type="text" class="form-control" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="razon_social">Razón Social</label>
+                                <input type="text" class="form-control" id="razon_social" name="razon_social" placeholder="Razón Social">
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="factura_a" id="facturaA" value="1">
+                            <label class="form-check-label text-bold" for="facturaA">
+                                Necesito Factura A
+                            </label>
+                        </div>
+
+                        <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label for="fac_direccion">Dirección *</label>
                                 <input type="text" class="form-control" id="fac_direccion" name="fac_direccion" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['direccion'] : ''; ?>" required>
@@ -242,27 +278,6 @@ if (isset($_POST['entrega'])) {
                                 <input type="text" class="form-control" id="fac_celular" name="fac_celular" value="">
                             </div>
                         </div>
-
-                        <hr class="my-4">
-
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" name="factura_a" id="facturaA" value="1">
-                            <label class="form-check-label text-bold" for="facturaA">
-                                Necesito Factura A
-                            </label>
-                        </div>
-                        <div id="datosFacturaA" style="display: none;">
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="cuit">CUIT</label>
-                                    <input type="text" class="form-control" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="razon_social">Razón Social</label>
-                                    <input type="text" class="form-control" id="razon_social" name="razon_social" placeholder="Razón Social">
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -283,11 +298,19 @@ if (isset($_POST['entrega'])) {
                         $porc = 0;
                         $subd = 0;
                         foreach ($carro as $id => $datos) {
-                            $res = $conectar->query("SELECT p.nombre,p.descripcion, p.precio,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
+                            $res = $conectar->query("SELECT p.nombre,p.descripcion, p.precio, p.descuento_final,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
                             $row = $res->fetch_assoc();
                             $cant = $datos['cantidad'];
                             $cat = $datos['cat'];
-                            $precio = ($cant * $row['precio']);
+
+                            // Calcular precio con descuento si existe
+                            $precioUnitario = $row['precio'];
+                            $descuento = isset($row['descuento_final']) && $row['descuento_final'] > 0 ? $row['descuento_final'] : 0;
+                            if($descuento > 0){
+                                $precioUnitario = $row['precio'] - ($row['precio'] * $descuento / 100);
+                            }
+
+                            $precio = ($cant * $precioUnitario);
 
                             $prod .= $row['nombre'] . ', ' . $datos['color'] . ' x ' . $datos['cantidad'] . '<br>';
 
@@ -422,21 +445,6 @@ if (isset($_POST['entrega'])) {
 <script src="assets/js/starter.js"></script>
 <script>
     $(function() {
-        // Toggle para mostrar/ocultar datos de Factura A
-        $('#facturaA').change(function() {
-            if ($(this).is(':checked')) {
-                $('#datosFacturaA').slideDown();
-                $('#cuit').prop('required', true);
-                $('#razon_social').prop('required', true);
-            } else {
-                $('#datosFacturaA').slideUp();
-                $('#cuit').prop('required', false);
-                $('#razon_social').prop('required', false);
-                $('#cuit').val('');
-                $('#razon_social').val('');
-            }
-        });
-
         $('.metodoPago').change(function() {
             var meto = $(this).val();
             if (meto != '2') {

@@ -4,7 +4,7 @@ global $conectar;
 
 // Agregar columna descuento_final
 $sql1 = "ALTER TABLE productos 
-ADD COLUMN descuento_final DECIMAL(5,2) DEFAULT 0 COMMENT 'Porcentaje de descuento final'";
+ADD COLUMN descuento_final DECIMAL(10,2) DEFAULT 0 COMMENT 'Porcentaje de descuento final'";
 if ($conectar->query($sql1) === TRUE) {
     echo "Columna 'descuento_final' agregada exitosamente a la tabla productos.<br>";
 } else {

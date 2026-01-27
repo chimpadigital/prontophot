@@ -48,7 +48,7 @@ if (isset($_GET['id'])) {
 </style>
 <div class="container-fluid bg-black border-top border-white">
     <div class="row">
-        <div class="col-4 bg-black py-4 px-3 d-none d-md-block">
+        <div class="col-2 bg-black py-4 px-3 d-none d-md-block">
             <div class="align-items-end d-flex flex-column justify-items-end mt-3 mb-4">
                 <a href="\"><img class="logo-blanco" src="assets\img\logo-pronto-white.svg" alt=""></a>
             </div>
@@ -70,7 +70,7 @@ if (isset($_GET['id'])) {
         </div>
         <!-- FIN COL-4  -->
 
-        <div class="col-md-8 bg-white p-5 rounded-lg columna-content-admin">
+        <div class="col-md-10 bg-white p-5 rounded-lg columna-content-admin">
 
             <!-- tab-content -->
             <div class="tab-content" id="v-pills-tabContent">
@@ -87,16 +87,19 @@ if (isset($_GET['id'])) {
                             <a class="nav-link active" id="cargarProducto" href="#">Este Producto</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="productosCargados" href="productos_cargados.php">Productos ya
-                                Cargados</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
                             <a class="nav-link" id="cat" href="productos_categorias.php">Categorias</a>
                         </li>
                         <li class="nav-item" role="presentation2">
                             <a class="nav-link" id="valoresImpresion" href="productos_valoresImpresion.php">Valores
                                 Impresión</a>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="impuestos" href="productos_impuestos.php">Impuestos</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="metodosEnvio" href="productos_metodos_envio.php">Métodos de Envío</a>
+                        </li>
+
                     </ul>
                     <!-- FIN TABS PRODUCTOS -->
 
@@ -246,6 +249,10 @@ if (isset($_GET['id'])) {
                                             <label for="validationCustom06">Profundidad</label>
                                             <input type="text" name="profundidad" value="<?php echo $row['profundidad'];?>" class="form-control" id="validationCustom06">
                                         </div>
+                                        <div class="col-md-2 mb-3 mx-0 mx-md-5">
+                                            <label for="validationCustom07">Peso</label>
+                                            <input type="number" step="0.01" name="peso" value="<?php echo $row['peso'];?>" class="form-control" id="validationCustom07" placeholder="kg">
+                                        </div>
                                     </div>
 
                                     <p class="subtitulo-form">Descripción del Producto</p>
@@ -257,7 +264,7 @@ if (isset($_GET['id'])) {
                                         </div>
                                     </div>
 
-                                    <div class="form-row mt-3">
+                                    <div class="form-row mt-3 d-none">
                                         <label for="validationCustom07">Colores Disponibles</label>
                                         <div
                                             class="col-md-12 d-flex flex-row flex-wrap flex-lg-nowrap mt-2 justify-content-lg-between">                                            

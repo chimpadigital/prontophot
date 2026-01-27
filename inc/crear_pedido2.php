@@ -18,7 +18,20 @@ $porc=0;
 foreach($carro as $id=>$datos){
     $cant=$datos['cantidad'];
     $cat=$datos['cat'];
-    $precio=($cant * $datos['precio']);
+
+    // Obtener precio y descuento del producto
+    $prod_res=$conectar->query("SELECT precio, descuento_final FROM productos WHERE id='$id'");
+    $prod_row=$prod_res->fetch_assoc();
+    $precioUnitario=$prod_row['precio'];
+    $descuentoProducto=isset($prod_row['descuento_final']) && $prod_row['descuento_final'] > 0 ? $prod_row['descuento_final'] : 0;
+
+    // Aplicar descuento del producto si existe
+    if($descuentoProducto > 0){
+        $precioUnitario=$prod_row['precio'] - ($prod_row['precio'] * $descuentoProducto / 100);
+    }
+
+    $precio=($cant * $precioUnitario);
+
     if(isset($_SESSION['prontoFront']['cupon'])){
         if ($_SESSION['prontoFront']['cupon']['categoria']==$cat) {
             $porc=intval($_SESSION['prontoFront']['cupon']['valor']);
@@ -30,7 +43,9 @@ foreach($carro as $id=>$datos){
 }
 unset($_SESSION['prontoFront']['cupon']);
 
-$monto=$total-$descuento;
+// Incluir costo de envío en el total
+$costoEnvio = isset($_SESSION['prontoFront']['envio']['costo']) ? floatval($_SESSION['prontoFront']['envio']['costo']) : 0;
+$monto=$total-$descuento+$costoEnvio;
 
 //crear pedido
 $param=array();
@@ -68,10 +83,18 @@ if($pedido->success){
     $carro=$_SESSION['pronto']['cart'];
     $items=array();
     foreach($carro as $id=>$datos){
-        $res=$conectar->query("SELECT p.nombre,p.descripcion, p.precio,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
+        $res=$conectar->query("SELECT p.nombre,p.descripcion, p.precio, p.descuento_final,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
         $row=$res->fetch_assoc();
         $cant=$datos['cantidad'];
-        $precio=($cant * $row['precio']);
+
+        // Aplicar descuento del producto si existe
+        $precioUnitario=$row['precio'];
+        $descuentoProducto=isset($row['descuento_final']) && $row['descuento_final'] > 0 ? $row['descuento_final'] : 0;
+        if($descuentoProducto > 0){
+            $precioUnitario=$row['precio'] - ($row['precio'] * $descuentoProducto / 100);
+        }
+
+        $precio=($cant * $precioUnitario);
         $item['producto']=$row['nombre'].' '.$datos['color'];
         $item['cantidad']=$cant;
         $item['precio']=$precio;

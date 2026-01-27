@@ -13,6 +13,30 @@ if (isset($_SESSION['prontoFront']['token'])) {
 
 // Obtener métodos de envío
 $metodos_envio = $conectar->query("SELECT * FROM metodos_envio ORDER BY id ASC");
+
+// Obtener datos de Epresis (ID 2) para usar en JavaScript
+$epresis_data = $conectar->query("SELECT valor_gratis FROM metodos_envio WHERE id=2");
+$epresis_row = $epresis_data->fetch_assoc();
+$epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
+
+// Obtener productos del carrito con sus dimensiones
+$productos_carrito = [];
+if (isset($_SESSION['pronto']['cart'])) {
+    $carro = $_SESSION['pronto']['cart'];
+    foreach($carro as $id_producto => $datos){
+        $res = $conectar->query("SELECT ancho, alto, profundidad FROM productos WHERE id='$id_producto'");
+        if($row = $res->fetch_assoc()){
+            $productos_carrito[] = [
+                'id' => $id_producto,
+                'cantidad' => $datos['cantidad'],
+                'ancho' => floatval($row['ancho'] ?? 0.25),
+                'alto' => floatval($row['alto'] ?? 0.25),
+                'profundidad' => floatval($row['profundidad'] ?? 0.25),
+                'peso' => 0.5 // Peso por defecto en kg
+            ];
+        }
+    }
+}
 ?>
 
 <div class="">
@@ -32,8 +56,8 @@ $metodos_envio = $conectar->query("SELECT * FROM metodos_envio ORDER BY id ASC")
                 <h5 class="titulo-tabs-user">Selecciona tu método de envío</h5>
             </div>
         </div>
-        <form class="formCheckout " action="checkout_2.php" method="post" >
-        <!-- checkout-pago -->   
+        <form class="formCheckout " action="checkout_2.php" method="post" id="formEnvio">
+        <!-- checkout-pago -->
         <!-- FORM METODO ENVIO -->
         <div class="row metodo-envio">
             <div class="col-md-6 ">
@@ -74,11 +98,14 @@ $metodos_envio = $conectar->query("SELECT * FROM metodos_envio ORDER BY id ASC")
             <div id="metodo-envio" class="col-md-6 my-3 my-md-0 ">
                 <div class="mx-1 shadow-sm p-3 p-md-5">
                     <p class="text-bold m-0 text-danger">Envío a Domicilio</p>
-                    <span class="text-muted descripcion-pequeña">(disponible para pedidos superiores a $1000)*</span>
                     <?php
                     $metodo_counter = 0;
                     while($metodo = $metodos_envio->fetch_assoc()){
                         $metodo_counter++;
+                        // ID 2 es para Epresis, lo manejamos por separado
+                        if($metodo['id'] == 2) {
+                            continue;
+                        }
                     ?>
                     <div class="form-check mb-3 <?php echo $metodo_counter == 1 ? 'mt-3' : ''; ?> contenedor-input">
                         <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="entrega" id="metodo_envio_<?php echo $metodo['id']; ?>" value="envio_<?php echo $metodo['id']; ?>" data-metodo-id="<?php echo $metodo['id']; ?>" data-costo="<?php echo $metodo['valor']; ?>">
@@ -95,6 +122,18 @@ $metodos_envio = $conectar->query("SELECT * FROM metodos_envio ORDER BY id ASC")
                         </label>
                     </div>
                     <?php } ?>
+
+                    <!-- EPRESIS Envío (ID 2) -->
+                    <div class="form-check mb-3 contenedor-input">
+                        <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="entrega" id="metodo_envio_2" value="envio_2" data-metodo-id="2" data-costo="0">
+                        <label class="form-check-label d-flex flex-row" for="metodo_envio_2">
+                            <div>
+                                <p class="d-inline-block m-0">Envío Epresis</p>
+                                <span class="d-block text-bold" id="epresis_precio_display">Calcular envío</span>
+                                <span class="d-block text-muted descripcion-pequeña">Entrega a domicilio</span>
+                            </div>
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -108,6 +147,31 @@ $metodos_envio = $conectar->query("SELECT * FROM metodos_envio ORDER BY id ASC")
                 <div class="shadow-sm p-5 w-100">
                     <?php if (isset($_SESSION['prontoFront']['token'])) { ?>
                     <input type="hidden" name="envio" value="domicilio">
+
+                    <!-- Formulario Epresis - Visible solo cuando se selecciona Epresis -->
+                    <div id="epresis_calc_form" style="display:none;">
+                        <h5 class="mb-3">Calcular Envío Epresis</h5>
+                        <div class="form-group">
+                            <label for="cp_destino_epresis">Código Postal de Destino</label>
+                            <input type="text" class="form-control" id="cp_destino_epresis" placeholder="Ej: 3500" value="<?php echo isset($rowc['cp']) ? $rowc['cp'] : ''; ?>">
+                        </div>
+                        <button type="button" class="btn btn-primary" id="calcular_envio_epresis">Calcular Envío</button>
+                        <div id="epresis_result" class="mt-3" style="display:none;">
+                            <div class="alert alert-success">
+                                <h6>Costo de envío: $<span id="epresis_costo">0</span></h6>
+                                <p class="mb-0 small">Fecha estimada: <span id="epresis_fecha">-</span></p>
+                            </div>
+                        </div>
+                        <div id="epresis_error" class="mt-3" style="display:none;">
+                            <div class="alert alert-danger">
+                                <p class="mb-0" id="epresis_error_msg">Error al calcular envío</p>
+                            </div>
+                        </div>
+                        <input type="hidden" id="epresis_costo_hidden" name="epresis_costo" value="0">
+                        <input type="hidden" id="epresis_fecha_hidden" name="epresis_fecha" value="">
+                        <hr class="my-4">
+                    </div>
+
                     <div class="d-flex align-items-baseline">
                         <label class="ml-0">
                         	<span class="text-bold">Mi direccion</span>
@@ -228,6 +292,96 @@ $('.contenedor-input > input[data-toggle="collapse"]').click(function(e) {
         e.stopPropagation()
     }
 })
+</script>
+
+<script>
+// Variable con el valor de envío gratis de Epresis desde BD
+var epresisValorGratis = <?php echo floatval($epresis_valor_gratis); ?>;
+
+// Mostrar/ocultar formulario Epresis según selección
+$('input[name="entrega"]').on('change', function() {
+    if($(this).val() === 'envio_2' || $(this).data('metodo-id') == 2) {
+        $('#epresis_calc_form').slideDown();
+    } else {
+        $('#epresis_calc_form').slideUp();
+        $('#epresis_result').hide();
+        $('#epresis_error').hide();
+    }
+});
+
+// Calcular envío Epresis
+$('#calcular_envio_epresis').on('click', function() {
+    var cpDestino = $('#cp_destino_epresis').val().trim();
+
+    if(!cpDestino) {
+        alert('Por favor ingrese un código postal');
+        return;
+    }
+
+    // Ocultar mensajes anteriores
+    $('#epresis_result').hide();
+    $('#epresis_error').hide();
+
+    // Mostrar loading
+    $(this).prop('disabled', true).text('Calculando...');
+
+    // Realizar petición al archivo PHP
+    $.ajax({
+        url: 'inc/metodo_envio.php',
+        type: 'POST',
+        data: {
+            cp_destino: cpDestino
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log('Respuesta Epresis:', response);
+
+            if(response.success) {
+                var costoCalculado = parseFloat(response.costo);
+                var costoFinal = costoCalculado;
+                var esGratis = false;
+
+                // Verificar si el costo calculado es menor o igual al valor_gratis
+                if(epresisValorGratis > 0 && costoCalculado <= epresisValorGratis) {
+                    costoFinal = 0;
+                    esGratis = true;
+                }
+
+                // Mostrar resultado
+                if(esGratis) {
+                    $('#epresis_costo').html('<span class="text-success">GRATIS</span> <small class="text-muted">(antes $' + costoCalculado.toFixed(2) + ')</small>');
+                } else {
+                    $('#epresis_costo').text(costoFinal.toFixed(2));
+                }
+                $('#epresis_fecha').text(response.fecha);
+                $('#epresis_result').slideDown();
+
+                // Guardar costo final en hidden input y actualizar data-costo
+                $('#epresis_costo_hidden').val(costoFinal);
+                $('#epresis_fecha_hidden').val(response.fecha);
+                $('#metodo_envio_2').attr('data-costo', costoFinal);
+
+                // Actualizar el precio display
+                if(esGratis) {
+                    $('#epresis_precio_display').html('<span class="text-success">GRATIS</span>');
+                } else {
+                    $('#epresis_precio_display').text('$' + costoFinal.toFixed(2));
+                }
+            } else {
+                $('#epresis_error_msg').text(response.error || 'Error al calcular envío');
+                $('#epresis_error').slideDown();
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            $('#epresis_error_msg').text('Error al calcular envío. Intente nuevamente.');
+            $('#epresis_error').slideDown();
+        },
+        complete: function() {
+            $('#calcular_envio_epresis').prop('disabled', false).text('Calcular Envío');
+        }
+    });
+});
 </script>
 
 <script src="assets/js/starter.js"></script>

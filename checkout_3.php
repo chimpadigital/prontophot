@@ -119,8 +119,39 @@ if (isset($_GET['payment_id'])) {
                         <p>Teléfono/Celular : '.$telefono.'</p>
                     </div>
                 </div>';
-            	    break;    
-            	    
+            	    break;
+            	    default:
+            	        // Manejo de métodos de envío dinámicos (envio_1, envio_2, etc)
+            	        if (strpos($pedido['entrega'], 'envio_') === 0) {
+            	            $metodo_id = str_replace('envio_', '', $pedido['entrega']);
+
+            	            // Si es Epresis (ID 2)
+            	            if ($metodo_id == 2) {
+            	                echo '<h5>Envío Epresis a Domicilio</h5>';
+            	            } else {
+            	                // Obtener nombre del método desde la BD
+            	                $metodo_res = $conectar->query("SELECT nombre FROM metodos_envio WHERE id='$metodo_id'");
+            	                if ($metodo_row = $metodo_res->fetch_assoc()) {
+            	                    echo '<h5>'.$metodo_row['nombre'].'</h5>';
+            	                }
+            	            }
+
+            	            echo '<h5 class="mt-4">'.$titulo.'</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>Nombre y Apellido: '.$nombre.'</p>
+                        <p>DNI: '.$dni.'</p>
+                        <p>Dirección: '.$direccion.'</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Provincia: '.$provincia.'</p>
+                        <p>CP: '.$cp.'</p>
+                        <p>Teléfono/Celular: '.$telefono.'</p>
+                    </div>
+                </div>';
+            	        }
+            	    break;
+
             	}?>
             </div>
             <div class="col-md-3 offset-0 offset-md-1 p-4 shadowBox my-3 my-lg-0">
@@ -134,7 +165,7 @@ if (isset($_GET['payment_id'])) {
             <div class="col-md-12 my-3 my-md-5">
                 <div class="d-block d-md-flex align-items-center justify-content-center">
                     <a href="usuario/misCompras.php"><button class="btn btn-border-yellow text-black text-uppercase btn-block" type="button">Ver Mis Compras</button></a>
-                    <a href="tienda"><button  class="btn btn-warning btn-cargar-producto ml-0 ml-md-3 my-3 my-md-0 btn-block" type="button">SEGUIR COMPRANDO</button></a>                
+                    <a href="tienda"><button  class="btn btn-warning btn-cargar-producto ml-0 ml-md-3 my-3 my-md-0 btn-block" type="button">SEGUIR COMPRANDO</button></a>
                 </div>
             </div>
         </div>
