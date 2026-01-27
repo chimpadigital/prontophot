@@ -180,9 +180,10 @@ if (isset($_POST['entrega'])) {
             -->
 
                 <!-- Formulario de Facturación -->
-                <div class="row shadow-sm p-3 p-md-4 mt-4">
+                <div class="row shadow-sm p-3 p-md-4 mt-4 mb-4">
                     <div class="col-md-12">
-                        <h5 class="titulo-tabs-user mb-4">Datos de Facturación</h5>
+                        <h5 class="titulo-tabs-user" style="margin: 0px;">Datos de Facturación</h5>
+                        <h6 clasS="mb-4">Revisar los datos de facturación antes de continuar</h6>
 
                         <div class="form-row">
                             <div class="form-group col-md-6">

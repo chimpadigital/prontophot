@@ -134,9 +134,12 @@ function crearPedido($param)
     $envio = $param['envio'];
     $desc = $param['desc'];
     $metodo_envio_id = isset($param['metodo_envio_id']) ? $param['metodo_envio_id'] : null;
+    $epresis_tiempo_entrega = isset($param['epresis_tiempo_entrega']) ? $conectar->real_escape_string($param['epresis_tiempo_entrega']) : null;
 
-    // Construir SQL con o sin metodo_envio_id (SIN cuit, razon_social, factura_a)
-    if ($metodo_envio_id !== null) {
+    // Construir SQL con o sin metodo_envio_id y epresis_tiempo_entrega
+    if ($metodo_envio_id !== null && $epresis_tiempo_entrega !== null) {
+        $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion`, `metodo_envio_id`, `epresis_tiempo_entrega` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc','$metodo_envio_id','$epresis_tiempo_entrega')";
+    } elseif ($metodo_envio_id !== null) {
         $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion`, `metodo_envio_id` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc','$metodo_envio_id')";
     } else {
         $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc')";

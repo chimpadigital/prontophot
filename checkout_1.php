@@ -153,9 +153,8 @@ if (isset($_SESSION['pronto']['cart'])) {
                         <h5 class="mb-3">Calcular Envío Epresis</h5>
                         <div class="form-group">
                             <label for="cp_destino_epresis">Código Postal de Destino</label>
-                            <input type="text" class="form-control" id="cp_destino_epresis" placeholder="Ej: 3500" value="<?php echo isset($rowc['cp']) ? $rowc['cp'] : ''; ?>">
+                            <input type="text" class="form-control" id="cp_destino_epresis" placeholder="Ej: 3500" value="<?php echo isset($rowc['cp']) ? $rowc['cp'] : ''; ?>" readonly>
                         </div>
-                        <button type="button" class="btn btn-primary" id="calcular_envio_epresis">Calcular Envío</button>
                         <div id="epresis_result" class="mt-3" style="display:none;">
                             <div class="alert alert-success">
                                 <h6>Costo de envío: $<span id="epresis_costo">0</span></h6>
@@ -165,6 +164,11 @@ if (isset($_SESSION['pronto']['cart'])) {
                         <div id="epresis_error" class="mt-3" style="display:none;">
                             <div class="alert alert-danger">
                                 <p class="mb-0" id="epresis_error_msg">Error al calcular envío</p>
+                            </div>
+                        </div>
+                        <div id="epresis_loading" class="mt-3" style="display:none;">
+                            <div class="alert alert-info">
+                                <p class="mb-0"><i class="fa fa-spin fa-spinner"></i> Calculando envío...</p>
                             </div>
                         </div>
                         <input type="hidden" id="epresis_costo_hidden" name="epresis_costo" value="0">
@@ -298,32 +302,20 @@ $('.contenedor-input > input[data-toggle="collapse"]').click(function(e) {
 // Variable con el valor de envío gratis de Epresis desde BD
 var epresisValorGratis = <?php echo floatval($epresis_valor_gratis); ?>;
 
-// Mostrar/ocultar formulario Epresis según selección
-$('input[name="entrega"]').on('change', function() {
-    if($(this).val() === 'envio_2' || $(this).data('metodo-id') == 2) {
-        $('#epresis_calc_form').slideDown();
-    } else {
-        $('#epresis_calc_form').slideUp();
-        $('#epresis_result').hide();
-        $('#epresis_error').hide();
-    }
-});
-
-// Calcular envío Epresis
-$('#calcular_envio_epresis').on('click', function() {
+// Función para calcular envío Epresis automáticamente
+function calcularEnvioEpresis() {
     var cpDestino = $('#cp_destino_epresis').val().trim();
 
     if(!cpDestino) {
-        alert('Por favor ingrese un código postal');
+        $('#epresis_error_msg').text('No se encontró código postal del usuario');
+        $('#epresis_error').slideDown();
         return;
     }
 
     // Ocultar mensajes anteriores
     $('#epresis_result').hide();
     $('#epresis_error').hide();
-
-    // Mostrar loading
-    $(this).prop('disabled', true).text('Calculando...');
+    $('#epresis_loading').show();
 
     // Realizar petición al archivo PHP
     $.ajax({
@@ -378,9 +370,23 @@ $('#calcular_envio_epresis').on('click', function() {
             $('#epresis_error').slideDown();
         },
         complete: function() {
-            $('#calcular_envio_epresis').prop('disabled', false).text('Calcular Envío');
+            $('#epresis_loading').hide();
         }
     });
+}
+
+// Mostrar/ocultar formulario Epresis según selección y calcular automáticamente
+$('input[name="entrega"]').on('change', function() {
+    if($(this).val() === 'envio_2' || $(this).data('metodo-id') == 2) {
+        $('#epresis_calc_form').slideDown();
+        // Calcular automáticamente al seleccionar Epresis
+        calcularEnvioEpresis();
+    } else {
+        $('#epresis_calc_form').slideUp();
+        $('#epresis_result').hide();
+        $('#epresis_error').hide();
+        $('#epresis_loading').hide();
+    }
 });
 </script>
 

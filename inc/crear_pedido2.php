@@ -66,6 +66,7 @@ $param['valor']=$monto;
 $param['metodo']=$metodo;
 $param['desc']=$desc;
 $param['metodo_envio_id']=$_SESSION['prontoFront']['envio']['metodo_envio_id'] ?? null;
+$param['epresis_tiempo_entrega']=$_SESSION['prontoFront']['envio']['epresis_fecha'] ?? null;
 
 // Agregar datos de facturación desde el POST
 if(isset($_POST['facturacion'])){

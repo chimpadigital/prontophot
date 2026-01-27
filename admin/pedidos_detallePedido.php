@@ -185,7 +185,7 @@ try {
                             <?php
                             if ($row['envio'] == 'domicilio') {
                                 $titulo = 'Enviar a mi domicilio';
-                                $nombre = $row['clientenombre'];
+                                $nombre = $row['nombre'];
                                 $dni = $row['clientedni'];
                                 $direccion = $row['clientedireccion'];
                                 $provincia = $row['clienteprovincia'];
@@ -202,6 +202,9 @@ try {
                             }
 
                             switch ($row['entrega']) {
+                                case 'envio_2':
+                                    echo $titulo = '<strong>Datos de envio</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
+                                    break;
                                 case 'suc1':
                                     echo '<h5>Retiro Gratis por Sucursal</h5>
                             <p>Sucursal 1</p>
@@ -273,6 +276,8 @@ try {
                                     <div class="col-md-6">
                                         <p><strong>Nombre y Apellido:</strong> <?php echo $rowf['nombre'] . ' ' . $rowf['apellido']; ?></p>
                                         <p><strong>DNI:</strong> <?php echo $rowf['dni']; ?></p>
+                                        <p><strong>CUIT/CUIL:</strong> <?php echo $rowf['cuit']; ?></p>
+                                        <p><strong>Razon Social:</strong> <?php echo $rowf['razon_social']; ?></p>
                                         <p><strong>Email:</strong> <?php echo $rowf['email']; ?></p>
                                         <p><strong>Dirección:</strong> <?php echo $rowf['direccion']; ?></p>
                                     </div>
@@ -290,14 +295,6 @@ try {
                                 <?php if ($rowf['factura_a'] == 1): ?>
                                     <hr class="my-3">
                                     <h5 class="text-danger">Requiere Factura A</h5>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <p><strong>CUIT:</strong> <?php echo $rowf['cuit']; ?></p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <p><strong>Razón Social:</strong> <?php echo $rowf['razon_social']; ?></p>
-                                        </div>
-                                    </div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -358,6 +355,195 @@ try {
                             </div>
                         </div>
                     <?php } ?>
+
+                    <!-- Modal Generar Guía Epresis -->
+                    <div class="modal fade" id="modalGenerarGuia" tabindex="-1" role="dialog" aria-labelledby="modalGenerarGuiaLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning">
+                                    <h5 class="modal-title" id="modalGenerarGuiaLabel">
+                                        <i class="fa fa-truck"></i> Generar Guía de Envío Epresis
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="text-muted mb-4">Revisa y corrige los datos necesarios para generar la guía de envío.</p>
+
+                                    <form id="formGenerarGuia">
+                                        <input type="hidden" id="modal_pedido_id" value="<?php echo $id; ?>">
+
+                                        <!-- Datos del Destinatario -->
+                                        <h6 class="text-bold mb-3 border-bottom pb-2">Datos del Destinatario</h6>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="modal_empresa">Empresa</label>
+                                                <input type="text" class="form-control" id="modal_empresa" placeholder="Nombre de empresa (opcional)">
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="modal_celular">Celular *</label>
+                                                <input type="text" class="form-control" id="modal_celular" value="<?php echo $row['clientetelefono']; ?>" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-8">
+                                                <label for="modal_calle">Calle *</label>
+                                                <input type="text" class="form-control" id="modal_calle" value="" required>
+                                                <small class="form-text text-muted">Nombre de la calle sin número</small>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="modal_altura">Altura *</label>
+                                                <input type="number" class="form-control" id="modal_altura" placeholder="0" required>
+                                                <small class="form-text text-muted">Número de calle</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-2">
+                                                <label for="modal_piso">Piso</label>
+                                                <input type="text" class="form-control" id="modal_piso" placeholder="Ej: 2">
+                                            </div>
+                                            <div class="form-group col-md-2">
+                                                <label for="modal_dpto">Depto</label>
+                                                <input type="text" class="form-control" id="modal_dpto" placeholder="Ej: A">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="modal_hora_desde">Hora Desde</label>
+                                                <input type="time" class="form-control" id="modal_hora_desde" placeholder="10:00">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="modal_hora_hasta">Hora Hasta</label>
+                                                <input type="time" class="form-control" id="modal_hora_hasta" placeholder="18:00">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="modal_cuit">CUIT/CUIL</label>
+                                                <input type="text" class="form-control" id="modal_cuit" placeholder="XX-XXXXXXXX-X">
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="modal_contenido">Contenido</label>
+                                                <input type="text" class="form-control" id="modal_contenido" placeholder="Descripción del contenido">
+                                            </div>
+                                        </div>
+
+                                        <!-- Información adicional -->
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="modal_info_adicional_1">Info Adicional 1</label>
+                                                <input type="text" class="form-control" id="modal_info_adicional_1" placeholder="Información adicional">
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="modal_info_adicional_2">Info Adicional 2</label>
+                                                <input type="text" class="form-control" id="modal_info_adicional_2" placeholder="Información adicional">
+                                            </div>
+                                        </div>
+
+                                        <!-- Configuración del Envío -->
+                                        <h6 class="text-bold mb-3 border-bottom pb-2 mt-4">Configuración del Envío</h6>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-4">
+                                                <label for="modal_fragil">
+                                                    <input type="checkbox" id="modal_fragil" value="1">
+                                                    Frágil
+                                                </label>
+                                                <small class="form-text text-muted">Marcar si el envío es frágil</small>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="modal_is_urgente">
+                                                    <input type="checkbox" id="modal_is_urgente" value="1">
+                                                    Urgente
+                                                </label>
+                                                <small class="form-text text-muted">Marcar si es envío urgente</small>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="modal_valida_stock">
+                                                    <input type="checkbox" id="modal_valida_stock" value="1">
+                                                    Validar Stock
+                                                </label>
+                                                <small class="form-text text-muted">Validar stock disponible</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-4">
+                                                <label for="modal_guia_agente">Guía Agente</label>
+                                                <input type="text" class="form-control" id="modal_guia_agente" placeholder="Segundo remito">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="modal_precinto">Precinto</label>
+                                                <input type="text" class="form-control" id="modal_precinto" placeholder="Número de precinto">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="modal_codigo_ceco">Código CECO</label>
+                                                <input type="text" class="form-control" id="modal_codigo_ceco" placeholder="Centro de costo">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-4">
+                                                <label for="modal_contrareembolso">Contrareembolso</label>
+                                                <input type="number" step="0.01" class="form-control" id="modal_contrareembolso" placeholder="0.00">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="modal_cobro_efectivo">Cobro Efectivo</label>
+                                                <input type="number" step="0.01" class="form-control" id="modal_cobro_efectivo" placeholder="0.00">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="modal_cobro_cheque">Cobro Cheque</label>
+                                                <input type="number" step="0.01" class="form-control" id="modal_cobro_cheque" placeholder="0.00">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="modal_canal">Canal</label>
+                                                <input type="text" class="form-control" id="modal_canal" placeholder="Ej: WEB, API, TIENDA NUBE">
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="modal_codigo_expreso">Código Expreso</label>
+                                                <input type="text" class="form-control" id="modal_codigo_expreso" placeholder="Ej: 01">
+                                            </div>
+                                        </div>
+
+                                        <!-- Información Autocompletada -->
+                                        <h6 class="text-bold mb-3 border-bottom pb-2 mt-4">Información Autocompletada</h6>
+                                        <div class="alert alert-secondary">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <p class="mb-1"><strong>Destinatario:</strong> <?php echo $row['clientenombre']; ?></p>
+                                                    <p class="mb-1"><strong>Localidad:</strong> <?php echo $row['ciudad']; ?></p>
+                                                    <p class="mb-1"><strong>Provincia:</strong> <?php echo $row['clienteprovincia']; ?></p>
+                                                    <p class="mb-1"><strong>Remito:</strong> PED-<?php echo $id; ?></p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p class="mb-1"><strong>CP:</strong> <?php echo $row['clientecp']; ?></p>
+                                                    <p class="mb-1"><strong>Servicio:</strong> ESTANDAR</p>
+                                                    <p class="mb-1"><strong>Valor Declarado:</strong> $<?php echo $row['total']; ?></p>
+                                                    <p class="mb-1"><strong>Tipo Operación:</strong> ENTREGA</p>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted"><i class="fa fa-info-circle"></i> Estos datos se tomarán automáticamente del pedido.</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="modal_observaciones">Observaciones</label>
+                                            <textarea class="form-control" id="modal_observaciones" rows="2" placeholder="Agregar observaciones adicionales..."><?php echo htmlspecialchars($row['descripcion']); ?></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn btn-warning" id="confirmarGenerarGuia">
+                                        <i class="fa fa-check"></i> Generar Guía
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="row align-items-lg-center mt-5">
                         <div class="col-md-12 p-0">
@@ -445,61 +631,118 @@ try {
             });
         });
 
-        // Generar Guía Epresis
+        // Abrir modal para generar guía Epresis
         $('#generarGuiaEpresis').click(function(e) {
             e.preventDefault();
-            var btn = $(this);
-            var idpedido = $('#idpedido').val();
 
-            // Confirmar acción
-            if (!confirm('¿Deseas generar la guía de envío Epresis para este pedido?')) {
+            // Parsear dirección para pre-llenar calle y altura
+            var direccion = '<?php echo addslashes($row['clientedireccion']); ?>';
+            var calle = direccion;
+            var altura = 'S/N';
+
+            // Intentar separar calle y número
+            var match = direccion.match(/^(.+?)[\s,]+(\d+)/);
+            if (match) {
+                calle = match[1].trim();
+                altura = match[2].trim();
+            }
+
+            $('#modal_calle').val(calle);
+            $('#modal_altura').val(altura);
+
+            // Abrir modal
+            $('#modalGenerarGuia').modal('show');
+        });
+
+        // Confirmar generación de guía desde el modal
+        $('#confirmarGenerarGuia').click(function(e) {
+            e.preventDefault();
+
+            // Validar formulario
+            if (!$('#formGenerarGuia')[0].checkValidity()) {
+                $('#formGenerarGuia')[0].reportValidity();
                 return;
             }
+
+            var btn = $(this);
+            var idpedido = $('#modal_pedido_id').val();
+
+            // Recopilar datos del formulario
+            var datosGuia = {
+                pedido_id: idpedido,
+                // Datos del destinatario
+                empresa: $('#modal_empresa').val(),
+                calle: $('#modal_calle').val(),
+                altura: $('#modal_altura').val(),
+                piso: $('#modal_piso').val(),
+                dpto: $('#modal_dpto').val(),
+                hora_desde: $('#modal_hora_desde').val(),
+                hora_hasta: $('#modal_hora_hasta').val(),
+                celular: $('#modal_celular').val(),
+                cuit: $('#modal_cuit').val(),
+                contenido: $('#modal_contenido').val(),
+                info_adicional_1: $('#modal_info_adicional_1').val(),
+                info_adicional_2: $('#modal_info_adicional_2').val(),
+                // Configuración del envío
+                fragil: $('#modal_fragil').is(':checked') ? 1 : 0,
+                is_urgente: $('#modal_is_urgente').is(':checked') ? 1 : 0,
+                valida_stock: $('#modal_valida_stock').is(':checked') ? 1 : 0,
+                guia_agente: $('#modal_guia_agente').val(),
+                precinto: $('#modal_precinto').val(),
+                codigo_ceco: $('#modal_codigo_ceco').val(),
+                contrareembolso: $('#modal_contrareembolso').val(),
+                cobro_efectivo: $('#modal_cobro_efectivo').val(),
+                cobro_cheque: $('#modal_cobro_cheque').val(),
+                canal: $('#modal_canal').val(),
+                codigo_expreso: $('#modal_codigo_expreso').val(),
+                observaciones: $('#modal_observaciones').val()
+            };
 
             // Deshabilitar botón y mostrar loading
             btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Generando...');
 
-            $.post('inc/generar_guia_ajax.php', {
-                pedido_id: idpedido
-            }, function(data) {
+            $.post('inc/generar_guia_ajax.php', datosGuia, function(data) {
                 if (data.success) {
+                    // Cerrar modal
+                    $('#modalGenerarGuia').modal('hide');
+
                     // Mostrar información de la guía generada
                     var html = `
-					<div class="alert alert-success">
-						<h5 class="mb-3"><i class="fa fa-check-circle"></i> Guía Generada Exitosamente</h5>
-						<div class="row">
-							<div class="col-md-3">
-								<strong>Código de Guía:</strong>
-								<p class="h4 text-primary">${data.guia}</p>
-							</div>
-							<div class="col-md-3">
-								<strong>Remito:</strong>
-								<p>${data.remito}</p>
-							</div>
-							<div class="col-md-3">
-								<strong>Importe:</strong>
-								<p>$${parseFloat(data.importe).toFixed(2)}</p>
-							</div>
-							<div class="col-md-3">
-								<strong>Zona:</strong>
-								<p>${data.sub_zona_destino}</p>
-							</div>
-						</div>
-						<p class="mb-0 text-muted small">Generada hace un momento</p>
-					</div>
-				`;
+                    <div class="alert alert-success">
+                        <h5 class="mb-3"><i class="fa fa-check-circle"></i> Guía Generada Exitosamente</h5>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Código de Guía:</strong>
+                                <p class="h4 text-primary">${data.guia}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Remito:</strong>
+                                <p>${data.remito}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Importe:</strong>
+                                <p>$${parseFloat(data.importe).toFixed(2)}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Zona:</strong>
+                                <p>${data.sub_zona_destino}</p>
+                            </div>
+                        </div>
+                        <p class="mb-0 text-muted small">Generada hace un momento</p>
+                    </div>
+                `;
 
                     $('#guiaEpresisContainer').html(html);
-                    btn.remove(); // Remover el botón ya que ya se generó la guía
+                    $('#generarGuiaEpresis').remove(); // Remover el botón ya que ya se generó la guía
 
                     alert('Guía generada exitosamente. Código: ' + data.guia);
                 } else {
                     alert('Error al generar guía: ' + (data.error || 'Error desconocido'));
-                    btn.prop('disabled', false).html('<i class="fa fa-truck"></i> Generar Guía');
+                    btn.prop('disabled', false).html('<i class="fa fa-check"></i> Generar Guía');
                 }
             }, 'json').fail(function(xhr, status, error) {
                 alert('Error de conexión: ' + error);
-                btn.prop('disabled', false).html('<i class="fa fa-truck"></i> Generar Guía');
+                btn.prop('disabled', false).html('<i class="fa fa-check"></i> Generar Guía');
             });
         });
 
