@@ -360,7 +360,7 @@ function calcularEnvioEpresis() {
                 // Mostrar resultado
                 var htmlCosto = '';
                 if(esGratis) {
-                    htmlCosto = '<span class="text-success">GRATIS</span> <small class="text-muted">(costo: $' + costoCalculado.toFixed(2) + ')</small>';
+                    htmlCosto = '<span class="text-white">GRATIS</span> <small class="text-white">(costo: $' + costoCalculado.toFixed(2) + ')</small>';
                 } else {
                     htmlCosto = '$' + costoFinal.toFixed(2);
                 }
