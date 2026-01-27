@@ -22,13 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'] ?? null;
     $nombre = $_POST['nombre'] ?? null;
     $valor = $_POST['valor'] ?? null;
+    $valor_gratis = $_POST['valor_gratis'] ?? null;
 
     if (!$id || !$nombre || !$valor) {
         echo json_encode(['success' => false, 'error' => 'Datos incompletos']);
         exit();
     }
 
-    $stmt = $conectar->prepare("UPDATE metodos_envio SET nombre = ?, valor = ? WHERE id = ?");
+    $stmt = $conectar->prepare("UPDATE metodos_envio SET nombre = ?, valor = ?, valor_gratis = ? WHERE id = ?");
     $stmt->bind_param("sdi", $nombre, $valor, $id);
 
     if ($stmt->execute()) {
