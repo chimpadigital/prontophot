@@ -403,11 +403,13 @@ if (isset($_POST['tamanogral'])) {
                         $metodo_counter++;
                     ?>
                     <div class="form-check mb-3 <?php echo $metodo_counter == 1 ? 'mt-3' : ''; ?> contenedor-input">
-                        <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="tipoenvio" id="metodo_envio_<?php echo $metodo['id']; ?>" value="envio_<?php echo $metodo['id']; ?>" data-metodo-id="<?php echo $metodo['id']; ?>" data-costo="<?php echo $metodo['valor']; ?>">
+                        <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="tipoenvio" id="metodo_envio_<?php echo $metodo['id']; ?>" value="envio_<?php echo $metodo['id']; ?>" data-metodo-id="<?php echo $metodo['id']; ?>" data-costo="<?php echo $metodo['valor']; ?>" data-valor-gratis="<?php echo $metodo['valor_gratis']; ?>">
                         <label class="form-check-label d-flex flex-row" for="metodo_envio_<?php echo $metodo['id']; ?>">
                             <div>
                                 <p class="d-inline-block m-0"><?php echo $metodo['nombre']; ?></p>
-                                <?php if($metodo['valor'] > 0){ ?>
+                                <?php if($metodo['id'] == 2){ // Epresis ?>
+                                <span class="d-block text-bold" id="epresis_costo_label"><i class="fa fa-spinner fa-spin"></i> Calculando...</span>
+                                <?php } else if($metodo['valor'] > 0){ ?>
                                 <span class="d-block text-bold">$<?php echo $metodo['valor']; ?></span>
                                 <?php } ?>
                                 <?php if(!empty($metodo['descripcion'])){ ?>
@@ -417,6 +419,10 @@ if (isset($_POST['tamanogral'])) {
                         </label>
                     </div>
                     <?php } ?>
+
+                    <!-- Campos ocultos para Epresis -->
+                    <input type="hidden" name="epresis_costo" id="epresis_costo_input" value="0">
+                    <input type="hidden" name="epresis_fecha" id="epresis_fecha_input" value="">
                 </div>
             </div>
 
@@ -644,6 +650,93 @@ $('.contenedor-input > input[data-toggle="collapse"]').click(function(e) {
         e.stopPropagation()
     }
 })
+
+// Calcular envío Epresis automáticamente
+$(document).ready(function() {
+    <?php if(isset($_SESSION['prontoFront']['token']) && !empty($rowc['cp'])){ ?>
+    calcularEnvioEpresis(true); // true = mostrar en label
+    <?php } ?>
+});
+
+function calcularEnvioEpresis(enLabel) {
+    var cp = '<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cp'] : ''; ?>';
+
+    if(!cp || cp.length < 4) {
+        if(enLabel) {
+            $('#epresis_costo_label').html('<span class="text-danger">CP inválido</span>');
+        }
+        return;
+    }
+
+    // Calcular total del carrito para envío gratis
+    <?php
+    $total_carrito = 0;
+    $tama = array();
+    if(isset($_SESSION['archivos'])){
+        foreach ($_SESSION['archivos'] as $key=>$impre){
+            $tam = $impre['tamano'];
+            $c = (int)$impre['cantidad'];
+            if(isset($tama[$tam])){
+                $tama[$tam] = $tama[$tam] + $c;
+            }else{
+                $tama[$tam] = $c;
+            }
+        }
+        foreach ($tama as $tam=>$cant){
+            $query = "SELECT * FROM `impresiones` WHERE formato='$tam' AND desde<='$cant' AND hasta>='$cant' ORDER BY id DESC LIMIT 1";
+            $calc = $conectar->query($query);
+            if($row = $calc->fetch_assoc()){
+                $p = $row['precio'];
+                $precio = ($p * $cant);
+                $total_carrito += $precio;
+            }
+        }
+    }
+    ?>
+    var totalCarrito = <?php echo $total_carrito; ?>;
+
+    if(enLabel) {
+        $('#epresis_costo_label').html('<i class="fa fa-spinner fa-spin"></i> Calculando...');
+    } else {
+        $('#formularioEnvio').html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i><p>Calculando costo de envío...</p></div>');
+    }
+
+    $.post('inc/metodo_envio.php', {
+        cp_destino: cp
+    }, function(data) {
+        if(data.success) {
+            var costoEnvio = parseFloat(data.costo);
+            var fecha = data.fecha;
+            var valorGratis = parseFloat($('#metodo_envio_2').data('valor-gratis')) || 0;
+
+            // Verificar si aplica envío gratis
+            if(valorGratis > 0 && costoEnvio >= valorGratis) {
+                costoEnvio = 0;
+            }
+
+            $('#epresis_costo_input').val(costoEnvio);
+            $('#epresis_fecha_input').val(fecha);
+
+            if(enLabel) {
+                var textoEnvio = costoEnvio > 0 ? '$' + costoEnvio.toFixed(2) : '<span class="text-success">GRATIS</span>';
+                var textoFecha = fecha ? '<br><small class="text-muted">Entrega estimada: ' + fecha + '</small>' : '';
+                var textoPromocion = (valorGratis > 0 && costoEnvio > 0 && costoEnvio < valorGratis) ?
+                    '<br><small class="text-info">Envío gratis superando $' + valorGratis.toFixed(0) + ' de costo de envío</small>' : '';
+
+                $('#epresis_costo_label').html(textoEnvio + textoFecha + textoPromocion);
+            }
+        } else {
+            if(enLabel) {
+                $('#epresis_costo_label').html('<span class="text-danger">No disponible</span>');
+            }
+            console.error('Error al calcular Epresis:', data.error);
+        }
+    }, 'json').fail(function() {
+        if(enLabel) {
+            $('#epresis_costo_label').html('<span class="text-danger">Error</span>');
+        }
+    });
+}
 </script>
 
 <script src="assets/js/starter.js"></script>

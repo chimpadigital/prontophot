@@ -139,9 +139,11 @@ if (isset($_SESSION['pronto']['cart'])) {
                         <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="entrega" id="metodo_envio_2" value="envio_2" data-metodo-id="2" data-costo="0">
                         <label class="form-check-label d-flex flex-row" for="metodo_envio_2">
                             <div>
-                                <p class="d-inline-block m-0">Envío Epresis</p>
-                                <span class="d-block text-bold" id="epresis_precio_display">Calcular envío</span>
-                                <span class="d-block text-muted descripcion-pequeña">Entrega a domicilio</span>
+                                <p class="d-inline-block m-0">Envío a domicilio</p>
+                                <span class="d-block text-bold" id="epresis_precio_display">
+                                    <i class="fa fa-spinner fa-spin"></i> Calculando...
+                                </span>
+                                <span class="d-block text-muted descripcion-pequeña" id="epresis_descripcion_display">Entrega a domicilio</span>
                             </div>
                         </label>
                     </div>
@@ -316,19 +318,26 @@ var epresisValorGratis = <?php echo floatval($epresis_valor_gratis); ?>;
 var totalCarrito = <?php echo floatval($total_carrito); ?>;
 
 // Función para calcular envío Epresis automáticamente
-function calcularEnvioEpresis() {
-    var cpDestino = $('#cp_destino_epresis').val().trim();
+function calcularEnvioEpresis(enLabel) {
+    var cpDestino = '<?php echo isset($rowc['cp']) ? $rowc['cp'] : ''; ?>';
 
     if(!cpDestino) {
-        $('#epresis_error_msg').text('No se encontró código postal del usuario');
-        $('#epresis_error').slideDown();
+        if(enLabel) {
+            $('#epresis_precio_display').html('<span class="text-danger">Sin CP</span>');
+            $('#epresis_descripcion_display').text('Código postal no disponible');
+        } else {
+            $('#epresis_error_msg').text('No se encontró código postal del usuario');
+            $('#epresis_error').slideDown();
+        }
         return;
     }
 
-    // Ocultar mensajes anteriores
-    $('#epresis_result').hide();
-    $('#epresis_error').hide();
-    $('#epresis_loading').show();
+    // Si es en el label, no mostrar loading en el formulario
+    if(!enLabel) {
+        $('#epresis_result').hide();
+        $('#epresis_error').hide();
+        $('#epresis_loading').show();
+    }
 
     // Realizar petición al archivo PHP
     $.ajax({
@@ -346,6 +355,7 @@ function calcularEnvioEpresis() {
                 var costoFinal = costoCalculado;
                 var esGratis = false;
                 var mensajeAdicional = '';
+                var mensajeDescripcion = '';
 
                 // Verificar si el costo de envío supera el valor_gratis para ser gratis
                 if(epresisValorGratis > 0 && costoCalculado >= epresisValorGratis) {
@@ -354,53 +364,80 @@ function calcularEnvioEpresis() {
                 } else if(epresisValorGratis > 0 && costoCalculado < epresisValorGratis) {
                     // Calcular cuánto falta para envío gratis
                     var faltante = epresisValorGratis - costoCalculado;
-                    mensajeAdicional = '<small class="text-white d-block mt-1">Te faltan $' + faltante.toFixed(2) + ' para obtener envío gratis</small>';
+                    mensajeAdicional = '<small class="text-info d-block mt-1">Te faltan $' + faltante.toFixed(2) + ' para envío gratis</small>';
+                    mensajeDescripcion = 'Te faltan $' + faltante.toFixed(2) + ' para envío gratis';
                 }
-
-                // Mostrar resultado
-                var htmlCosto = '';
-                if(esGratis) {
-                    htmlCosto = '<span class="text-white">GRATIS</span> <small class="text-white">(costo: $' + costoCalculado.toFixed(2) + ')</small>';
-                } else {
-                    htmlCosto = '$' + costoFinal.toFixed(2);
-                }
-                $('#epresis_costo').html(htmlCosto + mensajeAdicional);
-                $('#epresis_fecha').text(response.fecha);
-                $('#epresis_result').slideDown();
 
                 // Guardar costo final en hidden input y actualizar data-costo
                 $('#epresis_costo_hidden').val(costoFinal);
                 $('#epresis_fecha_hidden').val(response.fecha);
                 $('#metodo_envio_2').attr('data-costo', costoFinal);
 
-                // Actualizar el precio display
+                // Actualizar el precio display en el label
                 if(esGratis) {
                     $('#epresis_precio_display').html('<span class="text-success">GRATIS</span>');
+                    $('#epresis_descripcion_display').html('Llega el ' + response.fecha);
                 } else {
-                    $('#epresis_precio_display').html('$' + costoFinal.toFixed(2) + mensajeAdicional);
+                    $('#epresis_precio_display').html('$' + costoFinal.toFixed(2));
+                    if(mensajeDescripcion) {
+                        $('#epresis_descripcion_display').html(mensajeDescripcion + ' - Llega el ' + response.fecha);
+                    } else {
+                        $('#epresis_descripcion_display').html('Llega el ' + response.fecha);
+                    }
+                }
+
+                // Si NO es en label, actualizar también el resultado del formulario
+                if(!enLabel) {
+                    var htmlCosto = '';
+                    if(esGratis) {
+                        htmlCosto = '<span class="text-success">GRATIS</span> <small class="text-muted">(costo: $' + costoCalculado.toFixed(2) + ')</small>';
+                    } else {
+                        htmlCosto = '$' + costoFinal.toFixed(2);
+                    }
+                    $('#epresis_costo').html(htmlCosto + mensajeAdicional);
+                    $('#epresis_fecha').text(response.fecha);
+                    $('#epresis_result').slideDown();
                 }
             } else {
-                $('#epresis_error_msg').text(response.error || 'Error al calcular envío');
-                $('#epresis_error').slideDown();
+                // Error en la respuesta
+                if(enLabel) {
+                    $('#epresis_precio_display').html('<span class="text-warning">No disponible</span>');
+                    $('#epresis_descripcion_display').text('Error al calcular envío');
+                } else {
+                    $('#epresis_error_msg').text(response.error || 'Error al calcular envío');
+                    $('#epresis_error').slideDown();
+                }
             }
         },
         error: function(xhr, status, error) {
             console.error('Error:', error);
-            $('#epresis_error_msg').text('Error al calcular envío. Intente nuevamente.');
-            $('#epresis_error').slideDown();
+            if(enLabel) {
+                $('#epresis_precio_display').html('<span class="text-danger">Error</span>');
+                $('#epresis_descripcion_display').text('Error de conexión');
+            } else {
+                $('#epresis_error_msg').text('Error al calcular envío. Intente nuevamente.');
+                $('#epresis_error').slideDown();
+            }
         },
         complete: function() {
-            $('#epresis_loading').hide();
+            if(!enLabel) {
+                $('#epresis_loading').hide();
+            }
         }
     });
 }
 
-// Mostrar/ocultar formulario Epresis según selección y calcular automáticamente
+// Calcular automáticamente al cargar la página
+$(document).ready(function() {
+    calcularEnvioEpresis(true); // true = mostrar en el label
+});
+
+// Mostrar/ocultar formulario Epresis según selección
 $('input[name="entrega"]').on('change', function() {
     if($(this).val() === 'envio_2' || $(this).data('metodo-id') == 2) {
         $('#epresis_calc_form').slideDown();
-        // Calcular automáticamente al seleccionar Epresis
-        calcularEnvioEpresis();
+        // Calcular en el formulario también
+        calcularEnvioEpresis(false);
     } else {
         $('#epresis_calc_form').slideUp();
         $('#epresis_result').hide();

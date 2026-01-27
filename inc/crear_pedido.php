@@ -37,6 +37,26 @@ $param['valor']=$monto;
 $param['metodo']=$metodo;
 $param['desc']=$desc;
 $param['metodo_envio_id']=$_SESSION['prontoFront']['envio']['metodo_envio_id'] ?? null;
+$param['epresis_tiempo_entrega']=$_SESSION['prontoFront']['envio']['epresis_fecha'] ?? null;
+
+// Datos de facturación
+if(isset($_POST['facturacion'])){
+    $facturacion = $_POST['facturacion'];
+    $param['facturacion_nombre'] = $facturacion['nombre'] ?? '';
+    $param['facturacion_apellido'] = $facturacion['apellido'] ?? '';
+    $param['facturacion_dni'] = $facturacion['dni'] ?? '';
+    $param['facturacion_email'] = $facturacion['email'] ?? '';
+    $param['facturacion_direccion'] = $facturacion['direccion'] ?? '';
+    $param['facturacion_provincia'] = $facturacion['provincia'] ?? '';
+    $param['facturacion_ciudad'] = $facturacion['ciudad'] ?? '';
+    $param['facturacion_cp'] = $facturacion['cp'] ?? '';
+    $param['facturacion_telefono'] = $facturacion['telefono'] ?? '';
+    $param['facturacion_celular'] = $facturacion['celular'] ?? '';
+    $param['factura_a'] = $facturacion['factura_a'] ?? 0;
+    $param['cuit'] = $facturacion['cuit'] ?? '';
+    $param['razon_social'] = $facturacion['razon_social'] ?? '';
+}
+
 $pedido=crearPedido($param);
 
 if($pedido->success){

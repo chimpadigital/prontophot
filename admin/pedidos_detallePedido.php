@@ -7,7 +7,7 @@ $id = $_GET['id'];
 $pedidos = $conectar->query("SELECT p.*,(SELECT id_producto FROM pedidos_detalle WHERE id_pedido=p.id LIMIT 1 ) as producto,(SELECT imagen FROM imagenes WHERE id_pedido=p.id LIMIT 1 ) as imagen,DATE_FORMAT(fecha, '%d-%m-%Y') as fecha,CONCAT(c.nombre,' ',c.apellido) as clientenombre,c.dni clientedni,CONCAT(c.direccion,' ',c.ciudad) as clientedireccion,c.cp clientecp,c.provincia clienteprovincia,c.telefono clientetelefono FROM pedidos p LEFT JOIN clientes c ON p.id_cliente=c.id WHERE p.id='$id' ");
 $row = $pedidos->fetch_assoc();
 $imagenes = $conectar->query("SELECT * FROM pedidos_imagenes WHERE id_pedido='$id'");
-$productos = $conectar->query("SELECT pd.cantidad,p.*,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$id'");
+$productos = $conectar->query("SELECT pd.cantidad, pd.color, p.*,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$id'");
 
 // Obtener datos de facturación
 $facturacion = $conectar->query("SELECT * FROM facturacion WHERE pedido_id='$id'");
@@ -136,21 +136,18 @@ try {
                     <div class="row align-items-lg-center mt-5">
                         <div class="col-md-12 p-0">
                             <h4 class="text-bold">Detalles de Compra</h4>
-                            <?php
-                            $repla = array('<', '>');
-                            $texto = str_replace($repla, '<br>', $row['descripcion']);
-                            $texto = preg_replace_callback('/#([0-9a-fA-F]{6})/', function ($m) {
-                                $color = '#' . $m[1];
-                                return '<span class="dot" style="background-color: ' . $color . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span>';
-                            }, $texto);
-                            ?>
-                            <p><?php echo  $texto; ?></p>
                         </div>
 
                     </div>
 
                     <div class="row mt-3">
-                        <?php while ($rowp = $productos->fetch_assoc()) { ?>
+                        <?php while ($rowp = $productos->fetch_assoc()) {
+                            // Generar HTML del color
+                            $color_html = '';
+                            if (!empty($rowp['color'])) {
+                                $color_html = '<span class="dot" style="background-color: ' . $rowp['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span>';
+                            }
+                        ?>
                             <div class="col-12 p-4 col-categoria my-2">
                                 <div class="row">
                                     <div class="col-md-2">
@@ -162,9 +159,13 @@ try {
                                     </div>
                                     <div class="col-md-10 d-block d-lg-flex flex-column">
                                         <div class="d-block d-lg-flex">
-                                            <p class="detalles-pedido"><?php echo $rowp['nombre'] ?></p>
+                                            <ul class="list-group">
+                                                <li class="list-group-item bg-transparent border-0 mb-0 p-0"><strong><?php echo $rowp['nombre']; ?></strong></li>
+                                                <li class="list-group-item bg-transparent border-0 mb-0 p-0">Color seleccionado: <?php echo $color_html; ?></li>
+                                                <li class="list-group-item bg-transparent border-0 mb-0 p-0">Cantidad: <?php echo $rowp['cantidad'] ?></li>
+                                            </ul>
                                         </div>
-                                        <p class="descripcion-pedido"><?php echo $rowp['descripcion'] ?> <br> <?php echo $rowp['cantidad']; ?> </p>
+                                        <p class="descripcion-pedido"><?php echo $rowp['descripcion'] ?></p>
                                     </div>
                                 </div>
                             </div>

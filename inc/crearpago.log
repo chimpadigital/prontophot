@@ -1,0 +1,6 @@
+[27-Jan-2026 20:26:17 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[27-Jan-2026 20:26:22 UTC] {"message":"auto_return invalid. back_url.success must be defined","error":"invalid_auto_return","status":400,"cause":null}
+[27-Jan-2026 20:26:22 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Generic\RecuperableError.php on line 30
+[27-Jan-2026 21:16:49 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[27-Jan-2026 21:16:55 UTC] {"message":"auto_return invalid. back_url.success must be defined","error":"invalid_auto_return","status":400,"cause":null}
+[27-Jan-2026 21:16:55 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Generic\RecuperableError.php on line 30

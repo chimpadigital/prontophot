@@ -216,12 +216,6 @@ if (isset($_POST['entrega'])) {
                             </div>
                         </div>
 
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" name="factura_a" id="facturaA" value="1">
-                            <label class="form-check-label text-bold" for="facturaA">
-                                Necesito Factura A
-                            </label>
-                        </div>
 
                         <div class="form-row">
                             <div class="form-group col-md-12">
@@ -278,6 +272,13 @@ if (isset($_POST['entrega'])) {
                                 <label for="fac_celular">Celular</label>
                                 <input type="text" class="form-control" id="fac_celular" name="fac_celular" value="">
                             </div>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="factura_a" id="facturaA" value="1">
+                            <label class="form-check-label text-bold" for="facturaA">
+                                Necesito Factura A
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -514,6 +515,66 @@ if (isset($_POST['entrega'])) {
                 }, 'json');
             }
         });
+
+        // Detectar cambios en el CP y recalcular Epresis si está seleccionado
+        var ultimoCp = '<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cp'] : ''; ?>';
+        var metodoEnvioActual = '<?php echo isset($_SESSION['prontoFront']['envio']['metodo_envio_id']) ? $_SESSION['prontoFront']['envio']['metodo_envio_id'] : ''; ?>';
+
+        $('#fac_cp').on('blur', function() {
+            var nuevoCp = $(this).val();
+
+            // Solo recalcular si cambió el CP y el método de envío es Epresis (ID 2)
+            if (nuevoCp !== ultimoCp && metodoEnvioActual == '2' && nuevoCp.length >= 4) {
+                recalcularEpresis(nuevoCp);
+                ultimoCp = nuevoCp;
+            }
+        });
+
+        function recalcularEpresis(cp) {
+            // Mostrar indicador de carga en el área de envío
+            $('.totales p:contains("Envio")').html('Envio <i class="fa fa-spin fa-spinner"></i>');
+
+            $.post('inc/metodo_envio.php', {
+                cp_destino: cp
+            }, function(data) {
+                if (data.success) {
+                    var costoEnvio = parseFloat(data.costo);
+                    var fecha = data.fecha;
+                    var subtotal = <?php echo $total; ?>;
+
+                    // Actualizar el costo de envío en la sesión vía AJAX
+                    $.post('inc/actualizar_envio_sesion.php', {
+                        costo: costoEnvio,
+                        fecha: fecha
+                    }, function(response) {
+                        if (response.success) {
+                            // Actualizar visualmente el costo de envío
+                            var envioTag = costoEnvio > 0 ? '$ ' + costoEnvio.toFixed(2) : '<span class="text-success">GRATIS</span>';
+                            $('.totales p:contains("Envio")').html('Envio ' + envioTag);
+
+                            // Recalcular y actualizar el total
+                            var descuento = <?php echo $subd; ?>;
+                            var nuevoTotal = subtotal + costoEnvio - descuento;
+                            $('.totales p:contains("TOTAL")').html('TOTAL $ ' + nuevoTotal.toFixed(2));
+
+                            // Mostrar mensaje de actualización
+                            $('.totales').append('<p class="text-success mt-2 mensaje-actualizacion"><small>✓ Envío actualizado</small></p>');
+                            setTimeout(function() {
+                                $('.mensaje-actualizacion').fadeOut(function() {
+                                    $(this).remove();
+                                });
+                            }, 3000);
+                        }
+                    }, 'json').fail(function() {
+                        $('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error al actualizar</span>');
+                    });
+                } else {
+                    $('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error: ' + data.error + '</span>');
+                }
+            }, 'json').fail(function() {
+                $('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error de conexión</span>');
+            });
+        }
 
     });
 </script>

@@ -13,20 +13,44 @@ if (isset($_SESSION['prontoFront']['token'])) {
 if (isset($_POST['tipoenvio'])) {
     $costoenvio=0;
     $enviotag='';
+    $metodo_envio_id = null;
+
     $_SESSION['prontoFront']['envio']['tipo']=$_POST['tipoenvio'];
     $_SESSION['prontoFront']['envio']['envio']=$_POST['envio']??'';
-    
-    if ($_POST['tipoenvio']=='urbano') {
-        $costoenvio=250;
-        $enviotag='$ 250';
-    }else{
-        if($_POST['tipoenvio']=='recibir'){
-            $enviotag='Abona al recibir';
-            
+
+    // Verificar si se seleccionó un método de envío dinámico
+    if (strpos($_POST['tipoenvio'], 'envio_') === 0) {
+        // Extraer el ID del método de envío
+        $metodo_envio_id = str_replace('envio_', '', $_POST['tipoenvio']);
+
+        // Si es Epresis (ID 2), usar el costo calculado
+        if ($metodo_envio_id == 2) {
+            $costoenvio = isset($_POST['epresis_costo']) ? floatval($_POST['epresis_costo']) : 0;
+            $enviotag = $costoenvio > 0 ? '$ ' . $costoenvio : '<span class="text-success">GRATIS</span>';
+            $_SESSION['prontoFront']['envio']['epresis_fecha'] = $_POST['epresis_fecha'] ?? '';
+        } elseif ($metodo_envio_id != 2) {
+            // Obtener datos del método de envío desde la base de datos
+            $metodo_query = $conectar->query("SELECT * FROM metodos_envio WHERE id='$metodo_envio_id'");
+            if ($metodo_row = $metodo_query->fetch_assoc()) {
+                $costoenvio = $metodo_row['valor'];
+                $enviotag = $metodo_row['valor'] > 0 ? '$ ' . $metodo_row['valor'] : 'Sin cargo';
+            }
         }
-        $costoenvio=0;
+    } else {
+        // Compatibilidad con los valores antiguos hardcodeados
+        if ($_POST['tipoenvio']=='urbano') {
+            $costoenvio=250;
+            $enviotag='$ 250';
+        }else{
+            if($_POST['tipoenvio']=='recibir'){
+                $enviotag='Abona al recibir';
+            }
+            $costoenvio=0;
+        }
     }
+
     $_SESSION['prontoFront']['envio']['costo']=$costoenvio;
+    $_SESSION['prontoFront']['envio']['metodo_envio_id']=$metodo_envio_id;
     $_SESSION['prontoFront']['envio']['nombre']=$rowc['nombre'];
     $_SESSION['prontoFront']['envio']['apellido']=$rowc['apellido'];
     $_SESSION['prontoFront']['envio']['dni']=$rowc['dni'];
@@ -670,6 +694,66 @@ $(function(){
 			$('.btn-pagar').html('Pagar');
 		}
 	});
+
+	// Detectar cambios en el CP y recalcular Epresis si está seleccionado
+	var ultimoCp = '<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cp'] : ''; ?>';
+	var metodoEnvioActual = '<?php echo isset($_SESSION['prontoFront']['envio']['metodo_envio_id']) ? $_SESSION['prontoFront']['envio']['metodo_envio_id'] : ''; ?>';
+
+	$('#fac_cp').on('blur', function() {
+		var nuevoCp = $(this).val();
+
+		// Solo recalcular si cambió el CP y el método de envío es Epresis (ID 2)
+		if (nuevoCp !== ultimoCp && metodoEnvioActual == '2' && nuevoCp.length >= 4) {
+			recalcularEpresis(nuevoCp);
+			ultimoCp = nuevoCp;
+		}
+	});
+
+	function recalcularEpresis(cp) {
+		// Mostrar indicador de carga en el área de envío
+		$('.totales p:contains("Envio")').html('Envio <i class="fa fa-spin fa-spinner"></i>');
+
+		$.post('inc/metodo_envio.php', {
+			cp_destino: cp
+		}, function(data) {
+			if (data.success) {
+				var costoEnvio = parseFloat(data.costo);
+				var fecha = data.fecha;
+				var subtotal = <?php echo $costototal; ?>;
+
+				// Actualizar el costo de envío en la sesión vía AJAX
+				$.post('inc/actualizar_envio_sesion.php', {
+					costo: costoEnvio,
+					fecha: fecha
+				}, function(response) {
+					if (response.success) {
+						// Actualizar visualmente el costo de envío
+						var envioTag = costoEnvio > 0 ? '$ ' + costoEnvio.toFixed(2) : '<span class="text-success">GRATIS</span>';
+						$('.totales p:contains("Envio")').html('Envio ' + envioTag);
+
+						// Recalcular y actualizar el total
+						var descuento = <?php echo $md; ?>;
+						var nuevoTotal = subtotal + costoEnvio - descuento;
+						$('.totales p:contains("TOTAL")').html('TOTAL $ ' + nuevoTotal.toFixed(2));
+
+						// Mostrar mensaje de actualización
+						$('.totales').append('<p class="text-success mt-2 mensaje-actualizacion"><small>✓ Envío actualizado</small></p>');
+						setTimeout(function() {
+							$('.mensaje-actualizacion').fadeOut(function() {
+								$(this).remove();
+							});
+						}, 3000);
+					}
+				}, 'json').fail(function() {
+					$('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error al actualizar</span>');
+				});
+			} else {
+				$('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error: ' + data.error + '</span>');
+			}
+		}, 'json').fail(function() {
+			$('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error de conexión</span>');
+		});
+	}
 
 	$('.btn-pagar').click(function(e){
 		e.preventDefault();

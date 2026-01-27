@@ -9,7 +9,11 @@ $pedidod=$conectar->query("SELECT p.*,CONCAT(c.nombre,' ',c.apellido) as cliente
 $pedido=$pedidod->fetch_assoc();
 
 $imagenes=$conectar->query("SELECT * FROM pedidos_imagenes WHERE id_pedido='$id'");
-$productos=$conectar->query("SELECT pd.cantidad,p.*,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$id'");
+$productos=$conectar->query("SELECT pd.cantidad, pd.color, p.*,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$id'");
+
+// Obtener datos de facturación
+$facturacion = $conectar->query("SELECT * FROM facturacion WHERE pedido_id='$id'");
+$rowf = $facturacion->fetch_assoc();
 ?>
 <div class="container-fluid bg-black border-top border-white">
     <div class="row">
@@ -69,8 +73,13 @@ $productos=$conectar->query("SELECT pd.cantidad,p.*,(SELECT imagen FROM imagenes
                             <?php if($productos->num_rows>0){ ?>
                             <div class="row my-3">
                             <?php
-                            
-                            while($rowp=$productos->fetch_assoc()){?>
+                            while($rowp=$productos->fetch_assoc()){
+                                // Generar HTML del color
+                                $color_html = '';
+                                if (!empty($rowp['color'])) {
+                                    $color_html = '<span class="dot" style="background-color: ' . $rowp['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span>';
+                                }
+                            ?>
                                 <div class="col-12 p-4 col-categoria my-2">
                                     <div class="row">
                                         <div class="col-md-2">
@@ -78,9 +87,15 @@ $productos=$conectar->query("SELECT pd.cantidad,p.*,(SELECT imagen FROM imagenes
                                         </div>
                                         <div class="col-md-10 d-block d-lg-flex flex-column">
                                             <div class="d-block d-lg-flex">
-                                                <p class="detalles-pedido"><?php echo $rowp['nombre']?></p>
+                                                <ul class="list-group">
+                                                    <li class="list-group-item bg-transparent border-0 mb-0 p-0"><strong><?php echo $rowp['nombre']; ?></strong></li>
+                                                    <?php if(!empty($rowp['color'])): ?>
+                                                    <li class="list-group-item bg-transparent border-0 mb-0 p-0">Color seleccionado: <?php echo $color_html; ?></li>
+                                                    <?php endif; ?>
+                                                    <li class="list-group-item bg-transparent border-0 mb-0 p-0">Cantidad: <?php echo $rowp['cantidad'] ?></li>
+                                                </ul>
                                             </div>
-                                            <p class="descripcion-pedido"><?php echo $rowp['descripcion']?> <br> <?php echo $rowp['cantidad']; ?> </p>
+                                            <p class="descripcion-pedido"><?php echo $rowp['descripcion']?></p>
                                         </div>
                                     </div>
                                 </div>
@@ -158,20 +173,50 @@ $productos=$conectar->query("SELECT pd.cantidad,p.*,(SELECT imagen FROM imagenes
                                 	}
                                 	
                                 	switch ($pedido['entrega']){
+                                	    case 'envio_2': // Epresis
+                                	        echo '<strong>Datos de envio (Epresis)</strong><br>' .
+                                	             '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
+                                	             '<div> DNI:  ' . $dni . '</div>' .
+                                	             '<div>Dirección:  ' . $direccion . '</div>' .
+                                	             '<div> Provincia:  ' . $provincia . '</div>' .
+                                	             '<div>Código Postal:  ' . $cp . '</div>' .
+                                	             '<div>Teléfono:  ' . $telefono . '</div>';
+                                	    break;
                                 	    case 'suc1':
                                 	        echo '<h5>Retiro Gratis por Sucursal</h5>
                                     <p>Sucursal 1</p>
-                                    <p>Calle 12 N°1108 e/55 y 56</p>';
+                                    <p>Calle 12 N°1108 e/55 y 56</p>' .
+                                    '<strong>Datos de usuario</strong><br>' .
+                                    '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
+                                    '<div> DNI:  ' . $dni . '</div>' .
+                                    '<div>Dirección:  ' . $direccion . '</div>' .
+                                    '<div> Provincia:  ' . $provincia . '</div>' .
+                                    '<div>Código Postal:  ' . $cp . '</div>' .
+                                    '<div>Teléfono:  ' . $telefono . '</div>';
                                 	    break;
                                 	    case 'suc2':
                                 	        echo '<h5>Retiro Gratis por Sucursal</h5>
                                     <p>Sucursal 2</p>
-                                    <p>Calle 12 N°1108 e/55 y 56</p>';
+                                    <p>Calle 12 N°1108 e/55 y 56</p>' .
+                                    '<strong>Datos de usuario</strong><br>' .
+                                    '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
+                                    '<div> DNI:  ' . $dni . '</div>' .
+                                    '<div>Dirección:  ' . $direccion . '</div>' .
+                                    '<div> Provincia:  ' . $provincia . '</div>' .
+                                    '<div>Código Postal:  ' . $cp . '</div>' .
+                                    '<div>Teléfono:  ' . $telefono . '</div>';
                                 	    break;
                                 	    case 'suc3':
                                 	        echo '<h5>Retiro Gratis por Sucursal</h5>
                                     <p>Sucursal 3</p>
-                                    <p>Calle 12 N°1108 e/55 y 56</p>';
+                                    <p>Calle 12 N°1108 e/55 y 56</p>' .
+                                    '<strong>Datos de usuario</strong><br>' .
+                                    '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
+                                    '<div> DNI:  ' . $dni . '</div>' .
+                                    '<div>Dirección:  ' . $direccion . '</div>' .
+                                    '<div> Provincia:  ' . $provincia . '</div>' .
+                                    '<div>Código Postal:  ' . $cp . '</div>' .
+                                    '<div>Teléfono:  ' . $telefono . '</div>';
                                 	    break;
                                 	    case 'urbano':
                                 	        echo '<h5 class="mt-4">'.$titulo.'</h5>
@@ -202,8 +247,8 @@ $productos=$conectar->query("SELECT pd.cantidad,p.*,(SELECT imagen FROM imagenes
                                             <p>Teléfono/Celular : '.$telefono.'</p>
                                         </div>
                                     </div>';
-                                	    break;    
-                                	    
+                                	    break;
+
                                 	}?>
                                 </div>
                                 <div class="col-md-3 offset-0 offset-md-1 p-4 shadowBox my-3 my-lg-0">
@@ -212,6 +257,106 @@ $productos=$conectar->query("SELECT pd.cantidad,p.*,(SELECT imagen FROM imagenes
                                     <h4 class="text-bold">Total: $<?php echo $pedido['total']?></h4>
                                 </div>
                             </div>
+
+                            <?php if ($rowf): ?>
+                                <div class="row align-items-lg-center mt-5">
+                                    <div class="col-md-12 p-0">
+                                        <h4 class="text-bold">Datos de Facturación</h4>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4 datos-facturacion">
+                                    <div class="col-md-12 p-4 shadowBox">
+                                        <h5>Datos del Comprador</h5>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Nombre y Apellido:</strong> <?php echo $rowf['nombre'] . ' ' . $rowf['apellido']; ?></p>
+                                                <p><strong>DNI:</strong> <?php echo $rowf['dni']; ?></p>
+                                                <?php if (!empty($rowf['cuit'])): ?>
+                                                <p><strong>CUIT/CUIL:</strong> <?php echo $rowf['cuit']; ?></p>
+                                                <?php endif; ?>
+                                                <?php if (!empty($rowf['razon_social'])): ?>
+                                                <p><strong>Razón Social:</strong> <?php echo $rowf['razon_social']; ?></p>
+                                                <?php endif; ?>
+                                                <p><strong>Email:</strong> <?php echo $rowf['email']; ?></p>
+                                                <p><strong>Dirección:</strong> <?php echo $rowf['direccion']; ?></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Ciudad:</strong> <?php echo $rowf['ciudad']; ?></p>
+                                                <p><strong>Provincia:</strong> <?php echo $rowf['provincia']; ?></p>
+                                                <p><strong>CP:</strong> <?php echo $rowf['cp']; ?></p>
+                                                <p><strong>Teléfono:</strong> <?php echo $rowf['telefono']; ?></p>
+                                                <?php if (!empty($rowf['celular'])): ?>
+                                                    <p><strong>Celular:</strong> <?php echo $rowf['celular']; ?></p>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+
+                                        <?php if ($rowf['factura_a'] == 1): ?>
+                                            <hr class="my-3">
+                                            <div class="alert alert-info mb-0">
+                                                <i class="fa fa-file-text"></i> <strong>Requiere Factura A</strong>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
+                            <!-- Guía Epresis -->
+                            <?php
+                            // Verificar si el pedido usa Epresis (metodo_envio_id = 2)
+                            if ($pedido['metodo_envio_id'] == 2) {
+                                include __DIR__ . '/../inc/epresis_guia.php';
+                                $guia_existente = obtenerGuiaEpresis($id);
+                            ?>
+                                <div class="row align-items-lg-center mt-5">
+                                    <div class="col-md-12 p-0">
+                                        <h4 class="text-bold">Información de Envío Epresis</h4>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4 mb-5">
+                                    <div class="col-md-12">
+                                        <?php if ($guia_existente): ?>
+                                            <div class="alert alert-success p-4">
+                                                <h5 class="mb-3"><i class="fa fa-check-circle"></i> Tu pedido tiene guía de envío generada</h5>
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <strong>Código de Seguimiento:</strong>
+                                                        <p class="h4 text-primary"><?php echo $guia_existente['codigo_guia']; ?></p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <strong>Número de Remito:</strong>
+                                                        <p><?php echo $guia_existente['remito']; ?></p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <strong>Importe de Envío:</strong>
+                                                        <p>$<?php echo number_format($guia_existente['importe'], 2); ?></p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <strong>Zona de Destino:</strong>
+                                                        <p><?php echo $guia_existente['sub_zona_destino']; ?></p>
+                                                    </div>
+                                                </div>
+                                                <hr class="my-3">
+                                                <p class="mb-2"><i class="fa fa-info-circle"></i> <strong>Información del envío:</strong></p>
+                                                <p class="mb-1">Generada el <?php echo date('d/m/Y', strtotime($guia_existente['fecha_creacion'])); ?> a las <?php echo date('H:i', strtotime($guia_existente['fecha_creacion'])); ?>hs</p>
+                                                <?php if (!empty($pedido['epresis_tiempo_entrega'])): ?>
+                                                <p class="mb-0">Fecha estimada de entrega: <strong><?php echo $pedido['epresis_tiempo_entrega']; ?></strong></p>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="alert alert-info p-4">
+                                                <h5><i class="fa fa-clock-o"></i> Estamos preparando tu envío</h5>
+                                                <p class="mb-0">Tu pedido será procesado y la guía de envío se generará pronto. Te notificaremos cuando esté lista.</p>
+                                                <?php if (!empty($pedido['epresis_tiempo_entrega'])): ?>
+                                                <p class="mb-0 mt-2">Fecha estimada de entrega: <strong><?php echo $pedido['epresis_tiempo_entrega']; ?></strong></p>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php } ?>
 
                         </div>
                         <!-- FIN .tab-pane.show -->

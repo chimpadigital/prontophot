@@ -56,10 +56,17 @@ if($pedido->success){
         $row=$res->fetch_assoc();
         $cant=$datos['cantidad'];
         $precio=($cant * $row['precio']);
+        $color = isset($datos['color']) ? $conectar->real_escape_string($datos['color']) : NULL;
         $item['producto']=$row['nombre'].' '.$datos['color'];
         $item['cantidad']=$cant;
         $item['precio']=$precio;
-        $conectar->query("INSERT INTO `pedidos_detalle`( `id_pedido`, `id_producto`, `cantidad`) VALUES ('$idpedido','$id','$cant')");
+
+        // Guardar producto con color
+        if($color !== NULL){
+            $conectar->query("INSERT INTO `pedidos_detalle`( `id_pedido`, `id_producto`, `cantidad`, `color`) VALUES ('$idpedido','$id','$cant','$color')");
+        } else {
+            $conectar->query("INSERT INTO `pedidos_detalle`( `id_pedido`, `id_producto`, `cantidad`) VALUES ('$idpedido','$id','$cant')");
+        }
         $items[]=$item;
     }
     
