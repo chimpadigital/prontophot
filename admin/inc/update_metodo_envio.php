@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $stmt = $conectar->prepare("UPDATE metodos_envio SET nombre = ?, valor = ?, valor_gratis = ? WHERE id = ?");
-    $stmt->bind_param("sdi", $nombre, $valor, $valor_gratis, $id);
+    $stmt->bind_param($nombre, $valor, $valor_gratis, $id);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true]);
