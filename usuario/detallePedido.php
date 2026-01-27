@@ -342,7 +342,7 @@ $rowf = $facturacion->fetch_assoc();
                                                 <?php if (!empty($pedido['epresis_tiempo_entrega'])): ?>
                                                 <p class="mb-0">Fecha estimada de entrega: <strong><?php echo $pedido['epresis_tiempo_entrega']; ?></strong></p>
                                                 <?php endif; ?>
-                                                <a href="https://epresis.epsared.com.ar/seguimiento" class="text-white">Seguir envio</a>
+                                                <a target="_blank" href="https://epresis.epsared.com.ar/seguimiento" class="text-white">Seguir envio</a>
                                             </div>
                                         <?php else: ?>
                                             <div class="alert alert-info text-white p-4">
