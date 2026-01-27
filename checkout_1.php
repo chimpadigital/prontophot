@@ -19,12 +19,13 @@ $epresis_data = $conectar->query("SELECT valor_gratis FROM metodos_envio WHERE i
 $epresis_row = $epresis_data->fetch_assoc();
 $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
 
-// Obtener productos del carrito con sus dimensiones
+// Obtener productos del carrito con sus dimensiones y calcular total
 $productos_carrito = [];
+$total_carrito = 0;
 if (isset($_SESSION['pronto']['cart'])) {
     $carro = $_SESSION['pronto']['cart'];
     foreach($carro as $id_producto => $datos){
-        $res = $conectar->query("SELECT ancho, alto, profundidad FROM productos WHERE id='$id_producto'");
+        $res = $conectar->query("SELECT ancho, alto, profundidad, precio, descuento_final FROM productos WHERE id='$id_producto'");
         if($row = $res->fetch_assoc()){
             $productos_carrito[] = [
                 'id' => $id_producto,
@@ -34,6 +35,16 @@ if (isset($_SESSION['pronto']['cart'])) {
                 'profundidad' => floatval($row['profundidad'] ?? 0.25),
                 'peso' => 0.5 // Peso por defecto en kg
             ];
+
+            // Calcular total del carrito con descuentos aplicados
+            $precioUnitario = floatval($row['precio']);
+            $descuentoProducto = isset($row['descuento_final']) && $row['descuento_final'] > 0 ? floatval($row['descuento_final']) : 0;
+
+            if($descuentoProducto > 0){
+                $precioUnitario = $precioUnitario - ($precioUnitario * $descuentoProducto / 100);
+            }
+
+            $total_carrito += ($precioUnitario * $datos['cantidad']);
         }
     }
 }
@@ -156,8 +167,8 @@ if (isset($_SESSION['pronto']['cart'])) {
                             <input type="text" class="form-control" id="cp_destino_epresis" placeholder="Ej: 3500" value="<?php echo isset($rowc['cp']) ? $rowc['cp'] : ''; ?>" readonly>
                         </div>
                         <div id="epresis_result" class="mt-3" style="display:none;">
-                            <div class="alert alert-success">
-                                <h6>Costo de envío: $<span id="epresis_costo">0</span></h6>
+                            <div class="alert alert-success text-white">
+                                <h6>Costo de envío: <span id="epresis_costo">0</span></h6>
                                 <p class="mb-0 small">Fecha estimada: <span id="epresis_fecha">-</span></p>
                             </div>
                         </div>
@@ -301,6 +312,8 @@ $('.contenedor-input > input[data-toggle="collapse"]').click(function(e) {
 <script>
 // Variable con el valor de envío gratis de Epresis desde BD
 var epresisValorGratis = <?php echo floatval($epresis_valor_gratis); ?>;
+// Total del carrito
+var totalCarrito = <?php echo floatval($total_carrito); ?>;
 
 // Función para calcular envío Epresis automáticamente
 function calcularEnvioEpresis() {
@@ -332,19 +345,26 @@ function calcularEnvioEpresis() {
                 var costoCalculado = parseFloat(response.costo);
                 var costoFinal = costoCalculado;
                 var esGratis = false;
+                var mensajeAdicional = '';
 
-                // Verificar si el costo calculado es menor o igual al valor_gratis
-                if(epresisValorGratis > 0 && costoCalculado <= epresisValorGratis) {
+                // Verificar si el costo de envío supera el valor_gratis para ser gratis
+                if(epresisValorGratis > 0 && costoCalculado >= epresisValorGratis) {
                     costoFinal = 0;
                     esGratis = true;
+                } else if(epresisValorGratis > 0 && costoCalculado < epresisValorGratis) {
+                    // Calcular cuánto falta para envío gratis
+                    var faltante = epresisValorGratis - costoCalculado;
+                    mensajeAdicional = '<small class="text-white d-block mt-1">Te faltan $' + faltante.toFixed(2) + ' para obtener envío gratis</small>';
                 }
 
                 // Mostrar resultado
+                var htmlCosto = '';
                 if(esGratis) {
-                    $('#epresis_costo').html('<span class="text-success">GRATIS</span> <small class="text-muted">(antes $' + costoCalculado.toFixed(2) + ')</small>');
+                    htmlCosto = '<span class="text-success">GRATIS</span> <small class="text-muted">(costo: $' + costoCalculado.toFixed(2) + ')</small>';
                 } else {
-                    $('#epresis_costo').text(costoFinal.toFixed(2));
+                    htmlCosto = '$' + costoFinal.toFixed(2);
                 }
+                $('#epresis_costo').html(htmlCosto + mensajeAdicional);
                 $('#epresis_fecha').text(response.fecha);
                 $('#epresis_result').slideDown();
 
@@ -357,7 +377,7 @@ function calcularEnvioEpresis() {
                 if(esGratis) {
                     $('#epresis_precio_display').html('<span class="text-success">GRATIS</span>');
                 } else {
-                    $('#epresis_precio_display').text('$' + costoFinal.toFixed(2));
+                    $('#epresis_precio_display').html('$' + costoFinal.toFixed(2) + mensajeAdicional);
                 }
             } else {
                 $('#epresis_error_msg').text(response.error || 'Error al calcular envío');
