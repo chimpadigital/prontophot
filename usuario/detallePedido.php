@@ -68,8 +68,6 @@ $rowf = $facturacion->fetch_assoc();
                             aria-labelledby="home-tab">
 
                             <h5 class="titulo-tabs-user">Detalle de el pedido #<?php echo $pedido['id']; ?></h5>
-							<?php $repla=array('<','>'); ?>
-                            <p><?php echo str_replace($repla,'<br>',$pedido['descripcion']); ?></p>
                             <?php if($productos->num_rows>0){ ?>
                             <div class="row my-3">
                             <?php
@@ -323,7 +321,7 @@ $rowf = $facturacion->fetch_assoc();
                                                 <div class="row">
                                                     <div class="col-md-3">
                                                         <strong>Código de Seguimiento:</strong>
-                                                        <p class="h4 text-primary"><?php echo $guia_existente['codigo_guia']; ?></p>
+                                                        <p class="h4 text-white"><?php echo $guia_existente['codigo_guia']; ?></p>
                                                     </div>
                                                     <div class="col-md-3">
                                                         <strong>Número de Remito:</strong>
@@ -346,7 +344,7 @@ $rowf = $facturacion->fetch_assoc();
                                                 <?php endif; ?>
                                             </div>
                                         <?php else: ?>
-                                            <div class="alert alert-info p-4">
+                                            <div class="alert alert-info text-white p-4">
                                                 <h5><i class="fa fa-clock-o"></i> Estamos preparando tu envío</h5>
                                                 <p class="mb-0">Tu pedido será procesado y la guía de envío se generará pronto. Te notificaremos cuando esté lista.</p>
                                                 <?php if (!empty($pedido['epresis_tiempo_entrega'])): ?>
