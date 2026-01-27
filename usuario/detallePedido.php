@@ -172,7 +172,7 @@ $rowf = $facturacion->fetch_assoc();
                                 	
                                 	switch ($pedido['entrega']){
                                 	    case 'envio_2': // Epresis
-                                	        echo '<strong>Datos de envio (Epresis)</strong><br>' .
+                                	        echo '<strong>Datos de envio (EPSA)</strong><br>' .
                                 	             '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
                                 	             '<div> DNI:  ' . $dni . '</div>' .
                                 	             '<div>Dirección:  ' . $direccion . '</div>' .
@@ -309,7 +309,7 @@ $rowf = $facturacion->fetch_assoc();
                             ?>
                                 <div class="row align-items-lg-center mt-5">
                                     <div class="col-md-12 p-0">
-                                        <h4 class="text-bold">Información de Envío Epresis</h4>
+                                        <h4 class="text-bold">Información de Envío EPSA</h4>
                                     </div>
                                 </div>
 

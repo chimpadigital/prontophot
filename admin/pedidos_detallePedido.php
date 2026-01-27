@@ -310,7 +310,7 @@ try {
                     ?>
                         <div class="row align-items-lg-center mt-5">
                             <div class="col-md-9 p-0">
-                                <h4 class="text-bold">Guía de Envío Epresis</h4>
+                                <h4 class="text-bold">Guía de Envío EPSA</h4>
                             </div>
                             <div class="col-md-3 text-left text-lg-right p-0 mt-2 mt-md-0">
                                 <?php if (!$guia_existente): ?>
@@ -363,7 +363,7 @@ try {
                             <div class="modal-content">
                                 <div class="modal-header bg-warning">
                                     <h5 class="modal-title" id="modalGenerarGuiaLabel">
-                                        <i class="fa fa-truck"></i> Generar Guía de Envío Epresis
+                                        <i class="fa fa-truck"></i> Generar Guía de Envío EPSA
                                     </h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
