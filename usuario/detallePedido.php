@@ -341,6 +341,7 @@ $rowf = $facturacion->fetch_assoc();
                                                 <p class="mb-1">Generada el <?php echo date('d/m/Y', strtotime($guia_existente['fecha_creacion'])); ?> a las <?php echo date('H:i', strtotime($guia_existente['fecha_creacion'])); ?>hs</p>
                                                 <?php if (!empty($pedido['epresis_tiempo_entrega'])): ?>
                                                 <p class="mb-0">Fecha estimada de entrega: <strong><?php echo $pedido['epresis_tiempo_entrega']; ?></strong></p>
+                                                <a href="https://epresis.epsared.com.ar/seguimiento" class="text-white">Seguir envio</a>
                                                 <?php endif; ?>
                                             </div>
                                         <?php else: ?>
