@@ -1,5 +1,5 @@
 <?php include ('header.php'); ?>
-<?php 
+<?php
 include_once 'conexion/conectar.inc.php';
 global $conectar;
 if (isset($_SESSION['pronto']['cart'])) {
@@ -10,10 +10,13 @@ if (isset($_SESSION['pronto']['cart'])) {
     }
 }else{
     echo '<script>window.location.replace("'.URL_SITIO.'");</script>';
-    
+
 }
 
-
+// Obtener valor para envío gratis con Epresis
+$epresis_data = $conectar->query("SELECT valor_gratis FROM metodos_envio WHERE id=2");
+$epresis_row = $epresis_data->fetch_assoc();
+$epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
 
 ?>
 <div class="">
@@ -83,13 +86,51 @@ if (isset($_SESSION['pronto']['cart'])) {
                                         </div>
                                     </div>
                                 </div>
-                                <?php } ?>    
+                                <?php } ?>
                             	<?php }else{?>
                             	<h5 class="mb-4">Pedido vacio</h5>
                             	<?php }?>
-                                
+
                                 <hr class="mb-4">
-                                
+
+                                <?php if ($cant>0 && $epresis_valor_gratis > 0) {
+                                    // Calcular progreso para envío gratis
+                                    $porcentaje = min(($total / $epresis_valor_gratis) * 100, 100);
+                                    $faltante = max($epresis_valor_gratis - $total, 0);
+                                ?>
+                                <!-- Barra de progreso envío gratis -->
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <?php if ($total >= $epresis_valor_gratis) { ?>
+                                            <p class="mb-0 text-success font-weight-bold">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle-fill mb-1" viewBox="0 0 16 16">
+                                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                                </svg>
+                                                ¡Felicitaciones! Tenés envío GRATIS con Epresis
+                                            </p>
+                                        <?php } else { ?>
+                                            <p class="mb-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-truck mb-1" viewBox="0 0 16 16">
+                                                    <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                                                </svg>
+                                                Te faltan <strong>$<?php echo number_format($faltante, 0); ?></strong> para envío GRATIS con Epresis
+                                            </p>
+                                            <span class="text-muted small">$<?php echo number_format($total, 0); ?> / $<?php echo number_format($epresis_valor_gratis, 0); ?></span>
+                                        <?php } ?>
+                                    </div>
+                                    <div class="progress" style="height: 25px; border-radius: 20px;">
+                                        <div class="progress-bar <?php echo $total >= $epresis_valor_gratis ? 'bg-success' : 'bg-warning'; ?>"
+                                             role="progressbar"
+                                             style="width: <?php echo $porcentaje; ?>%;"
+                                             aria-valuenow="<?php echo $porcentaje; ?>"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
+                                            <?php echo number_format($porcentaje, 0); ?>%
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php } ?>
+
                             </div>
                         </div>
                         <!-- Card -->

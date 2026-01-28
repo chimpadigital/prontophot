@@ -115,7 +115,8 @@
                                         	<div class="form-group">
                                             	<label for="imagenSlide">Imagen</label>
                                                 <input type="file" class="form-control-file" name="imagen" id="imagenSlide">
-                                                <small class="form-text text-muted">Ratio 1280∶571</small>
+                                                <small class="form-text text-muted">
+                                            <span class="d-block my-3">Tamaño de imagen 1366x609px</span></small>
                                             </div>
                                         </div>
                                         <div class="form-row">
