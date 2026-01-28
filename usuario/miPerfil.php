@@ -54,6 +54,10 @@ $datos=$usuario->fetch_assoc();
                                     <input type="text" class="form-control"  value="<?php echo $datos['dni']; ?>" name="dni">
                                 </div>
                                 <div class="form-group ">
+                                    <label for="cuit">CUIT</label>
+                                    <input type="text" class="form-control" value="<?php echo $datos['cuit']; ?>" name="cuit" placeholder="XX-XXXXXXXX-X">
+                                </div>
+                                <div class="form-group ">
                                     <label for="email">Email</label>
                                     <input type="email" class="form-control" value="<?php echo $datos['email']; ?>" name="email">
                                 </div>

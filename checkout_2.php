@@ -44,7 +44,7 @@ if (isset($_POST['entrega'])) {
                             $precioUnitario = $prod_row['precio'];
                             $descuento = isset($prod_row['descuento_final']) && $prod_row['descuento_final'] > 0 ? $prod_row['descuento_final'] : 0;
 
-                            if($descuento > 0){
+                            if ($descuento > 0) {
                                 $precioUnitario = $prod_row['precio'] - ($prod_row['precio'] * $descuento / 100);
                             }
 
@@ -105,7 +105,7 @@ if (isset($_POST['entrega'])) {
         $descuento = isset($prod_row['descuento_final']) && $prod_row['descuento_final'] > 0 ? $prod_row['descuento_final'] : 0;
 
         // Aplicar descuento si existe
-        if($descuento > 0){
+        if ($descuento > 0) {
             $precioUnitario = $prod_row['precio'] - ($prod_row['precio'] * $descuento / 100);
         }
 
@@ -231,20 +231,10 @@ if (isset($_POST['entrega'])) {
                                 <label for="fac_email">Email *</label>
                                 <input type="email" class="form-control" id="fac_email" name="fac_email" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['email'] : ''; ?>" required>
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label for="cuit">CUIT/CUIL</label>
-                                <input type="text" class="form-control" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
+                                <label for="cuit">CUIT</label>
+                                <input type="text" class="form-control" id="cuit" name="cuit" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cuit'] : ''; ?>" placeholder="XX-XXXXXXXX-X">
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="razon_social">Razón Social</label>
-                                <input type="text" class="form-control" id="razon_social" name="razon_social" placeholder="Razón Social">
-                            </div>
-                        </div>
-
-
-                        <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="fac_direccion">Dirección *</label>
                                 <input type="text" class="form-control" id="fac_direccion" name="fac_direccion" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['direccion'] : ''; ?>" required>
@@ -253,8 +243,6 @@ if (isset($_POST['entrega'])) {
                                 <label for="fac_altura">Altura *</label>
                                 <input type="number" class="form-control" id="fac_altura" name="fac_altura" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['altura'] : ''; ?>" required min="1" max="99999">
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="fac_provincia">Provincia *</label>
                                 <select name="fac_provincia" id="fac_provincia" class="form-control" required>
@@ -285,7 +273,7 @@ if (isset($_POST['entrega'])) {
                                     <option value="Tucuman" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Tucuman') ? 'selected' : ''; ?>>Tucuman</option>
                                 </select>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-12">
                                 <label for="fac_ciudad">Ciudad *</label>
                                 <input type="text" class="form-control" id="fac_ciudad" name="fac_ciudad" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['ciudad'] : ''; ?>" required>
                             </div>
@@ -299,13 +287,13 @@ if (isset($_POST['entrega'])) {
                                 <label for="fac_telefono">Teléfono</label>
                                 <input type="text" class="form-control" id="fac_telefono" name="fac_telefono" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['telefono'] : ''; ?>">
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label for="fac_celular">Celular</label>
                                 <input type="text" class="form-control" id="fac_celular" name="fac_celular" value="">
                             </div>
                         </div>
+
+                        <hr class="my-4">
 
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" name="factura_a" id="facturaA" value="1">
@@ -313,6 +301,16 @@ if (isset($_POST['entrega'])) {
                                 Necesito Factura A
                             </label>
                         </div>
+                        <div id="datosFacturaA" style="display: none;">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="razon_social">Razón Social</label>
+                                    <input type="text" class="form-control" id="razon_social" name="razon_social" placeholder="Razón Social">
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
                     </div>
                 </div>
 
@@ -341,7 +339,7 @@ if (isset($_POST['entrega'])) {
                             // Calcular precio con descuento si existe
                             $precioUnitario = $row['precio'];
                             $descuento = isset($row['descuento_final']) && $row['descuento_final'] > 0 ? $row['descuento_final'] : 0;
-                            if($descuento > 0){
+                            if ($descuento > 0) {
                                 $precioUnitario = $row['precio'] - ($row['precio'] * $descuento / 100);
                             }
 
@@ -547,6 +545,18 @@ if (isset($_POST['entrega'])) {
                         window.location.href = "checkout-resultado?pedido=" + data.pedido;
                     }
                 }, 'json');
+            }
+        });
+
+        // Toggle para mostrar/ocultar datos de Factura A
+        $('#facturaA').change(function() {
+            if ($(this).is(':checked')) {
+                $('#datosFacturaA').slideDown();
+                $('#razon_social').prop('required', true);
+            } else {
+                $('#datosFacturaA').slideUp();
+                $('#razon_social').prop('required', false);
+                $('#razon_social').val('');
             }
         });
 

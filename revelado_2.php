@@ -406,7 +406,9 @@ if (isset($_POST['tamanogral'])) {
                         <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="tipoenvio" id="metodo_envio_<?php echo $metodo['id']; ?>" value="envio_<?php echo $metodo['id']; ?>" data-metodo-id="<?php echo $metodo['id']; ?>" data-costo="<?php echo $metodo['valor']; ?>" data-valor-gratis="<?php echo $metodo['valor_gratis']; ?>">
                         <label class="form-check-label d-flex flex-row" for="metodo_envio_<?php echo $metodo['id']; ?>">
                             <div>
-                                <p class="d-inline-block m-0"><?php echo $metodo['nombre']; ?></p>
+                                <p class="d-inline-block m-0"><?php 
+                                echo $metodo_counter == 2 ? 'Envío a domicilio' : $metodo['nombre'];
+                                ?></p>
                                 <?php if($metodo['id'] == 2){ // Epresis - cálculo dinámico ?>
                                 <span class="d-block text-bold" id="metodo_costo_label_<?php echo $metodo['id']; ?>"><i class="fa fa-spinner fa-spin"></i> Calculando...</span>
                                 <?php } else {
@@ -442,7 +444,7 @@ if (isset($_POST['tamanogral'])) {
                                     <?php } elseif($metodo['valor'] > 0){ ?>
                                     $<?php echo $metodo['valor']; ?>
                                     <?php if($valor_gratis_metodo > 0 && $total_carrito_calc < $valor_gratis_metodo){ ?>
-                                    <br><small class="text-info">Comprá $<?php echo number_format($valor_gratis_metodo - $total_carrito_calc, 0); ?> más para envío gratis</small>
+                                    <br><span class="d-block text-muted descripcion-pequeña text-info">Comprá $<?php echo number_format($valor_gratis_metodo - $total_carrito_calc, 0); ?> más para envío gratis</span>
                                     <?php } ?>
                                     <?php } else { ?>
                                     Sin cargo
@@ -758,7 +760,7 @@ function calcularEnvioEpresis(enLabel) {
                 var textoEnvio = costoEnvio > 0 ? '$' + costoEnvio.toFixed(2) : '<span class="text-success">¡Felicitaciones! Tenés envío GRATIS</span>';
                 var textoFecha = fecha ? '<br>' : '';
                 var textoPromocion = (valorGratis > 0 && totalCarrito < valorGratis) ?
-                    '<br><small class="text-info">🚚 ¡Te faltan $' + (valorGratis - totalCarrito).toFixed(0) + ' para envío GRATIS!</small>' : '';
+                    '<span class="d-block text-muted descripcion-pequeña text-info">🚚 ¡Te faltan $' + (valorGratis - totalCarrito).toFixed(0) + ' para envío GRATIS!</span>' : '';
 
                 $('#metodo_costo_label_2').html(textoEnvio + textoFecha + textoPromocion);
             }

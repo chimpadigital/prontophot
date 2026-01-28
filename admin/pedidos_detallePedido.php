@@ -4,7 +4,7 @@ include __DIR__ . '/../inc/funciones.inc.php';
 include __DIR__ . '/conexion/conectar.inc.php';
 global $conectar;
 $id = $_GET['id'];
-$pedidos = $conectar->query("SELECT p.*,(SELECT id_producto FROM pedidos_detalle WHERE id_pedido=p.id LIMIT 1 ) as producto,(SELECT imagen FROM imagenes WHERE id_pedido=p.id LIMIT 1 ) as imagen,DATE_FORMAT(fecha, '%d-%m-%Y') as fecha,CONCAT(c.nombre,' ',c.apellido) as clientenombre,c.dni clientedni,CONCAT(c.direccion,' ',c.ciudad) as clientedireccion,c.cp clientecp,c.altura clientealtura,c.provincia clienteprovincia,c.telefono clientetelefono FROM pedidos p LEFT JOIN clientes c ON p.id_cliente=c.id WHERE p.id='$id' ");
+$pedidos = $conectar->query("SELECT p.*,(SELECT id_producto FROM pedidos_detalle WHERE id_pedido=p.id LIMIT 1 ) as producto,(SELECT imagen FROM imagenes WHERE id_pedido=p.id LIMIT 1 ) as imagen,DATE_FORMAT(fecha, '%d-%m-%Y') as fecha,CONCAT(c.nombre,' ',c.apellido) as clientenombre,c.dni clientedni,CONCAT(c.direccion) as clientedireccion,c.cp clientecp, c.ciudad clienteciudad, c.altura clientealtura,c.provincia clienteprovincia,c.telefono clientetelefono FROM pedidos p LEFT JOIN clientes c ON p.id_cliente=c.id WHERE p.id='$id' ");
 $row = $pedidos->fetch_assoc();
 $imagenes = $conectar->query("SELECT * FROM pedidos_imagenes WHERE id_pedido='$id'");
 $productos = $conectar->query("SELECT pd.cantidad, pd.color, p.*,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$id'");
@@ -188,6 +188,7 @@ try {
                                 $titulo = 'Enviar a mi domicilio';
                                 $nombre = $row['nombre'];
                                 $dni = $row['clientedni'];
+                                $ciudad = $row['clienteciudad'];
                                 $direccion = $row['clientedireccion'];
                                 $provincia = $row['clienteprovincia'];
                                 $cp = $row['clientecp'];
@@ -204,7 +205,7 @@ try {
 
                             switch ($row['entrega']) {
                                 case 'envio_2':
-                                    echo $titulo = '<strong>Datos de envio</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' - Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
+                                    echo $titulo = '<strong>Datos de envio</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Ciudad:  ' . $ciudad = $row['clienteciudad'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
                                     break;
                                 case 'suc1':
                                     echo '<h5>Retiro Gratis por Sucursal</h5>

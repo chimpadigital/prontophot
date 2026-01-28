@@ -21,7 +21,35 @@ $cp_destino = $_POST['cp_destino'];
 
 // Obtener productos del carrito con sus dimensiones y peso
 $productos_carrito = [];
-if (isset($_SESSION['pronto']['cart'])) {
+$total_fotos = 0;
+
+// Verificar si es revelado de fotos
+if (isset($_SESSION['archivos']) && !empty($_SESSION['archivos'])) {
+    // REVELADO DE FOTOS
+    // Contar total de fotos a revelar
+    foreach ($_SESSION['archivos'] as $foto) {
+        $total_fotos += intval($foto['cantidad'] ?? 1);
+    }
+
+    // Calcular peso basado en cantidad de fotos
+    // 100 copias = 1 kg, entonces 1 foto = 0.01 kg
+    $peso_calculado = ($total_fotos * 0.01);
+
+    // Mínimo 2 kg para cotizar
+    $peso_final = max($peso_calculado, 2);
+
+    // Medidas estándar para revelado: 18x22 cm (0.18 x 0.22 metros)
+    $productos_carrito[] = [
+        'id' => 'revelado',
+        'cantidad' => 1, // Un bulto
+        'alto' => 0.22,  // 22 cm
+        'ancho' => 0.18, // 18 cm
+        'profundidad' => 0.05, // Altura del paquete (estimada)
+        'peso' => $peso_final
+    ];
+
+} elseif (isset($_SESSION['pronto']['cart'])) {
+    // PRODUCTOS DE TIENDA
     $carro = $_SESSION['pronto']['cart'];
     foreach($carro as $id_producto => $datos){
         $res = $conectar->query("SELECT ancho, alto, profundidad, peso FROM productos WHERE id='$id_producto'");

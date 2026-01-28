@@ -436,14 +436,18 @@ if (isset($_POST['tipoenvio'])) {
                                 <label for="fac_email">Email *</label>
                                 <input type="email" class="form-control" id="fac_email" name="fac_email" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['email'] : ''; ?>" required>
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
+                                <div class="form-group col-md-6">
+                                    <label for="cuit">CUIT</label>
+                                    <input type="text" class="form-control" id="cuit" name="cuit" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cuit'] : ''; ?>" placeholder="XX-XXXXXXXX-X">
+                                </div>
+                            <div class="form-group col-md-6">
                                 <label for="fac_direccion">Dirección *</label>
                                 <input type="text" class="form-control" id="fac_direccion" name="fac_direccion" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['direccion'] : ''; ?>" required>
                             </div>
-                        </div>
-                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="fac_altura">Altura *</label>
+                                <input type="number" class="form-control" id="fac_altura" name="fac_altura" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['altura'] : ''; ?>" required min="1" max="99999">
+                            </div>
                             <div class="form-group col-md-6">
                                 <label for="fac_provincia">Provincia *</label>
                                 <select name="fac_provincia" id="fac_provincia" class="form-control" required>
@@ -474,7 +478,7 @@ if (isset($_POST['tipoenvio'])) {
                                     <option value="Tucuman" <?php echo (isset($_SESSION['prontoFront']['token']) && $rowc['provincia'] == 'Tucuman') ? 'selected' : ''; ?>>Tucuman</option>
                                 </select>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-12">
                                 <label for="fac_ciudad">Ciudad *</label>
                                 <input type="text" class="form-control" id="fac_ciudad" name="fac_ciudad" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['ciudad'] : ''; ?>" required>
                             </div>
@@ -485,16 +489,10 @@ if (isset($_POST['tipoenvio'])) {
                                 <input type="text" class="form-control" id="fac_cp" name="fac_cp" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cp'] : ''; ?>" required>
                             </div>
                             <div class="form-group col-md-4">
-                                <label for="fac_altura">Altura *</label>
-                                <input type="number" class="form-control" id="fac_altura" name="fac_altura" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['altura'] : ''; ?>" required min="1" max="99999">
-                            </div>
-                            <div class="form-group col-md-4">
                                 <label for="fac_telefono">Teléfono</label>
                                 <input type="text" class="form-control" id="fac_telefono" name="fac_telefono" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['telefono'] : ''; ?>">
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label for="fac_celular">Celular</label>
                                 <input type="text" class="form-control" id="fac_celular" name="fac_celular" value="">
                             </div>
@@ -510,10 +508,6 @@ if (isset($_POST['tipoenvio'])) {
                         </div>
                         <div id="datosFacturaA" style="display: none;">
                             <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="cuit">CUIT</label>
-                                    <input type="text" class="form-control" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
-                                </div>
                                 <div class="form-group col-md-6">
                                     <label for="razon_social">Razón Social</label>
                                     <input type="text" class="form-control" id="razon_social" name="razon_social" placeholder="Razón Social">
@@ -682,13 +676,11 @@ $(function(){
 	$('#facturaA').change(function() {
 		if ($(this).is(':checked')) {
 			$('#datosFacturaA').slideDown();
-			$('#cuit').prop('required', true);
 			$('#razon_social').prop('required', true);
 		} else {
 			$('#datosFacturaA').slideUp();
 			$('#cuit').prop('required', false);
 			$('#razon_social').prop('required', false);
-			$('#cuit').val('');
 			$('#razon_social').val('');
 		}
 	});

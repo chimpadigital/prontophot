@@ -106,7 +106,7 @@ $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle-fill mb-1" viewBox="0 0 16 16">
                                                     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                                                 </svg>
-                                                ¡Felicitaciones! Tenés envío GRATIS con Epresis
+                                                ¡Felicitaciones! Tenés envío GRATIS
                                             </p>
                                         <?php } else { ?>
                                             <p class="mb-0">
@@ -119,7 +119,7 @@ $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
                                         <?php } ?>
                                     </div>
                                     <div class="progress" style="height: 25px; border-radius: 20px;">
-                                        <div class="progress-bar <?php echo $total >= $epresis_valor_gratis ? 'bg-success' : 'bg-warning'; ?>"
+                                        <div class="progress-bar <?php echo $total >= $epresis_valor_gratis ? 'bg-success' : 'bg-success'; ?>"
                                              role="progressbar"
                                              style="width: <?php echo $porcentaje; ?>%;"
                                              aria-valuenow="<?php echo $porcentaje; ?>"
