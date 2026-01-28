@@ -119,12 +119,23 @@ if (isset($_SESSION['pronto']['cart'])) {
                         }
                     ?>
                     <div class="form-check mb-3 <?php echo $metodo_counter == 1 ? 'mt-3' : ''; ?> contenedor-input">
-                        <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="entrega" id="metodo_envio_<?php echo $metodo['id']; ?>" value="envio_<?php echo $metodo['id']; ?>" data-metodo-id="<?php echo $metodo['id']; ?>" data-costo="<?php echo $metodo['valor']; ?>">
+                        <?php
+                        // Calcular si aplica envío gratis para este método
+                        $valor_gratis_metodo = floatval($metodo['valor_gratis']);
+                        $es_gratis_metodo = ($valor_gratis_metodo > 0 && $total_carrito >= $valor_gratis_metodo);
+                        $costo_final_metodo = $es_gratis_metodo ? 0 : $metodo['valor'];
+                        ?>
+                        <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="entrega" id="metodo_envio_<?php echo $metodo['id']; ?>" value="envio_<?php echo $metodo['id']; ?>" data-metodo-id="<?php echo $metodo['id']; ?>" data-costo="<?php echo $costo_final_metodo; ?>" data-valor-gratis="<?php echo $valor_gratis_metodo; ?>">
                         <label class="form-check-label d-flex flex-row" for="metodo_envio_<?php echo $metodo['id']; ?>">
                             <div>
                                 <p class="d-inline-block m-0"><?php echo $metodo['nombre']; ?></p>
-                                <?php if($metodo['valor'] > 0){ ?>
+                                <?php if($es_gratis_metodo){ ?>
+                                <span class="d-block text-bold text-success">¡Felicitaciones! Tenés envío GRATIS</span>
+                                <?php } elseif($metodo['valor'] > 0){ ?>
                                 <span class="d-block text-bold">$<?php echo $metodo['valor']; ?></span>
+                                <?php if($valor_gratis_metodo > 0 && $total_carrito < $valor_gratis_metodo){ ?>
+                                <span class="d-block text-muted descripcion-pequeña text-info">🚚 ¡Te faltan $<?php echo number_format($valor_gratis_metodo - $total_carrito, 0); ?> para envío GRATIS!</span>
+                                <?php } ?>
                                 <?php } ?>
                                 <?php if(!empty($metodo['descripcion'])){ ?>
                                 <span class="d-block text-muted descripcion-pequeña"><?php echo $metodo['descripcion']; ?></span>
@@ -323,11 +334,11 @@ function calcularEnvioEpresis(enLabel) {
 
     if(!cpDestino) {
         if(enLabel) {
-            $('#epresis_precio_display').html('<span class="text-danger">Sin CP</span>');
-            $('#epresis_descripcion_display').text('Código postal no disponible');
+            //$('#epresis_precio_display').html('<span class="text-danger">Sin CP</span>');
+            //$('#epresis_descripcion_display').text('Código postal no disponible');
         } else {
-            $('#epresis_error_msg').text('No se encontró código postal del usuario');
-            $('#epresis_error').slideDown();
+            //$('#epresis_error_msg').text('No se encontró código postal del usuario');
+            //$('#epresis_error').slideDown();
         }
         return;
     }
@@ -357,15 +368,15 @@ function calcularEnvioEpresis(enLabel) {
                 var mensajeAdicional = '';
                 var mensajeDescripcion = '';
 
-                // Verificar si el costo de envío supera el valor_gratis para ser gratis
-                if(epresisValorGratis > 0 && costoCalculado >= epresisValorGratis) {
+                // Verificar si el TOTAL DEL CARRITO supera el valor_gratis para envío gratis
+                if(epresisValorGratis > 0 && totalCarrito >= epresisValorGratis) {
                     costoFinal = 0;
                     esGratis = true;
-                } else if(epresisValorGratis > 0 && costoCalculado < epresisValorGratis) {
-                    // Calcular cuánto falta para envío gratis
-                    var faltante = epresisValorGratis - costoCalculado;
-                    mensajeAdicional = '<small class="text-info d-block mt-1">Te faltan $' + faltante.toFixed(2) + ' para envío gratis</small>';
-                    mensajeDescripcion = 'Te faltan $' + faltante.toFixed(2) + ' para envío gratis';
+                } else if(epresisValorGratis > 0 && totalCarrito < epresisValorGratis) {
+                    // Calcular cuánto falta en productos para envío gratis
+                    var faltante = epresisValorGratis - totalCarrito;
+                    mensajeAdicional = '<small class="text-info d-block mt-1">🚚 ¡Te faltan $' + faltante.toFixed(2) + ' para envío GRATIS!</small>';
+                    mensajeDescripcion = '🚚 ¡Te faltan $' + faltante.toFixed(2) + ' para envío GRATIS!';
                 }
 
                 // Guardar costo final en hidden input y actualizar data-costo
@@ -375,14 +386,14 @@ function calcularEnvioEpresis(enLabel) {
 
                 // Actualizar el precio display en el label
                 if(esGratis) {
-                    $('#epresis_precio_display').html('<span class="text-success">GRATIS</span>');
-                    $('#epresis_descripcion_display').html('Llega el ' + response.fecha);
+                    $('#epresis_precio_display').html('<span class="text-success">¡Felicitaciones! Tenés envío GRATIS</span>');
+                    $('#epresis_descripcion_display').html('<p>Llega el ' + response.fecha+'</p>');
                 } else {
                     $('#epresis_precio_display').html('$' + costoFinal.toFixed(2));
                     if(mensajeDescripcion) {
                         $('#epresis_descripcion_display').html(mensajeDescripcion + ' - Llega el ' + response.fecha);
                     } else {
-                        $('#epresis_descripcion_display').html('Llega el ' + response.fecha);
+                        $('#epresis_descripcion_display').html('<p>Llega el ' + response.fecha+'</p>');
                     }
                 }
 
@@ -390,7 +401,7 @@ function calcularEnvioEpresis(enLabel) {
                 if(!enLabel) {
                     var htmlCosto = '';
                     if(esGratis) {
-                        htmlCosto = '<span class="text-success">GRATIS</span> <small class="text-muted">(costo: $' + costoCalculado.toFixed(2) + ')</small>';
+                        htmlCosto = '<span class="text-success">¡Felicitaciones! Tenés envío GRATIS</span> <small class="text-muted">(costo: $' + costoCalculado.toFixed(2) + ')</small>';
                     } else {
                         htmlCosto = '$' + costoFinal.toFixed(2);
                     }
@@ -435,7 +446,7 @@ $(document).ready(function() {
 // Mostrar/ocultar formulario Epresis según selección
 $('input[name="entrega"]').on('change', function() {
     if($(this).val() === 'envio_2' || $(this).data('metodo-id') == 2) {
-        $('#epresis_calc_form').slideDown();
+        //$('#epresis_calc_form').slideDown();
         // Calcular en el formulario también
         calcularEnvioEpresis(false);
     } else {

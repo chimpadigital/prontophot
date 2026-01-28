@@ -33,7 +33,33 @@ if (isset($_POST['entrega'])) {
             $metodo_query = $conectar->query("SELECT * FROM metodos_envio WHERE id='$metodo_envio_id'");
             if ($metodo_row = $metodo_query->fetch_assoc()) {
                 $costoenvio = $metodo_row['valor'];
-                $enviotag = $metodo_row['valor'] > 0 ? '$ ' . $metodo_row['valor'] : 'Sin cargo';
+                $valor_gratis = floatval($metodo_row['valor_gratis']);
+
+                // Calcular el total del carrito para verificar envío gratis
+                $total_carrito = 0;
+                if (isset($_SESSION['pronto']['cart'])) {
+                    foreach ($_SESSION['pronto']['cart'] as $id_prod => $item_cart) {
+                        $prod_res = $conectar->query("SELECT precio, descuento_final FROM productos WHERE id='$id_prod'");
+                        if ($prod_row = $prod_res->fetch_assoc()) {
+                            $precioUnitario = $prod_row['precio'];
+                            $descuento = isset($prod_row['descuento_final']) && $prod_row['descuento_final'] > 0 ? $prod_row['descuento_final'] : 0;
+
+                            if($descuento > 0){
+                                $precioUnitario = $prod_row['precio'] - ($prod_row['precio'] * $descuento / 100);
+                            }
+
+                            $total_carrito += ($precioUnitario * $item_cart['cantidad']);
+                        }
+                    }
+                }
+
+                // Aplicar envío gratis si el total del carrito supera el umbral
+                if ($valor_gratis > 0 && $total_carrito >= $valor_gratis) {
+                    $costoenvio = 0;
+                    $enviotag = '<span class="text-success">GRATIS</span>';
+                } else {
+                    $enviotag = $metodo_row['valor'] > 0 ? '$ ' . $metodo_row['valor'] : 'Sin cargo';
+                }
             }
         }
     } else {
@@ -55,6 +81,7 @@ if (isset($_POST['entrega'])) {
     $_SESSION['prontoFront']['envio']['apellido'] = $rowc['apellido'];
     $_SESSION['prontoFront']['envio']['dni'] = $rowc['dni'];
     $_SESSION['prontoFront']['envio']['direccion'] = $rowc['direccion'];
+    $_SESSION['prontoFront']['envio']['altura'] = $rowc['altura'];
     $_SESSION['prontoFront']['envio']['email'] = $rowc['email'];
     $_SESSION['prontoFront']['envio']['provincia'] = $rowc['provincia'];
     $_SESSION['prontoFront']['envio']['ciudad'] = $rowc['ciudad'];
@@ -218,9 +245,13 @@ if (isset($_POST['entrega'])) {
 
 
                         <div class="form-row">
-                            <div class="form-group col-md-12">
+                            <div class="form-group col-md-6">
                                 <label for="fac_direccion">Dirección *</label>
                                 <input type="text" class="form-control" id="fac_direccion" name="fac_direccion" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['direccion'] : ''; ?>" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="fac_altura">Altura *</label>
+                                <input type="number" class="form-control" id="fac_altura" name="fac_altura" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['altura'] : ''; ?>" required min="1" max="99999">
                             </div>
                         </div>
                         <div class="form-row">
@@ -268,7 +299,9 @@ if (isset($_POST['entrega'])) {
                                 <label for="fac_telefono">Teléfono</label>
                                 <input type="text" class="form-control" id="fac_telefono" name="fac_telefono" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['telefono'] : ''; ?>">
                             </div>
-                            <div class="form-group col-md-4">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
                                 <label for="fac_celular">Celular</label>
                                 <input type="text" class="form-control" id="fac_celular" name="fac_celular" value="">
                             </div>
@@ -475,7 +508,8 @@ if (isset($_POST['entrega'])) {
                 celular: $('#fac_celular').val(),
                 factura_a: $('#facturaA').is(':checked') ? 1 : 0,
                 cuit: $('#cuit').val(),
-                razon_social: $('#razon_social').val()
+                razon_social: $('#razon_social').val(),
+                altura: $('#fac_altura').val(),
             };
 
             $(this).html('<i class="fa fa-spin fa-spinner" aria-hidden="true"></i>');

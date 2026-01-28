@@ -1,0 +1,64 @@
+[28-Jan-2026 03:10:35 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[28-Jan-2026 03:10:41 UTC] {"message":"auto_return invalid. back_url.success must be defined","error":"invalid_auto_return","status":400,"cause":null}
+[28-Jan-2026 03:10:41 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Generic\RecuperableError.php on line 30
+[28-Jan-2026 03:23:11 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[28-Jan-2026 03:23:11 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Incorrect integer value: '' for column 'altura' at row 1 in F:\laragonV8\www\prontophot\inc\funciones.inc.php:148
+Stack trace:
+#0 F:\laragonV8\www\prontophot\inc\funciones.inc.php(148): mysqli->query('INSERT INTO `pe...')
+#1 F:\laragonV8\www\prontophot\inc\crear_pago2.php(76): crearPedido(Array)
+#2 {main}
+  thrown in F:\laragonV8\www\prontophot\inc\funciones.inc.php on line 148
+[28-Jan-2026 03:27:14 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[28-Jan-2026 03:27:15 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Incorrect integer value: '' for column 'altura' at row 1 in F:\laragonV8\www\prontophot\inc\funciones.inc.php:148
+Stack trace:
+#0 F:\laragonV8\www\prontophot\inc\funciones.inc.php(148): mysqli->query('INSERT INTO `pe...')
+#1 F:\laragonV8\www\prontophot\inc\crear_pago2.php(76): crearPedido(Array)
+#2 {main}
+  thrown in F:\laragonV8\www\prontophot\inc\funciones.inc.php on line 148
+[28-Jan-2026 03:29:17 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[28-Jan-2026 03:29:18 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Incorrect integer value: '' for column 'altura' at row 1 in F:\laragonV8\www\prontophot\inc\funciones.inc.php:148
+Stack trace:
+#0 F:\laragonV8\www\prontophot\inc\funciones.inc.php(148): mysqli->query('INSERT INTO `pe...')
+#1 F:\laragonV8\www\prontophot\inc\crear_pago2.php(76): crearPedido(Array)
+#2 {main}
+  thrown in F:\laragonV8\www\prontophot\inc\funciones.inc.php on line 148
+[28-Jan-2026 03:32:52 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[28-Jan-2026 03:32:53 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Incorrect integer value: '' for column 'altura' at row 1 in F:\laragonV8\www\prontophot\inc\funciones.inc.php:148
+Stack trace:
+#0 F:\laragonV8\www\prontophot\inc\funciones.inc.php(148): mysqli->query('INSERT INTO `pe...')
+#1 F:\laragonV8\www\prontophot\inc\crear_pago2.php(76): crearPedido(Array)
+#2 {main}
+  thrown in F:\laragonV8\www\prontophot\inc\funciones.inc.php on line 148
+[28-Jan-2026 03:35:14 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[28-Jan-2026 03:35:15 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Incorrect integer value: '' for column 'altura' at row 1 in F:\laragonV8\www\prontophot\inc\funciones.inc.php:148
+Stack trace:
+#0 F:\laragonV8\www\prontophot\inc\funciones.inc.php(148): mysqli->query('INSERT INTO `pe...')
+#1 F:\laragonV8\www\prontophot\inc\crear_pago2.php(76): crearPedido(Array)
+#2 {main}
+  thrown in F:\laragonV8\www\prontophot\inc\funciones.inc.php on line 148
+[28-Jan-2026 03:39:21 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[28-Jan-2026 03:39:22 UTC] PHP Warning:  Undefined array key "cart" in F:\laragonV8\www\prontophot\inc\crear_pago2.php on line 16
+[28-Jan-2026 03:39:22 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in F:\laragonV8\www\prontophot\inc\crear_pago2.php on line 20
+[28-Jan-2026 03:39:22 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Incorrect integer value: '' for column 'altura' at row 1 in F:\laragonV8\www\prontophot\inc\funciones.inc.php:148
+Stack trace:
+#0 F:\laragonV8\www\prontophot\inc\funciones.inc.php(148): mysqli->query('INSERT INTO `pe...')
+#1 F:\laragonV8\www\prontophot\inc\crear_pago2.php(76): crearPedido(Array)
+#2 {main}
+  thrown in F:\laragonV8\www\prontophot\inc\funciones.inc.php on line 148
+[28-Jan-2026 03:40:08 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[28-Jan-2026 03:40:08 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Incorrect integer value: '' for column 'altura' at row 1 in F:\laragonV8\www\prontophot\inc\funciones.inc.php:148
+Stack trace:
+#0 F:\laragonV8\www\prontophot\inc\funciones.inc.php(148): mysqli->query('INSERT INTO `pe...')
+#1 F:\laragonV8\www\prontophot\inc\crear_pago2.php(76): crearPedido(Array)
+#2 {main}
+  thrown in F:\laragonV8\www\prontophot\inc\funciones.inc.php on line 148
+[28-Jan-2026 03:43:55 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[28-Jan-2026 03:43:56 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Incorrect integer value: '' for column 'altura' at row 1 in F:\laragonV8\www\prontophot\inc\funciones.inc.php:148
+Stack trace:
+#0 F:\laragonV8\www\prontophot\inc\funciones.inc.php(148): mysqli->query('INSERT INTO `pe...')
+#1 F:\laragonV8\www\prontophot\inc\crear_pago2.php(77): crearPedido(Array)
+#2 {main}
+  thrown in F:\laragonV8\www\prontophot\inc\funciones.inc.php on line 148
+[28-Jan-2026 03:47:16 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[28-Jan-2026 03:47:21 UTC] {"message":"auto_return invalid. back_url.success must be defined","error":"invalid_auto_return","status":400,"cause":null}
+[28-Jan-2026 03:47:21 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Generic\RecuperableError.php on line 30

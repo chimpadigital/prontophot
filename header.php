@@ -118,50 +118,62 @@ global $conectar;
                 <div class="modal-body">
                     <h5 class="modal-title text-danger text-bold text-center mb-4" id="exampleModalLabel">Registrate
                     </h5>
-                    <form class="iniciar-sesion" id="nuevoRegistro" method="post">
+                    <form class="iniciar-sesion" id="nuevoRegistro" method="post" novalidate>
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label for="nombre">Nombre</label>
-                                <input type="text" class="form-control " name="nombre" id="nombre">
+                                <label for="nombre">Nombre *</label>
+                                <input type="text" class="form-control" name="nombre" id="nombre" required>
+                                <small class="form-text text-danger d-none" id="error-nombre">El nombre es obligatorio</small>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="apellido">Apellido</label>
-                                <input type="text" class="form-control " name="apellido" id="apellido">
+                                <label for="apellido">Apellido *</label>
+                                <input type="text" class="form-control" name="apellido" id="apellido" required>
+                                <small class="form-text text-danger d-none" id="error-apellido">El apellido es obligatorio</small>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label for="DNI">DNI</label>
-                                <input type="text" class="form-control " name="dni" id="DNI">
+                                <label for="DNI">DNI *</label>
+                                <input type="text" class="form-control" name="dni" id="DNI" required>
+                                <small class="form-text text-danger d-none" id="error-DNI">El DNI es obligatorio y debe ser válido</small>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="inputEmail4">Email</label>
-                                <input type="email" class="form-control " name="email" id="inputEmail4">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="contraseña">Contraseña</label>
-                                <input type="password" class="form-control pass" name="passwd" id="reg-pass1" >
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="contraseña_check">Confirmar Contraseña</label>
-                                <input type="password" class="form-control pass" id="reg-pass2" >
+                                <label for="inputEmail4">Email *</label>
+                                <input type="email" class="form-control" name="email" id="inputEmail4" required>
+                                <small class="form-text text-danger d-none" id="error-inputEmail4">Ingrese un email válido</small>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-12">
-                                <label for="Dirección">Dirección</label>
-                                <input type="text" class="form-control " name="direccion" id="Dirección">
+                                <label for="contraseña">Contraseña *</label>
+                                <input type="password" class="form-control pass" name="passwd" id="reg-pass1" required minlength="6">
+                                <small class="form-text text-danger d-none" id="error-reg-pass1">La contraseña debe tener al menos 6 caracteres</small>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="contraseña_check">Confirmar Contraseña *</label>
+                                <input type="password" class="form-control pass" id="reg-pass2" required>
+                                <small class="form-text text-danger d-none" id="error-reg-pass2">Las contraseñas no coinciden</small>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label for="Provincia">Provincia</label>
-                                <select id="Provincia" name="provincia" class="form-control ">
-                                    <option selected>Seleccione...</option>
+                                <label for="Dirección">Dirección *</label>
+                                <input type="text" class="form-control" name="direccion" id="Dirección" required>
+                                <small class="form-text text-danger d-none" id="error-Dirección">La dirección es obligatoria</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="Altura">Altura *</label>
+                                <input type="number" class="form-control" name="altura" id="Altura" required min="1" max="99999">
+                                <small class="form-text text-danger d-none" id="error-Altura">La altura es obligatoria</small>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="Provincia">Provincia *</label>
+                                <select id="Provincia" name="provincia" class="form-control" required>
+                                    <option value="">Seleccione...</option>
                                     <option value="Buenos Aires">Buenos Aires</option>
                                     <option value="CABA">CABA</option>
                                     <option value="Catamarca">Catamarca</option>
@@ -187,18 +199,21 @@ global $conectar;
                                     <option value="Tierra del Fuego">Tierra del Fuego</option>
                                     <option value="Tucuman">Tucuman</option>
                                 </select>
+                                <small class="form-text text-danger d-none" id="error-Provincia">Debe seleccionar una provincia</small>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="Ciudad">Ciudad</label>
-                                <input type="text" class="form-control " name="ciudad" id="Ciudad">
+                                <label for="Ciudad">Ciudad *</label>
+                                <input type="text" class="form-control" name="ciudad" id="Ciudad" required>
+                                <small class="form-text text-danger d-none" id="error-Ciudad">La ciudad es obligatoria</small>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="CP">CP</label>
-                                <input type="text" class="form-control " name="cp" id="CP">
+                                <label for="CP">CP *</label>
+                                <input type="text" class="form-control" name="cp" id="CP" required pattern="[0-9]{4,8}">
+                                <small class="form-text text-danger d-none" id="error-CP">El código postal debe tener entre 4 y 8 dígitos</small>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="Telefono">Telefono</label>
-                                <input type="text" class="form-control " name="telefono" id="Telefono" placeholder="351 | 6120787">
+                                <input type="text" class="form-control" name="telefono" id="Telefono" placeholder="351 | 6120787">
                             </div>
                         </div>
 

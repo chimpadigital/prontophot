@@ -148,7 +148,6 @@ $(function(){
                                                     <th>Nombre</th>
                                                     <th>Valor</th>
                                                     <th>Valor Gratis</th>
-                                                    <th>CP</th>
                                                     <th>Acciones</th>
                                                 </tr>
                                             </thead>
@@ -160,7 +159,6 @@ $(function(){
                                                             <td><?php echo htmlspecialchars($metodo['nombre']); ?></td>
                                                             <td>$<?php echo number_format($metodo['valor'], 2); ?></td>
                                                             <td>$<?php echo number_format($metodo['valor_gratis'], 2); ?></td>
-                                                            <td><?php echo $metodo['cp'] ? htmlspecialchars($metodo['cp']) : 'N/A'; ?></td>
                                                             <td>
                                                                 <button class="btn btn-sm btn-primary btn-editar-metodo"
                                                                         data-id="<?php echo $metodo['id']; ?>"

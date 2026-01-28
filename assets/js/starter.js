@@ -55,9 +55,105 @@ $(document).ready(function () {
 
 	$('#nuevoRegistro').submit(function (e) {
 		e.preventDefault();
+
+		// Limpiar errores previos
+		$('.form-text.text-danger').addClass('d-none');
+		$('.form-control, select').removeClass('is-invalid');
+
+		var esValido = true;
+
+		// Validar Nombre
+		if ($('#nombre').val().trim() === '') {
+			mostrarError('nombre', 'El nombre es obligatorio');
+			esValido = false;
+		}
+
+		// Validar Apellido
+		if ($('#apellido').val().trim() === '') {
+			mostrarError('apellido', 'El apellido es obligatorio');
+			esValido = false;
+		}
+
+		// Validar DNI
+		var dni = $('#DNI').val().trim();
+		if (dni === '') {
+			mostrarError('DNI', 'El DNI es obligatorio');
+			esValido = false;
+		} else if (!/^\d{7,8}$/.test(dni)) {
+			mostrarError('DNI', 'El DNI debe tener 7 u 8 dígitos');
+			esValido = false;
+		}
+
+		// Validar Email
+		var email = $('#inputEmail4').val().trim();
+		if (email === '') {
+			mostrarError('inputEmail4', 'El email es obligatorio');
+			esValido = false;
+		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+			mostrarError('inputEmail4', 'Ingrese un email válido');
+			esValido = false;
+		}
+
+		// Validar Contraseña
 		var pass1 = $('#reg-pass1').val();
+		if (pass1 === '') {
+			mostrarError('reg-pass1', 'La contraseña es obligatoria');
+			esValido = false;
+		} else if (pass1.length < 6) {
+			mostrarError('reg-pass1', 'La contraseña debe tener al menos 6 caracteres');
+			esValido = false;
+		}
+
+		// Validar Confirmar Contraseña
 		var pass2 = $('#reg-pass2').val();
-		if (pass1 === pass2) {
+		if (pass2 === '') {
+			mostrarError('reg-pass2', 'Debe confirmar la contraseña');
+			esValido = false;
+		} else if (pass1 !== pass2) {
+			mostrarError('reg-pass2', 'Las contraseñas no coinciden');
+			esValido = false;
+		}
+
+		// Validar Dirección
+		if ($('#Dirección').val().trim() === '') {
+			mostrarError('Dirección', 'La dirección es obligatoria');
+			esValido = false;
+		}
+
+		// Validar Provincia
+		if ($('#Provincia').val() === '' || $('#Provincia').val() === 'Seleccione...') {
+			mostrarError('Provincia', 'Debe seleccionar una provincia');
+			esValido = false;
+		}
+
+		// Validar Ciudad
+		if ($('#Ciudad').val().trim() === '') {
+			mostrarError('Ciudad', 'La ciudad es obligatoria');
+			esValido = false;
+		}
+
+		// Validar CP
+		var cp = $('#CP').val().trim();
+		if (cp === '') {
+			mostrarError('CP', 'El código postal es obligatorio');
+			esValido = false;
+		} else if (!/^\d{4,8}$/.test(cp)) {
+			mostrarError('CP', 'El código postal debe tener entre 4 y 8 dígitos');
+			esValido = false;
+		}
+
+		// Validar Altura
+		var altura = $('#Altura').val().trim();
+		if (altura === '') {
+			mostrarError('Altura', 'La altura es obligatoria');
+			esValido = false;
+		} else if (!/^\d+$/.test(altura) || parseInt(altura) < 1) {
+			mostrarError('Altura', 'La altura debe ser un número válido');
+			esValido = false;
+		}
+
+		// Si todo es válido, enviar el formulario
+		if (esValido) {
 			var data = new FormData(this);
 
 			$.ajax({
@@ -75,18 +171,19 @@ $(document).ready(function () {
 						$('.modal-backdrop').remove();
 						alert('Tu cuenta ah sido creada exitosamente. Ya podes ingresar con tus datos');
 						location.reload();
-
 					} else {
 						alert(data.msg);
 					}
-
 				}
 			});
-		} else {
-			alert('No coinciden las claves');
-			$('#reg-pass1').focus();
 		}
 	});
+
+	// Función auxiliar para mostrar errores
+	function mostrarError(campoId, mensaje) {
+		$('#' + campoId).addClass('is-invalid');
+		$('#error-' + campoId).text(mensaje).removeClass('d-none');
+	}
 
 	$('#act-form').submit(function (e) {
 		e.preventDefault();

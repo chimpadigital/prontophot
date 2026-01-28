@@ -27,6 +27,7 @@ $param['costo']=$_SESSION['prontoFront']['envio']['costo'];
 $param['idcliente']=$_SESSION['prontoFront']['idcliente'];
 $param['nombre']=$_SESSION['prontoFront']['envio']['nombre'].' '.$_SESSION['prontoFront']['envio']['apellido'];
 $param['direccion']=$_SESSION['prontoFront']['envio']['direccion'];
+$param['altura']=$_SESSION['prontoFront']['envio']['altura'] ?? null;
 $param['cp']=$_SESSION['prontoFront']['envio']['cp'];
 $param['ciudad']=$_SESSION['prontoFront']['envio']['ciudad'];
 $param['provincia']=$_SESSION['prontoFront']['envio']['provincia'];
@@ -39,22 +40,9 @@ $param['desc']=$desc;
 $param['metodo_envio_id']=$_SESSION['prontoFront']['envio']['metodo_envio_id'] ?? null;
 $param['epresis_tiempo_entrega']=$_SESSION['prontoFront']['envio']['epresis_fecha'] ?? null;
 
-// Datos de facturación
+// Agregar datos de facturación desde el POST
 if(isset($_POST['facturacion'])){
-    $facturacion = $_POST['facturacion'];
-    $param['facturacion_nombre'] = $facturacion['nombre'] ?? '';
-    $param['facturacion_apellido'] = $facturacion['apellido'] ?? '';
-    $param['facturacion_dni'] = $facturacion['dni'] ?? '';
-    $param['facturacion_email'] = $facturacion['email'] ?? '';
-    $param['facturacion_direccion'] = $facturacion['direccion'] ?? '';
-    $param['facturacion_provincia'] = $facturacion['provincia'] ?? '';
-    $param['facturacion_ciudad'] = $facturacion['ciudad'] ?? '';
-    $param['facturacion_cp'] = $facturacion['cp'] ?? '';
-    $param['facturacion_telefono'] = $facturacion['telefono'] ?? '';
-    $param['facturacion_celular'] = $facturacion['celular'] ?? '';
-    $param['factura_a'] = $facturacion['factura_a'] ?? 0;
-    $param['cuit'] = $facturacion['cuit'] ?? '';
-    $param['razon_social'] = $facturacion['razon_social'] ?? '';
+    $param['facturacion']=$_POST['facturacion'];
 }
 
 $pedido=crearPedido($param);

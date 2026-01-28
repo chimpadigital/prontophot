@@ -76,11 +76,15 @@ $datos=$usuario->fetch_assoc();
                                 <label for="ciudad">Ciudad</label>
                                 <input type="text" class="form-control" value="<?php echo $datos['ciudad']; ?>" name="ciudad">
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-5">
                                 <label for="dir">Dirección</label>
                                 <input type="text" class="form-control" value="<?php echo $datos['direccion']; ?>" name="direccion">
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-5">
+                                <label for="altura">Altura</label>
+                                <input type="number" class="form-control" value="<?php echo $datos['altura']; ?>" name="altura" min="1" max="99999">
+                            </div>
+                            <div class="form-group col-md-5">
                                 <label for="cp">CP</label>
                                 <input type="text" class="form-control" value="<?php echo $datos['cp']; ?>" name="cp">
                             </div>

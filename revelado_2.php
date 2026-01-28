@@ -407,10 +407,47 @@ if (isset($_POST['tamanogral'])) {
                         <label class="form-check-label d-flex flex-row" for="metodo_envio_<?php echo $metodo['id']; ?>">
                             <div>
                                 <p class="d-inline-block m-0"><?php echo $metodo['nombre']; ?></p>
-                                <?php if($metodo['id'] == 2){ // Epresis ?>
-                                <span class="d-block text-bold" id="epresis_costo_label"><i class="fa fa-spinner fa-spin"></i> Calculando...</span>
-                                <?php } else if($metodo['valor'] > 0){ ?>
-                                <span class="d-block text-bold">$<?php echo $metodo['valor']; ?></span>
+                                <?php if($metodo['id'] == 2){ // Epresis - cálculo dinámico ?>
+                                <span class="d-block text-bold" id="metodo_costo_label_<?php echo $metodo['id']; ?>"><i class="fa fa-spinner fa-spin"></i> Calculando...</span>
+                                <?php } else {
+                                    // Calcular si aplica envío gratis para este método
+                                    $total_carrito_calc = 0;
+                                    $tama_calc = array();
+                                    if(isset($_SESSION['archivos'])){
+                                        foreach ($_SESSION['archivos'] as $key_calc => $impre_calc){
+                                            $tam_calc = $impre_calc['tamano'];
+                                            $c_calc = (int)$impre_calc['cantidad'];
+                                            if(isset($tama_calc[$tam_calc])){
+                                                $tama_calc[$tam_calc] = $tama_calc[$tam_calc] + $c_calc;
+                                            }else{
+                                                $tama_calc[$tam_calc] = $c_calc;
+                                            }
+                                        }
+                                        foreach ($tama_calc as $tam_calc => $cant_calc){
+                                            $query_calc = "SELECT * FROM `impresiones` WHERE formato='$tam_calc' AND desde<='$cant_calc' AND hasta>='$cant_calc' ORDER BY id DESC LIMIT 1";
+                                            $calc_res = $conectar->query($query_calc);
+                                            if($row_calc = $calc_res->fetch_assoc()){
+                                                $p_calc = $row_calc['precio'];
+                                                $precio_calc = ($p_calc * $cant_calc);
+                                                $total_carrito_calc += $precio_calc;
+                                            }
+                                        }
+                                    }
+                                    $valor_gratis_metodo = floatval($metodo['valor_gratis']);
+                                    $es_gratis = ($valor_gratis_metodo > 0 && $total_carrito_calc >= $valor_gratis_metodo);
+                                ?>
+                                <span class="d-block text-bold" id="metodo_costo_label_<?php echo $metodo['id']; ?>">
+                                    <?php if($es_gratis){ ?>
+                                    <span class="text-success">¡Felicitaciones! Tenés envío GRATIS</span>
+                                    <?php } elseif($metodo['valor'] > 0){ ?>
+                                    $<?php echo $metodo['valor']; ?>
+                                    <?php if($valor_gratis_metodo > 0 && $total_carrito_calc < $valor_gratis_metodo){ ?>
+                                    <br><small class="text-info">Comprá $<?php echo number_format($valor_gratis_metodo - $total_carrito_calc, 0); ?> más para envío gratis</small>
+                                    <?php } ?>
+                                    <?php } else { ?>
+                                    Sin cargo
+                                    <?php } ?>
+                                </span>
                                 <?php } ?>
                                 <?php if(!empty($metodo['descripcion'])){ ?>
                                 <span class="d-block text-muted descripcion-pequeña"><?php echo $metodo['descripcion']; ?></span>
@@ -663,7 +700,7 @@ function calcularEnvioEpresis(enLabel) {
 
     if(!cp || cp.length < 4) {
         if(enLabel) {
-            $('#epresis_costo_label').html('<span class="text-danger">CP inválido</span>');
+            $('#metodo_costo_label_2').html('<span class="text-danger">CP inválido</span>');
         }
         return;
     }
@@ -696,7 +733,7 @@ function calcularEnvioEpresis(enLabel) {
     var totalCarrito = <?php echo $total_carrito; ?>;
 
     if(enLabel) {
-        $('#epresis_costo_label').html('<i class="fa fa-spinner fa-spin"></i> Calculando...');
+        $('#metodo_costo_label_2').html('<i class="fa fa-spinner fa-spin"></i> Calculando...');
     } else {
         $('#formularioEnvio').html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i><p>Calculando costo de envío...</p></div>');
     }
@@ -709,8 +746,8 @@ function calcularEnvioEpresis(enLabel) {
             var fecha = data.fecha;
             var valorGratis = parseFloat($('#metodo_envio_2').data('valor-gratis')) || 0;
 
-            // Verificar si aplica envío gratis
-            if(valorGratis > 0 && costoEnvio >= valorGratis) {
+            // Verificar si aplica envío gratis por TOTAL DEL CARRITO
+            if(valorGratis > 0 && totalCarrito >= valorGratis) {
                 costoEnvio = 0;
             }
 
@@ -718,22 +755,22 @@ function calcularEnvioEpresis(enLabel) {
             $('#epresis_fecha_input').val(fecha);
 
             if(enLabel) {
-                var textoEnvio = costoEnvio > 0 ? '$' + costoEnvio.toFixed(2) : '<span class="text-success">GRATIS</span>';
+                var textoEnvio = costoEnvio > 0 ? '$' + costoEnvio.toFixed(2) : '<span class="text-success">¡Felicitaciones! Tenés envío GRATIS</span>';
                 var textoFecha = fecha ? '<br><small class="text-muted">Entrega estimada: ' + fecha + '</small>' : '';
-                var textoPromocion = (valorGratis > 0 && costoEnvio > 0 && costoEnvio < valorGratis) ?
-                    '<br><small class="text-info">Envío gratis superando $' + valorGratis.toFixed(0) + ' de costo de envío</small>' : '';
+                var textoPromocion = (valorGratis > 0 && totalCarrito < valorGratis) ?
+                    '<br><small class="text-info">🚚 ¡Te faltan $' + (valorGratis - totalCarrito).toFixed(0) + ' para envío GRATIS!</small>' : '';
 
-                $('#epresis_costo_label').html(textoEnvio + textoFecha + textoPromocion);
+                $('#metodo_costo_label_2').html(textoEnvio + textoFecha + textoPromocion);
             }
         } else {
             if(enLabel) {
-                $('#epresis_costo_label').html('<span class="text-danger">No disponible</span>');
+                $('#metodo_costo_label_2').html('<span class="text-danger">No disponible</span>');
             }
             console.error('Error al calcular Epresis:', data.error);
         }
     }, 'json').fail(function() {
         if(enLabel) {
-            $('#epresis_costo_label').html('<span class="text-danger">Error</span>');
+            $('#metodo_costo_label_2').html('<span class="text-danger">Error</span>');
         }
     });
 }

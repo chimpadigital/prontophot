@@ -124,6 +124,7 @@ function crearPedido($param)
     $nombre = $param['nombre'];
     $direccion = $param['direccion'];
     $cp = $param['cp'];
+    $altura = isset($param['altura']) ? $conectar->real_escape_string($param['altura']) : null;
     $ciudad = $param['ciudad'];
     $provincia = $param['provincia'];
     $dni = $param['dni'];
@@ -138,11 +139,11 @@ function crearPedido($param)
 
     // Construir SQL con o sin metodo_envio_id y epresis_tiempo_entrega
     if ($metodo_envio_id !== null && $epresis_tiempo_entrega !== null) {
-        $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion`, `metodo_envio_id`, `epresis_tiempo_entrega` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc','$metodo_envio_id','$epresis_tiempo_entrega')";
+        $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `altura`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion`, `metodo_envio_id`, `epresis_tiempo_entrega` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$altura','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc','$metodo_envio_id','$epresis_tiempo_entrega')";
     } elseif ($metodo_envio_id !== null) {
-        $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion`, `metodo_envio_id` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc','$metodo_envio_id')";
+        $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `altura`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion`, `metodo_envio_id` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$altura','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc','$metodo_envio_id')";
     } else {
-        $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc')";
+        $sql = "INSERT INTO `pedidos`(`id_cliente`, `nombre`, `direccion`, `cp`, `altura`, `ciudad`, `provincia`, `dni`, `telefono`, `total`, `metodo`, `entrega`, `envio`,`estado`,`estado_pedido`, `fecha`, `descripcion` ) VALUES ('$idcliente','$nombre','$direccion','$cp','$altura','$ciudad','$provincia','$dni','$telefono','$valor','$metodo','$entrega','$envio','0','1','$fecha','$desc')";
     }
     $res = $conectar->query($sql);
     if ($res) {
@@ -161,14 +162,15 @@ function crearPedido($param)
             $provincia = $conectar->real_escape_string($fac['provincia']);
             $ciudad = $conectar->real_escape_string($fac['ciudad']);
             $cp = $conectar->real_escape_string($fac['cp']);
+            $altura_fac = isset($fac['altura']) ? $conectar->real_escape_string($fac['altura']) : null;
             $telefono = $conectar->real_escape_string($fac['telefono']);
             $celular = $conectar->real_escape_string($fac['celular']);
             $factura_a = isset($fac['factura_a']) ? intval($fac['factura_a']) : 0;
             $cuit = isset($fac['cuit']) ? $conectar->real_escape_string($fac['cuit']) : '';
             $razon_social = isset($fac['razon_social']) ? $conectar->real_escape_string($fac['razon_social']) : '';
 
-            $sqlFac = "INSERT INTO `facturacion`(`pedido_id`, `nombre`, `apellido`, `dni`, `email`, `direccion`, `provincia`, `ciudad`, `cp`, `telefono`, `celular`, `factura_a`, `cuit`, `razon_social`)
-                       VALUES ('$idpedido','$nombre','$apellido','$dni','$email','$direccion','$provincia','$ciudad','$cp','$telefono','$celular','$factura_a','$cuit','$razon_social')";
+            $sqlFac = "INSERT INTO `facturacion`(`pedido_id`, `nombre`, `apellido`, `dni`, `email`, `direccion`, `provincia`, `ciudad`, `cp`, `altura`, `telefono`, `celular`, `factura_a`, `cuit`, `razon_social`)
+                       VALUES ('$idpedido','$nombre','$apellido','$dni','$email','$direccion','$provincia','$ciudad','$cp','$altura_fac','$telefono','$celular','$factura_a','$cuit','$razon_social')";
             $conectar->query($sqlFac);
         }
     } else {

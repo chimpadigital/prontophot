@@ -57,6 +57,7 @@ $param['idcliente']=$_SESSION['prontoFront']['idcliente'];
 $param['nombre']=$_SESSION['prontoFront']['envio']['nombre'].' '.$_SESSION['prontoFront']['envio']['apellido'];
 $param['direccion']=$_SESSION['prontoFront']['envio']['direccion'];
 $param['cp']=$_SESSION['prontoFront']['envio']['cp'];
+$param['altura']=$_SESSION['prontoFront']['envio']['altura'] ?? null;
 $param['ciudad']=$_SESSION['prontoFront']['envio']['ciudad'];
 $param['provincia']=$_SESSION['prontoFront']['envio']['provincia'];
 $param['telefono']=$_SESSION['prontoFront']['envio']['telefono'].' - '.$_SESSION['prontoFront']['envio']['celular'];

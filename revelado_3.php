@@ -55,6 +55,7 @@ if (isset($_POST['tipoenvio'])) {
     $_SESSION['prontoFront']['envio']['apellido']=$rowc['apellido'];
     $_SESSION['prontoFront']['envio']['dni']=$rowc['dni'];
     $_SESSION['prontoFront']['envio']['direccion']=$rowc['direccion'];
+    $_SESSION['prontoFront']['envio']['altura'] = $rowc['altura'];
     $_SESSION['prontoFront']['envio']['email']=$rowc['email'];
     $_SESSION['prontoFront']['envio']['provincia']=$rowc['provincia'];
     $_SESSION['prontoFront']['envio']['ciudad']=$rowc['ciudad'];
@@ -484,10 +485,16 @@ if (isset($_POST['tipoenvio'])) {
                                 <input type="text" class="form-control" id="fac_cp" name="fac_cp" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cp'] : ''; ?>" required>
                             </div>
                             <div class="form-group col-md-4">
+                                <label for="fac_altura">Altura *</label>
+                                <input type="number" class="form-control" id="fac_altura" name="fac_altura" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['altura'] : ''; ?>" required min="1" max="99999">
+                            </div>
+                            <div class="form-group col-md-4">
                                 <label for="fac_telefono">Teléfono</label>
                                 <input type="text" class="form-control" id="fac_telefono" name="fac_telefono" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['telefono'] : ''; ?>">
                             </div>
-                            <div class="form-group col-md-4">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
                                 <label for="fac_celular">Celular</label>
                                 <input type="text" class="form-control" id="fac_celular" name="fac_celular" value="">
                             </div>
@@ -769,6 +776,7 @@ $(function(){
 			provincia: $('#fac_provincia').val(),
 			ciudad: $('#fac_ciudad').val(),
 			cp: $('#fac_cp').val(),
+			altura: $('#fac_altura').val(),
 			telefono: $('#fac_telefono').val(),
 			celular: $('#fac_celular').val(),
 			factura_a: $('#facturaA').is(':checked') ? 1 : 0,

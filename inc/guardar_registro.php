@@ -15,12 +15,13 @@ $direccion=$_POST['direccion'];
 $provincia=$_POST['provincia'];
 $ciudad=$_POST['ciudad'];
 $cp=$_POST['cp'];
+$altura=$_POST['altura'];
 $telefono=$_POST['telefono'];
 $code=generarCodigo(64);
 $existe=existeCorreo($email);
 
 if($existe->success==false){
-    $query="INSERT INTO `clientes`(`nombre`, `apellido`, `dni`, `email`, `passwd`, `direccion`, `provincia`, `ciudad`, `cp`, `telefono`, `code`, `activo`, `nivel`) VALUES ('$nombre','$apellido','$dni','$email','$pass','$direccion','$provincia','$ciudad','$cp','$telefono','$code','1','0')";
+    $query="INSERT INTO `clientes`(`nombre`, `apellido`, `dni`, `email`, `passwd`, `direccion`, `provincia`, `ciudad`, `cp`, `altura`, `telefono`, `code`, `activo`, `nivel`) VALUES ('$nombre','$apellido','$dni','$email','$pass','$direccion','$provincia','$ciudad','$cp','$altura','$telefono','$code','1','0')";
     $res=$conectar->query($query);
     if($res){
         $respuesta->success=true;

@@ -1456,3 +1456,16 @@ button.btn.btn-sm.btn-danger.removeImg {
     height: 473px;
   }
 }
+
+
+/* Estilos para validación del formulario de registro */
+.form-control.is-invalid,
+select.is-invalid {
+    border-color: #dc3545;
+}
+
+.form-text.text-danger {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+

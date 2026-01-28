@@ -4,7 +4,7 @@ include __DIR__ . '/../inc/funciones.inc.php';
 include __DIR__ . '/conexion/conectar.inc.php';
 global $conectar;
 $id = $_GET['id'];
-$pedidos = $conectar->query("SELECT p.*,(SELECT id_producto FROM pedidos_detalle WHERE id_pedido=p.id LIMIT 1 ) as producto,(SELECT imagen FROM imagenes WHERE id_pedido=p.id LIMIT 1 ) as imagen,DATE_FORMAT(fecha, '%d-%m-%Y') as fecha,CONCAT(c.nombre,' ',c.apellido) as clientenombre,c.dni clientedni,CONCAT(c.direccion,' ',c.ciudad) as clientedireccion,c.cp clientecp,c.provincia clienteprovincia,c.telefono clientetelefono FROM pedidos p LEFT JOIN clientes c ON p.id_cliente=c.id WHERE p.id='$id' ");
+$pedidos = $conectar->query("SELECT p.*,(SELECT id_producto FROM pedidos_detalle WHERE id_pedido=p.id LIMIT 1 ) as producto,(SELECT imagen FROM imagenes WHERE id_pedido=p.id LIMIT 1 ) as imagen,DATE_FORMAT(fecha, '%d-%m-%Y') as fecha,CONCAT(c.nombre,' ',c.apellido) as clientenombre,c.dni clientedni,CONCAT(c.direccion,' ',c.ciudad) as clientedireccion,c.cp clientecp,c.altura clientealtura,c.provincia clienteprovincia,c.telefono clientetelefono FROM pedidos p LEFT JOIN clientes c ON p.id_cliente=c.id WHERE p.id='$id' ");
 $row = $pedidos->fetch_assoc();
 $imagenes = $conectar->query("SELECT * FROM pedidos_imagenes WHERE id_pedido='$id'");
 $productos = $conectar->query("SELECT pd.cantidad, pd.color, p.*,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$id'");
@@ -204,22 +204,22 @@ try {
 
                             switch ($row['entrega']) {
                                 case 'envio_2':
-                                    echo $titulo = '<strong>Datos de envio</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
+                                    echo $titulo = '<strong>Datos de envio</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' - Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
                                     break;
                                 case 'suc1':
                                     echo '<h5>Retiro Gratis por Sucursal</h5>
                             <p>Sucursal 1</p>
-                            <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
+                            <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' - Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
                                     break;
                                 case 'suc2':
                                     echo '<h5>Retiro Gratis por Sucursal</h5>
                             <p>Sucursal 2</p>
-                            <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
+                            <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' - Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
                                     break;
                                 case 'suc3':
                                     echo '<h5>Retiro Gratis por Sucursal</h5>
                             <p>Sucursal 3</p>
-                            <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
+                            <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' - Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
                                     break;
                                 case 'urbano':
                                     echo '<h5 class="mt-4">' . $titulo . '</h5>
@@ -280,7 +280,7 @@ try {
                                         <p><strong>CUIT/CUIL:</strong> <?php echo $rowf['cuit']; ?></p>
                                         <p><strong>Razon Social:</strong> <?php echo $rowf['razon_social']; ?></p>
                                         <p><strong>Email:</strong> <?php echo $rowf['email']; ?></p>
-                                        <p><strong>Dirección:</strong> <?php echo $rowf['direccion']; ?></p>
+                                        <p><strong>Dirección:</strong> <?php echo $rowf['direccion']; ?> - Altura: <?php echo $rowf['altura']; ?></p>
                                     </div>
                                     <div class="col-md-6">
                                         <p><strong>Ciudad:</strong> <?php echo $rowf['ciudad']; ?></p>
@@ -423,7 +423,7 @@ try {
                                         <div class="form-row">
                                             <div class="form-group col-md-6">
                                                 <label for="modal_cuit">CUIT/CUIL</label>
-                                                <input type="text" class="form-control" id="modal_cuit" placeholder="XX-XXXXXXXX-X">
+                                                <input type="text" class="form-control" id="modal_cuit" value="<?php echo $rowf ? $rowf['cuit'] : ''; ?>" placeholder="XX-XXXXXXXX-X">
                                             </div>
                                             <div class="form-group col-md-6">
                                                 <label for="modal_contenido">Contenido</label>
@@ -518,10 +518,14 @@ try {
                                                     <p class="mb-1"><strong>Destinatario:</strong> <?php echo $row['clientenombre']; ?></p>
                                                     <p class="mb-1"><strong>Localidad:</strong> <?php echo $row['ciudad']; ?></p>
                                                     <p class="mb-1"><strong>Provincia:</strong> <?php echo $row['clienteprovincia']; ?></p>
+                                                    <p class="mb-1"><strong>CP:</strong> <?php echo $row['clientecp']; ?></p>
                                                     <p class="mb-1"><strong>Remito:</strong> PED-<?php echo $id; ?></p>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <p class="mb-1"><strong>CP:</strong> <?php echo $row['clientecp']; ?></p>
+                                                    <p class="mb-1"><strong>Altura:</strong> <?php echo $row['clientealtura'] ? $row['clientealtura'] : 'S/N'; ?></p>
+                                                    <?php if($rowf && $rowf['cuit']): ?>
+                                                    <p class="mb-1"><strong>CUIT:</strong> <?php echo $rowf['cuit']; ?></p>
+                                                    <?php endif; ?>
                                                     <p class="mb-1"><strong>Servicio:</strong> ESTANDAR</p>
                                                     <p class="mb-1"><strong>Valor Declarado:</strong> $<?php echo $row['total']; ?></p>
                                                     <p class="mb-1"><strong>Tipo Operación:</strong> ENTREGA</p>
@@ -636,16 +640,24 @@ try {
         $('#generarGuiaEpresis').click(function(e) {
             e.preventDefault();
 
-            // Parsear dirección para pre-llenar calle y altura
+            // Obtener altura desde la base de datos del cliente
+            var alturaCliente = '<?php echo $row['clientealtura']; ?>';
+
+            // Parsear dirección para pre-llenar calle
             var direccion = '<?php echo addslashes($row['clientedireccion']); ?>';
             var calle = direccion;
-            var altura = 'S/N';
+            var altura = alturaCliente || 'S/N';
 
-            // Intentar separar calle y número
-            var match = direccion.match(/^(.+?)[\s,]+(\d+)/);
-            if (match) {
-                calle = match[1].trim();
-                altura = match[2].trim();
+            // Si hay altura en BD, usarla. Sino, intentar separar de la dirección
+            if (!alturaCliente || alturaCliente === '' || alturaCliente === 'null') {
+                var match = direccion.match(/^(.+?)[\s,]+(\d+)/);
+                if (match) {
+                    calle = match[1].trim();
+                    altura = match[2].trim();
+                }
+            } else {
+                // Si hay altura en BD, limpiar la dirección de números
+                calle = direccion.replace(/[\s,]+\d+.*$/, '').trim();
             }
 
             $('#modal_calle').val(calle);
