@@ -387,13 +387,13 @@ function calcularEnvioEpresis(enLabel) {
                 // Actualizar el precio display en el label
                 if(esGratis) {
                     $('#epresis_precio_display').html('<span class="text-success">¡Felicitaciones! Tenés envío GRATIS</span>');
-                    $('#epresis_descripcion_display').html('<p>Llega el ' + response.fecha+'</p>');
+                    $('#epresis_descripcion_display').html('<p></p>');
                 } else {
                     $('#epresis_precio_display').html('$' + costoFinal.toFixed(2));
                     if(mensajeDescripcion) {
-                        $('#epresis_descripcion_display').html(mensajeDescripcion + ' - Llega el ' + response.fecha);
+                        $('#epresis_descripcion_display').html(mensajeDescripcion);
                     } else {
-                        $('#epresis_descripcion_display').html('<p>Llega el ' + response.fecha+'</p>');
+                        $('#epresis_descripcion_display').html('<p></p>');
                     }
                 }
 

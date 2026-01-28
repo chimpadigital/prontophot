@@ -756,7 +756,7 @@ function calcularEnvioEpresis(enLabel) {
 
             if(enLabel) {
                 var textoEnvio = costoEnvio > 0 ? '$' + costoEnvio.toFixed(2) : '<span class="text-success">¡Felicitaciones! Tenés envío GRATIS</span>';
-                var textoFecha = fecha ? '<br><small class="text-muted">Entrega estimada: ' + fecha + '</small>' : '';
+                var textoFecha = fecha ? '<br>' : '';
                 var textoPromocion = (valorGratis > 0 && totalCarrito < valorGratis) ?
                     '<br><small class="text-info">🚚 ¡Te faltan $' + (valorGratis - totalCarrito).toFixed(0) + ' para envío GRATIS!</small>' : '';
 
