@@ -345,7 +345,7 @@ $rowf = $facturacion->fetch_assoc();
                                                 <a target="_blank" href="https://epresis.epsared.com.ar/seguimiento" class="text-white link-underline" style="text-decoration: underline;">Seguir envio</a>
                                             </div>
                                         <?php else: ?>
-                                            <div class="alert alert-info text-white p-4">
+                                            <div class="alert alert-info text-dark p-4">
                                                 <h5><i class="fa fa-clock-o"></i> Estamos preparando tu envío</h5>
                                                 <p class="mb-0">Tu pedido será procesado y la guía de envío se generará pronto. Te notificaremos cuando esté lista.</p>
                                                 <?php if (!empty($pedido['epresis_tiempo_entrega'])): ?>
