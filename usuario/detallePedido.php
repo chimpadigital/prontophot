@@ -269,12 +269,9 @@ $rowf = $facturacion->fetch_assoc();
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <p><strong>Nombre y Apellido:</strong> <?php echo $rowf['nombre'] . ' ' . $rowf['apellido']; ?></p>
-                                                <p><strong>DNI:</strong> <?php echo $rowf['dni']; ?></p>
-                                                <?php if (!empty($rowf['cuit'])): ?>
-                                                <p><strong>CUIT/CUIL:</strong> <?php echo $rowf['cuit']; ?></p>
-                                                <?php endif; ?>
-                                                <?php if (!empty($rowf['razon_social'])): ?>
-                                                <p><strong>Razón Social:</strong> <?php echo $rowf['razon_social']; ?></p>
+                                                <p><strong>DNI:</strong> <?php echo $rowf['dni']; ?></p> 
+                                                <?php if (!empty($rowf['cuil'])): ?>
+                                                <p><strong>CUIL:</strong> <?php echo $rowf['cuil']; ?></p>
                                                 <?php endif; ?>
                                                 <p><strong>Email:</strong> <?php echo $rowf['email']; ?></p>
                                                 <p><strong>Dirección:</strong> <?php echo $rowf['direccion']; ?></p>
@@ -294,6 +291,13 @@ $rowf = $facturacion->fetch_assoc();
                                             <hr class="my-3">
                                             <div class="alert alert-info mb-0">
                                                 <i class="fa fa-file-text"></i> <strong>Requiere Factura A</strong>
+                                                
+                                                <?php if (!empty($rowf['cuit'])): ?>
+                                                <p><strong>CUIT:</strong> <?php echo $rowf['cuit']; ?></p>
+                                                <?php endif; ?>
+                                                <?php if (!empty($rowf['razon_social'])): ?>
+                                                <p><strong>Razón Social:</strong> <?php echo $rowf['razon_social']; ?></p>
+                                                <?php endif; ?>
                                             </div>
                                         <?php endif; ?>
                                     </div>
