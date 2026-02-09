@@ -1,4 +1,4 @@
-<?php include ('header.php'); ?>
+<?php include('header.php'); ?>
 <?php
 // Obtener datos del cliente logueado
 if (isset($_SESSION['prontoFront']['token'])) {
@@ -10,13 +10,16 @@ if (isset($_SESSION['prontoFront']['token'])) {
     }
 }
 
+
+echo '<script>console.log("'.$_POST['tipoenvio'].'")</script>';
+
 if (isset($_POST['tipoenvio'])) {
-    $costoenvio=0;
-    $enviotag='';
+    $costoenvio = 0;
+    $enviotag = '';
     $metodo_envio_id = null;
 
-    $_SESSION['prontoFront']['envio']['tipo']=$_POST['tipoenvio'];
-    $_SESSION['prontoFront']['envio']['envio']=$_POST['envio']??'';
+    $_SESSION['prontoFront']['envio']['tipo'] = $_POST['tipoenvio'];
+    $_SESSION['prontoFront']['envio']['envio'] = $_POST['envio'] ?? '';
 
     // Verificar si se seleccionó un método de envío dinámico
     if (strpos($_POST['tipoenvio'], 'envio_') === 0) {
@@ -38,66 +41,67 @@ if (isset($_POST['tipoenvio'])) {
         }
     } else {
         // Compatibilidad con los valores antiguos hardcodeados
-        if ($_POST['tipoenvio']=='urbano') {
-            $costoenvio=250;
-            $enviotag='$ 250';
-        }else{
-            if($_POST['tipoenvio']=='recibir'){
-                $enviotag='Abona al recibir';
+        if ($_POST['tipoenvio'] == 'urbano') {
+            $costoenvio = 250;
+            $enviotag = '$ 250';
+        } elseif ($_POST['tipoenvio'] == 'suc1' || $_POST['tipoenvio'] == 'suc2') {
+            $costoenvio = 0;
+            $enviotag = 'Retiro por sucursal';
+        } else {
+            if ($_POST['tipoenvio'] == 'recibir') {
+                $enviotag = 'Abona al recibir';
             }
-            $costoenvio=0;
+            $costoenvio = 0;
         }
     }
 
-    $_SESSION['prontoFront']['envio']['costo']=$costoenvio;
-    $_SESSION['prontoFront']['envio']['metodo_envio_id']=$metodo_envio_id;
-    $_SESSION['prontoFront']['envio']['nombre']=$rowc['nombre'];
-    $_SESSION['prontoFront']['envio']['apellido']=$rowc['apellido'];
-    $_SESSION['prontoFront']['envio']['dni']=$rowc['dni'];
-    $_SESSION['prontoFront']['envio']['direccion']=$rowc['direccion'];
+    $_SESSION['prontoFront']['envio']['costo'] = $costoenvio;
+    $_SESSION['prontoFront']['envio']['metodo_envio_id'] = $metodo_envio_id;
+    $_SESSION['prontoFront']['envio']['nombre'] = $rowc['nombre'];
+    $_SESSION['prontoFront']['envio']['apellido'] = $rowc['apellido'];
+    $_SESSION['prontoFront']['envio']['dni'] = $rowc['dni'];
+    $_SESSION['prontoFront']['envio']['direccion'] = $rowc['direccion'];
     $_SESSION['prontoFront']['envio']['altura'] = $rowc['altura'];
-    $_SESSION['prontoFront']['envio']['email']=$rowc['email'];
-    $_SESSION['prontoFront']['envio']['provincia']=$rowc['provincia'];
-    $_SESSION['prontoFront']['envio']['ciudad']=$rowc['ciudad'];
-    $_SESSION['prontoFront']['envio']['cp']=$rowc['cp'];
-    $_SESSION['prontoFront']['envio']['telefono']=$rowc['telefono'];
-    $_SESSION['prontoFront']['envio']['celular']=$rowc['celular'] ?? '';
-    
-    $costototal=0;
-    $tama=array();
-    foreach ($_SESSION['archivos'] as $key=>$impre){
-        $tam=$impre['tamano'];
-        $c=(int)$impre['cantidad'];
-        if(isset($tama[$tam])){
-            $tama[$tam]=$tama[$tam]+$c;
-            
-        }else{
-            $tama[$tam]=$c;
+    $_SESSION['prontoFront']['envio']['email'] = $rowc['email'];
+    $_SESSION['prontoFront']['envio']['provincia'] = $rowc['provincia'];
+    $_SESSION['prontoFront']['envio']['ciudad'] = $rowc['ciudad'];
+    $_SESSION['prontoFront']['envio']['cp'] = $rowc['cp'];
+    $_SESSION['prontoFront']['envio']['telefono'] = $rowc['telefono'];
+    $_SESSION['prontoFront']['envio']['celular'] = $rowc['celular'] ?? '';
+
+    $costototal = 0;
+    $tama = array();
+    foreach ($_SESSION['archivos'] as $key => $impre) {
+        $tam = $impre['tamano'];
+        $c = (int)$impre['cantidad'];
+        if (isset($tama[$tam])) {
+            $tama[$tam] = $tama[$tam] + $c;
+        } else {
+            $tama[$tam] = $c;
         }
     }
-    $taman=array();
-    foreach ($tama as $tam=>$cant){
-        $query="SELECT * FROM `impresiones` WHERE formato='$tam' AND desde<='$cant' AND hasta>='$cant' ORDER BY id DESC LIMIT 1";
-        $calc=$conectar->query($query);
-        $row=$calc->fetch_assoc();
-        $p=$row['precio'];
-        $idimp=$row['id'];
-        $taman[$tam]=$idimp;
-        $precio=($p * $cant);
-        $costototal=$costototal+$precio;
+    $taman = array();
+    foreach ($tama as $tam => $cant) {
+        $query = "SELECT * FROM `impresiones` WHERE formato='$tam' AND desde<='$cant' AND hasta>='$cant' ORDER BY id DESC LIMIT 1";
+        $calc = $conectar->query($query);
+        $row = $calc->fetch_assoc();
+        $p = $row['precio'];
+        $idimp = $row['id'];
+        $taman[$tam] = $idimp;
+        $precio = ($p * $cant);
+        $costototal = $costototal + $precio;
     }
-    
-    foreach ($_SESSION['archivos'] as $key=>$impresion){
-        $tamano=$impresion['tamano'];
-        
-        $idimp=$taman[$tamano];
-        
-        $_SESSION['archivos'][$key]['idimpresion']=$idimp;
-    }
-    ;
-    $total=$costoenvio+$costototal;
-    $_SESSION['prontoFront']['valor']=$total;
-}else{
+
+    foreach ($_SESSION['archivos'] as $key => $impresion) {
+        $tamano = $impresion['tamano'];
+
+        $idimp = $taman[$tamano];
+
+        $_SESSION['archivos'][$key]['idimpresion'] = $idimp;
+    };
+    $total = $costoenvio + $costototal;
+    $_SESSION['prontoFront']['valor'] = $total;
+} else {
     header('Location: revelado-paso2');
     exit();
 }
@@ -402,7 +406,9 @@ if (isset($_POST['tipoenvio'])) {
                 <div class="row shadow-sm p-3 metodo-envio d-flex align-items-center">
                     <div class="col-9 col-md-10  order-md-1">
                         <div class="custom-control contenedor-input custom-radio ">
-                            <input type="radio" id="retiroSucursal" <?php if($_SESSION['prontoFront']['envio']['tipo']=='urbano' OR $_SESSION['prontoFront']['envio']['tipo']=='sucursal' OR $_SESSION['prontoFront']['envio']['tipo']=='recibir'){echo 'disabled';}?> name="metodoPago" value="3" class="custom-control-input no-transfer metodoPago">
+                            <input type="radio" id="retiroSucursal" <?php if ($_SESSION['prontoFront']['envio']['tipo'] == 'urbano' or $_SESSION['prontoFront']['envio']['tipo'] == 'sucursal' or $_SESSION['prontoFront']['envio']['tipo'] == 'recibir') {
+                                                                        echo 'disabled';
+                                                                    } ?> name="metodoPago" value="3" class="custom-control-input no-transfer metodoPago">
                             <label class="custom-control-label" for="retiroSucursal">Pagar al retirar por
                                 una sucursal</label>
                         </div>
@@ -436,10 +442,10 @@ if (isset($_POST['tipoenvio'])) {
                                 <label for="fac_email">Email *</label>
                                 <input type="email" class="form-control" id="fac_email" name="fac_email" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['email'] : ''; ?>" required>
                             </div>
-                                <div class="form-group col-md-6">
-                                    <label for="cuit">CUIT</label>
-                                    <input type="text" class="form-control" id="cuit" name="cuit" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cuit'] : ''; ?>" placeholder="XX-XXXXXXXX-X">
-                                </div>
+                            <div class="form-group col-md-6">
+                                <label for="cuil">CUIL</label>
+                                <input type="text" class="form-control" id="cuil" name="cuil" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cuil'] : ''; ?>" placeholder="XX-XXXXXXXX-X">
+                            </div>
                             <div class="form-group col-md-6">
                                 <label for="fac_direccion">Dirección *</label>
                                 <input type="text" class="form-control" id="fac_direccion" name="fac_direccion" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['direccion'] : ''; ?>" required>
@@ -512,6 +518,10 @@ if (isset($_POST['tipoenvio'])) {
                                     <label for="razon_social">Razón Social</label>
                                     <input type="text" class="form-control" id="razon_social" name="razon_social" placeholder="Razón Social">
                                 </div>
+                                <div class="form-group col-md-6" id="cuitContainer" style="display: none;">
+                                    <label for="cuit">CUIT</label>
+                                    <input type="text" class="form-control" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -526,58 +536,60 @@ if (isset($_POST['tipoenvio'])) {
                         <hr class="divisor-resumen-compra">
                     </div>
                     <div class="col-md-12">
-                    	<p class="descrip-pedido m-0 py-3">
-                    <?php
-                    $desc='';
-                    $cant=array();
-                    foreach ($_SESSION['archivos'] as $key=>$impre){
-                        $tam=$impre['tamano'];
-                        $c=$impre['cantidad'];
-                        $aca=$impre['acabado'];
-                        if(isset($cant[$tam][$aca])){
-                            $cant[$tam][$aca]=$cant[$tam][$aca]+$c;
-                            
-                        }else{
-                            $cant[$tam][$aca]=$c;
-                        }
-                    }
-                    foreach ($cant as $tam=>$item){
-                        foreach ($item as $acabado=>$c){
-                            $text='Revelado de '.$c.' fotografías en papel '.$acabado.', tamaño '.$tam.'.';
-                            $desc.=$text.'<br>';
-                        }
-                        
-                    }
-                    echo $desc;
-                    ?>
-                    <input type="hidden" name="descripcion" value="<?php echo $desc;?>">
-                    	</p>
-                    	<hr class="divisor-resumen-compra">
+                        <p class="descrip-pedido m-0 py-3">
+                            <?php
+                            $desc = '';
+                            $cant = array();
+                            foreach ($_SESSION['archivos'] as $key => $impre) {
+                                $tam = $impre['tamano'];
+                                $c = $impre['cantidad'];
+                                $aca = $impre['acabado'];
+                                if (isset($cant[$tam][$aca])) {
+                                    $cant[$tam][$aca] = $cant[$tam][$aca] + $c;
+                                } else {
+                                    $cant[$tam][$aca] = $c;
+                                }
+                            }
+                            foreach ($cant as $tam => $item) {
+                                foreach ($item as $acabado => $c) {
+                                    $text = 'Revelado de ' . $c . ' fotografías en papel ' . $acabado . ', tamaño ' . $tam . '.';
+                                    $desc .= $text . '<br>';
+                                }
+                            }
+                            echo $desc;
+                            ?>
+                            <input type="hidden" name="descripcion" value="<?php echo $desc; ?>">
+                        </p>
+                        <hr class="divisor-resumen-compra">
                     </div>
                     <div class="col-md-12">
                         <h6 class="font-weight-bold pt-3">Ingresa cupon de descuento</h6>
                         <div class="input-group mb-3">
-                          <input type="text" class="form-control" data-seccion="0"  id="codDescuento" placeholder="" >
-                          <div class="input-group-append">
-                            <button class="btn btn-outline-secondary btn-sm" id="btnDescuento" style="padding:.25rem .5rem;" type="button">Aplicar</button>
-                          </div>
+                            <input type="text" class="form-control" data-seccion="0" id="codDescuento" placeholder="">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary btn-sm" id="btnDescuento" style="padding:.25rem .5rem;" type="button">Aplicar</button>
+                            </div>
                         </div>
                         <hr class="divisor-resumen-compra">
                     </div>
                     <div class="col-md-12 totales">
-                        <p class="m-0 mb-2">Sub-Total $<?php echo $costototal;?></p>
-                        <p class="m-0 mb-2">Envio <?php echo $enviotag;?></p>
-                        <?php if(isset($_SESSION['prontoFront']['cupon'])){
-                                $desc=$_SESSION['prontoFront']['cupon']['valor'];
-                                $md=($costototal*$desc)/100;
-                                $cupon='<span class="badge badge-info"><small>Cupon '.$_SESSION["prontoFront"]["cupon"]["nombre"].'</small></span>';
-                            }else{
-                                $md=0;
-                                $cupon='';
-                            } ?>
+                        <p class="m-0 mb-2">Sub-Total $<?php echo $costototal; ?></p>
+                        <?php if($enviotag == 'Retiro por sucursal') : ?>
+                        <p class="m-0 mb-2"><?php echo $enviotag; ?></p>
+                        <?php else: ?>    
+                        <p class="m-0 mb-2">Envio <?php echo $enviotag; ?></p>
+                        <?php endif; ?>
+                        <?php if (isset($_SESSION['prontoFront']['cupon'])) {
+                            $desc = $_SESSION['prontoFront']['cupon']['valor'];
+                            $md = ($costototal * $desc) / 100;
+                            $cupon = '<span class="badge badge-info"><small>Cupon ' . $_SESSION["prontoFront"]["cupon"]["nombre"] . '</small></span>';
+                        } else {
+                            $md = 0;
+                            $cupon = '';
+                        } ?>
                         <p class="m-0 mb-2">Cupón de descuento $ <?php echo $md; ?></p>
                         <?php echo $cupon; ?>
-                        <p class="m-0 text-bold mb-4">TOTAL $<?php echo $costototal+$costoenvio-$md;?></p>
+                        <p class="m-0 text-bold mb-4">TOTAL $<?php echo $costototal + $costoenvio - $md; ?></p>
                     </div>
                 </div>
                 <div class="row p-0">
@@ -629,11 +641,15 @@ if (isset($_POST['tipoenvio'])) {
         </div>
     </div>
     <a class="d-md-none d-lg-none d-block text-center wp" href="https://wa.me/542216976559?  &amp;text=Buenos%20días,%20quiero%20mas%20info%20">
-         <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path></svg>
- </a>
-<a class="d-xs-none d-sm-none d-md-block text-center wp" target="_blank" href="https://wa.me/542216976559? &amp;text=Buenos%20días,%20quiero%20mas%20info">
-       <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path></svg>
-</a>
+        <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path>
+        </svg>
+    </a>
+    <a class="d-xs-none d-sm-none d-md-block text-center wp" target="_blank" href="https://wa.me/542216976559? &amp;text=Buenos%20días,%20quiero%20mas%20info">
+        <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path>
+        </svg>
+    </a>
 </footer>
 
 <!--Eliminar esto para que funciona el dropdown, pero deja de funcionar la animacion del menu hamburguesa-->
@@ -642,171 +658,183 @@ if (isset($_POST['tipoenvio'])) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous">
 </script>
-<script type="text/javascript" src="https://www.mercadopago.com/org-img/jsapi/mptools/buttons/render.js"></script> 
+<script type="text/javascript" src="https://www.mercadopago.com/org-img/jsapi/mptools/buttons/render.js"></script>
 <script>
-// Look for .hamburger
-var hamburger = document.querySelector(".hamburger");
-// On click
-hamburger.addEventListener("click", function() {
-    // Toggle class "is-active"
-    hamburger.classList.toggle("is-active");
-    // Do something else, like open/close menu
-});
+    // Look for .hamburger
+    var hamburger = document.querySelector(".hamburger");
+    // On click
+    hamburger.addEventListener("click", function() {
+        // Toggle class "is-active"
+        hamburger.classList.toggle("is-active");
+        // Do something else, like open/close menu
+    });
 </script>
 
 <script>
-$(".no-transfer").click(function() {
-    $("#collapsediv2").collapse('hide');
-})
+    $(".no-transfer").click(function() {
+        $("#collapsediv2").collapse('hide');
+    })
 
-// Cuando hacemos click verifica si tiene la clase "show" y si es asi, no colapsa nada. Caso contrario colapsa el div.
-$('.contenedor-input > input[data-toggle="collapse"]').click(function(e) {
-    target = $("#collapsediv2");
-    if ($(target).hasClass('show')) {
-        // e.preventDefault(); Esto en el caso que el link lleve a alguna seccion.
-        e.stopPropagation()
-    }
-})
+    // Cuando hacemos click verifica si tiene la clase "show" y si es asi, no colapsa nada. Caso contrario colapsa el div.
+    $('.contenedor-input > input[data-toggle="collapse"]').click(function(e) {
+        target = $("#collapsediv2");
+        if ($(target).hasClass('show')) {
+            // e.preventDefault(); Esto en el caso que el link lleve a alguna seccion.
+            e.stopPropagation()
+        }
+    })
 </script>
 
 <script src="assets/js/starter.js"></script>
 <script>
-$(function(){
-	// Toggle para mostrar/ocultar datos de Factura A
-	$('#facturaA').change(function() {
-		if ($(this).is(':checked')) {
-			$('#datosFacturaA').slideDown();
-			$('#razon_social').prop('required', true);
-		} else {
-			$('#datosFacturaA').slideUp();
-			$('#cuit').prop('required', false);
-			$('#razon_social').prop('required', false);
-			$('#razon_social').val('');
-		}
-	});
+    $(function() {
+        // Toggle para mostrar/ocultar datos de Factura A
+        $('#facturaA').change(function() {
+            if ($(this).is(':checked')) {
+                $('#datosFacturaA').slideDown();
+                $('#cuitContainer').slideDown();
+                $('#razon_social').prop('required', true);
+            } else {
+                $('#datosFacturaA').slideUp();
+                $('#cuitContainer').slideUp();
+                $('#cuit').prop('required', false);
+                $('#razon_social').prop('required', false);
+                $('#razon_social').val('');
+                $('#cuit').val('');
+            }
+        });
 
-	$('.metodoPago').change(function(){
-		var meto=$(this).val();
-		if(meto!='2'){
-			$('.btn-pagar').html('Finalizar pedido');
-		}else{
-			$('.btn-pagar').html('Pagar');
-		}
-	});
+        $('.metodoPago').change(function() {
+            var meto = $(this).val();
+            if (meto != '2') {
+                $('.btn-pagar').html('Finalizar pedido');
+            } else {
+                $('.btn-pagar').html('Pagar');
+            }
+        });
 
-	// Detectar cambios en el CP y recalcular Epresis si está seleccionado
-	var ultimoCp = '<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cp'] : ''; ?>';
-	var metodoEnvioActual = '<?php echo isset($_SESSION['prontoFront']['envio']['metodo_envio_id']) ? $_SESSION['prontoFront']['envio']['metodo_envio_id'] : ''; ?>';
+        // Detectar cambios en el CP y recalcular Epresis si está seleccionado
+        var ultimoCp = '<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cp'] : ''; ?>';
+        var metodoEnvioActual = '<?php echo isset($_SESSION['prontoFront']['envio']['metodo_envio_id']) ? $_SESSION['prontoFront']['envio']['metodo_envio_id'] : ''; ?>';
 
-	$('#fac_cp').on('blur', function() {
-		var nuevoCp = $(this).val();
+        $('#fac_cp').on('blur', function() {
+            var nuevoCp = $(this).val();
 
-		// Solo recalcular si cambió el CP y el método de envío es Epresis (ID 2)
-		if (nuevoCp !== ultimoCp && metodoEnvioActual == '2' && nuevoCp.length >= 4) {
-			recalcularEpresis(nuevoCp);
-			ultimoCp = nuevoCp;
-		}
-	});
+            // Solo recalcular si cambió el CP y el método de envío es Epresis (ID 2)
+            if (nuevoCp !== ultimoCp && metodoEnvioActual == '2' && nuevoCp.length >= 4) {
+                recalcularEpresis(nuevoCp);
+                ultimoCp = nuevoCp;
+            }
+        });
 
-	function recalcularEpresis(cp) {
-		// Mostrar indicador de carga en el área de envío
-		$('.totales p:contains("Envio")').html('Envio <i class="fa fa-spin fa-spinner"></i>');
+        function recalcularEpresis(cp) {
+            // Mostrar indicador de carga en el área de envío
+            $('.totales p:contains("Envio")').html('Envio <i class="fa fa-spin fa-spinner"></i>');
 
-		$.post('inc/metodo_envio.php', {
-			cp_destino: cp
-		}, function(data) {
-			if (data.success) {
-				var costoEnvio = parseFloat(data.costo);
-				var fecha = data.fecha;
-				var subtotal = <?php echo $costototal; ?>;
+            $.post('inc/metodo_envio.php', {
+                cp_destino: cp
+            }, function(data) {
+                if (data.success) {
+                    var costoEnvio = parseFloat(data.costo);
+                    var fecha = data.fecha;
+                    var subtotal = <?php echo $costototal; ?>;
 
-				// Actualizar el costo de envío en la sesión vía AJAX
-				$.post('inc/actualizar_envio_sesion.php', {
-					costo: costoEnvio,
-					fecha: fecha
-				}, function(response) {
-					if (response.success) {
-						// Actualizar visualmente el costo de envío
-						var envioTag = costoEnvio > 0 ? '$ ' + costoEnvio.toFixed(2) : '<span class="text-success">GRATIS</span>';
-						$('.totales p:contains("Envio")').html('Envio ' + envioTag);
+                    // Actualizar el costo de envío en la sesión vía AJAX
+                    $.post('inc/actualizar_envio_sesion.php', {
+                        costo: costoEnvio,
+                        fecha: fecha
+                    }, function(response) {
+                        if (response.success) {
+                            // Actualizar visualmente el costo de envío
+                            var envioTag = costoEnvio > 0 ? '$ ' + costoEnvio.toFixed(2) : '<span class="text-success">GRATIS</span>';
+                            $('.totales p:contains("Envio")').html('Envio ' + envioTag);
 
-						// Recalcular y actualizar el total
-						var descuento = <?php echo $md; ?>;
-						var nuevoTotal = subtotal + costoEnvio - descuento;
-						$('.totales p:contains("TOTAL")').html('TOTAL $ ' + nuevoTotal.toFixed(2));
+                            // Recalcular y actualizar el total
+                            var descuento = <?php echo $md; ?>;
+                            var nuevoTotal = subtotal + costoEnvio - descuento;
+                            $('.totales p:contains("TOTAL")').html('TOTAL $ ' + nuevoTotal.toFixed(2));
 
-						// Mostrar mensaje de actualización
-						$('.totales').append('<p class="text-success mt-2 mensaje-actualizacion"><small>✓ Envío actualizado</small></p>');
-						setTimeout(function() {
-							$('.mensaje-actualizacion').fadeOut(function() {
-								$(this).remove();
-							});
-						}, 3000);
-					}
-				}, 'json').fail(function() {
-					$('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error al actualizar</span>');
-				});
-			} else {
-				$('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error: ' + data.error + '</span>');
-			}
-		}, 'json').fail(function() {
-			$('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error de conexión</span>');
-		});
-	}
+                            // Mostrar mensaje de actualización
+                            $('.totales').append('<p class="text-success mt-2 mensaje-actualizacion"><small>✓ Envío actualizado</small></p>');
+                            setTimeout(function() {
+                                $('.mensaje-actualizacion').fadeOut(function() {
+                                    $(this).remove();
+                                });
+                            }, 3000);
+                        }
+                    }, 'json').fail(function() {
+                        $('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error al actualizar</span>');
+                    });
+                } else {
+                    $('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error: ' + data.error + '</span>');
+                }
+            }, 'json').fail(function() {
+                $('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error de conexión</span>');
+            });
+        }
 
-	$('.btn-pagar').click(function(e){
-		e.preventDefault();
-		var metodo=$(".metodoPago:checked").val();
+        $('.btn-pagar').click(function(e) {
+            e.preventDefault();
+            var metodo = $(".metodoPago:checked").val();
 
-		// Recopilar datos de facturación
-		var facturacionData = {
-			nombre: $('#fac_nombre').val(),
-			apellido: $('#fac_apellido').val(),
-			dni: $('#fac_dni').val(),
-			email: $('#fac_email').val(),
-			direccion: $('#fac_direccion').val(),
-			provincia: $('#fac_provincia').val(),
-			ciudad: $('#fac_ciudad').val(),
-			cp: $('#fac_cp').val(),
-			altura: $('#fac_altura').val(),
-			telefono: $('#fac_telefono').val(),
-			celular: $('#fac_celular').val(),
-			factura_a: $('#facturaA').is(':checked') ? 1 : 0,
-			cuit: $('#cuit').val(),
-			razon_social: $('#razon_social').val()
-		};
+            // Recopilar datos de facturación
+            var facturacionData = {
+                nombre: $('#fac_nombre').val(),
+                apellido: $('#fac_apellido').val(),
+                dni: $('#fac_dni').val(),
+                email: $('#fac_email').val(),
+                direccion: $('#fac_direccion').val(),
+                provincia: $('#fac_provincia').val(),
+                ciudad: $('#fac_ciudad').val(),
+                cp: $('#fac_cp').val(),
+                altura: $('#fac_altura').val(),
+                telefono: $('#fac_telefono').val(),
+                celular: $('#fac_celular').val(),
+                factura_a: $('#facturaA').is(':checked') ? 1 : 0,
+                cuit: $('#cuit').val(),
+                cuil: $('#cuil').val(),
+                razon_social: $('#razon_social').val()
+            };
 
-		$(this).html('<i class="fa fa-spin fa-spinner" aria-hidden="true"></i>');
-		$(this).prop('disabled',true);
-		if(metodo=='2'){
-			$.post('inc/crear_pago.php',{metodo:metodo,desc:'Impresion Imagenes',facturacion:facturacionData},function(data){
-				$(this).html('Pagar');
-				$(this).prop('disabled',false);
-				$MPC.openCheckout ({
-				    url: data.url,
-				    mode: "modal",
-				    onreturn: function(data) {
-					    if(data.collection_status== 'approved'){
-					    	window.location.href = "revelado-paso4";
-				    	}else{
-							alert('Error al realizar el pago, intente nuevamente');
-					    }
-					}
-				});
-			
-			},'json');	
-		}else{
-			$.post('inc/crear_pedido.php',{metodo:metodo,desc:'Impresion Imagenes',facturacion:facturacionData},function(data){
-				if(data.success){
-					$('.btn-pagar').html('Pagar');
-					$('.btn-pagar').prop('disabled',false);
-					window.location.href = "revelado-paso4?pedido="+data.pedido;
-				}
-			},'json');
-		}
-	});
-	
-});
+            $(this).html('<i class="fa fa-spin fa-spinner" aria-hidden="true"></i>');
+            $(this).prop('disabled', true);
+            if (metodo == '2') {
+                $.post('inc/crear_pago.php', {
+                    metodo: metodo,
+                    desc: 'Impresion Imagenes',
+                    facturacion: facturacionData
+                }, function(data) {
+                    $(this).html('Pagar');
+                    $(this).prop('disabled', false);
+                    $MPC.openCheckout({
+                        url: data.url,
+                        mode: "modal",
+                        onreturn: function(data) {
+                            if (data.collection_status == 'approved') {
+                                window.location.href = "revelado-paso4";
+                            } else {
+                                alert('Error al realizar el pago, intente nuevamente');
+                            }
+                        }
+                    });
+
+                }, 'json');
+            } else {
+                $.post('inc/crear_pedido.php', {
+                    metodo: metodo,
+                    desc: 'Impresion Imagenes',
+                    facturacion: facturacionData
+                }, function(data) {
+                    if (data.success) {
+                        $('.btn-pagar').html('Pagar');
+                        $('.btn-pagar').prop('disabled', false);
+                        window.location.href = "revelado-paso4?pedido=" + data.pedido;
+                    }
+                }, 'json');
+            }
+        });
+
+    });
 </script>
 </body>
 

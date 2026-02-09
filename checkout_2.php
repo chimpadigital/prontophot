@@ -10,6 +10,7 @@ if (isset($_SESSION['prontoFront']['token'])) {
     }
 }
 
+
 if (isset($_POST['entrega'])) {
     $costoenvio = 0;
     $enviotag = '';
@@ -67,6 +68,9 @@ if (isset($_POST['entrega'])) {
         if ($_POST['entrega'] == 'urbano') {
             $costoenvio = 250;
             $enviotag = '$ 250';
+        } elseif ($_POST['entrega'] == 'suc2' || $_POST['entrega'] == 'suc1') {
+            $costoenvio = 0;
+            $enviotag = 'Retiro por sucursal';
         } else {
             if ($_POST['entrega'] == 'recibir') {
                 $enviotag = 'Abona al recibir';
@@ -232,8 +236,8 @@ if (isset($_POST['entrega'])) {
                                 <input type="email" class="form-control" id="fac_email" name="fac_email" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['email'] : ''; ?>" required>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="cuit">CUIT</label>
-                                <input type="text" class="form-control" id="cuit" name="cuit" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cuit'] : ''; ?>" placeholder="XX-XXXXXXXX-X">
+                                <label for="cuil">CUIL</label>
+                                <input type="text" class="form-control" id="cuil" name="cuil" value="<?php echo isset($_SESSION['prontoFront']['token']) ? $rowc['cuil'] : ''; ?>" placeholder="XX-XXXXXXXX-X">
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="fac_direccion">Dirección *</label>
@@ -307,6 +311,10 @@ if (isset($_POST['entrega'])) {
                                     <label for="razon_social">Razón Social</label>
                                     <input type="text" class="form-control" id="razon_social" name="razon_social" placeholder="Razón Social">
                                 </div>
+                            <div class="form-group col-md-6" id="cuitContainer" style="display: none;">
+                                <label for="cuit">CUIT</label>
+                                <input type="text" class="form-control" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
+                            </div>
                             </div>
                         </div>
 
@@ -378,7 +386,12 @@ if (isset($_POST['entrega'])) {
                     </div>
                     <div class="col-md-12 totales">
                         <p class="m-0 mb-2">Sub-Total $ <?php echo $total; ?></p>
+                        
+                        <?php if($enviotag == 'Retiro por sucursal') : ?>
+                        <p class="m-0 mb-2"><?php echo $enviotag; ?></p>
+                        <?php else: ?>    
                         <p class="m-0 mb-2">Envio <?php echo $enviotag; ?></p>
+                        <?php endif; ?>
                         <p class="m-0 mb-2">Cupón de descuento $ <?php echo $subd; ?></p>
                         <?php echo $cupon; ?>
                         <p class="m-0 text-bold mb-4">TOTAL $ <?php echo $total + $costoenvio - $subd; ?></p>
@@ -506,6 +519,7 @@ if (isset($_POST['entrega'])) {
                 celular: $('#fac_celular').val(),
                 factura_a: $('#facturaA').is(':checked') ? 1 : 0,
                 cuit: $('#cuit').val(),
+                cuil: $('#cuil').val(),
                 razon_social: $('#razon_social').val(),
                 altura: $('#fac_altura').val(),
             };
@@ -552,11 +566,14 @@ if (isset($_POST['entrega'])) {
         $('#facturaA').change(function() {
             if ($(this).is(':checked')) {
                 $('#datosFacturaA').slideDown();
+                $('#cuitContainer').slideDown();
                 $('#razon_social').prop('required', true);
             } else {
                 $('#datosFacturaA').slideUp();
+                $('#cuitContainer').slideUp();
                 $('#razon_social').prop('required', false);
                 $('#razon_social').val('');
+                $('#cuit').val('');
             }
         });
 

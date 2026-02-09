@@ -8,7 +8,7 @@ $respuesta= new stdClass();
 $nombre=$_POST['nombre'];
 $apellido=$_POST['apellido'];
 $dni=$_POST['dni'];
-$cuit=$_POST['cuit'] ?? '';
+$cuil=$_POST['cuil'] ?? '';
 $email=$_POST['email'];
 $pass=password_hash($_POST['passwd'],  PASSWORD_DEFAULT);
 
@@ -22,7 +22,7 @@ $code=generarCodigo(64);
 $existe=existeCorreo($email);
 
 if($existe->success==false){
-    $query="INSERT INTO `clientes`(`nombre`, `apellido`, `dni`, `cuit`, `email`, `passwd`, `direccion`, `provincia`, `ciudad`, `cp`, `altura`, `telefono`, `code`, `activo`, `nivel`) VALUES ('$nombre','$apellido','$dni','$cuit','$email','$pass','$direccion','$provincia','$ciudad','$cp','$altura','$telefono','$code','1','0')";
+    $query="INSERT INTO `clientes`(`nombre`, `apellido`, `dni`, `cuil`, `email`, `passwd`, `direccion`, `provincia`, `ciudad`, `cp`, `altura`, `telefono`, `code`, `activo`, `nivel`) VALUES ('$nombre','$apellido','$dni','$cuil','$email','$pass','$direccion','$provincia','$ciudad','$cp','$altura','$telefono','$code','1','0')";
     $res=$conectar->query($query);
     if($res){
         $respuesta->success=true;

@@ -106,12 +106,20 @@ hr.solid {
     min-height: 635px;     /* ajustá según tu diseño */
 }
 
+.tag-percent-tienda {
+  font-size: 0.7rem!important;
+  font-weight: 600!important;
+  padding: 1px 2px 0!important;
+  color: #00a650!important;
+  background-color: #e6f7ef!important;
+}
+
 .tag-percent {
-  font-size: 1.3rem;
-  font-weight: 600;
-  padding: 1px 2px 0;
-  color: #00a650;
-  background-color: #e6f7ef;
+  font-size: 1.3rem!important;
+  font-weight: 600!important;
+  padding: 1px 2px 0!important;
+  color: #00a650!important;
+  background-color: #e6f7ef!important;
 }
 
 .bi {

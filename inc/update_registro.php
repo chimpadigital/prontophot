@@ -8,7 +8,7 @@ $id=$_POST['id'];
 $nombre=$_POST['nombre'];
 $apellido=$_POST['apellido'];
 $dni=$_POST['dni'];
-$cuit=$_POST['cuit'] ?? '';
+$cuil=$_POST['cuil'] ?? '';
 $email=$_POST['email'];
 
 $direccion=$_POST['direccion'];
@@ -18,7 +18,7 @@ $cp=$_POST['cp'];
 $altura=$_POST['altura'];
 $telefono=$_POST['telefono'];
 
-$query="UPDATE `clientes` SET `nombre`='$nombre',`apellido`='$apellido',`dni`='$dni',`cuit`='$cuit',`email`='$email',`direccion`='$direccion',`provincia`='$provincia',`ciudad`='$ciudad',`cp`='$cp',`altura`='$altura',`telefono`='$telefono' WHERE id='$id'";
+$query="UPDATE `clientes` SET `nombre`='$nombre',`apellido`='$apellido',`dni`='$dni',`cuil`='$cuil',`email`='$email',`direccion`='$direccion',`provincia`='$provincia',`ciudad`='$ciudad',`cp`='$cp',`altura`='$altura',`telefono`='$telefono' WHERE id='$id'";
 $res=$conectar->query($query);
 if($res){
     $respuesta->success=true;

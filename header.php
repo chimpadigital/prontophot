@@ -138,8 +138,8 @@ global $conectar;
                                 <small class="form-text text-danger d-none" id="error-DNI">El DNI es obligatorio y debe ser válido</small>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="CUIT">CUIT</label>
-                                <input type="text" class="form-control" name="cuit" id="CUIT" placeholder="XX-XXXXXXXX-X">
+                                <label for="CUIL">CUIL</label>
+                                <input type="text" class="form-control" name="cuil" id="CUIL" placeholder="XX-XXXXXXXX-X">
                             </div>
                         </div>
                         <div class="form-row">

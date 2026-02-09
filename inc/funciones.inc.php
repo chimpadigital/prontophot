@@ -167,10 +167,11 @@ function crearPedido($param)
             $celular = $conectar->real_escape_string($fac['celular']);
             $factura_a = isset($fac['factura_a']) ? intval($fac['factura_a']) : 0;
             $cuit = isset($fac['cuit']) ? $conectar->real_escape_string($fac['cuit']) : '';
+            $cuil = isset($fac['cuil']) ? $conectar->real_escape_string($fac['cuil']) : '';
             $razon_social = isset($fac['razon_social']) ? $conectar->real_escape_string($fac['razon_social']) : '';
 
-            $sqlFac = "INSERT INTO `facturacion`(`pedido_id`, `nombre`, `apellido`, `dni`, `email`, `direccion`, `provincia`, `ciudad`, `cp`, `altura`, `telefono`, `celular`, `factura_a`, `cuit`, `razon_social`)
-                       VALUES ('$idpedido','$nombre','$apellido','$dni','$email','$direccion','$provincia','$ciudad','$cp','$altura_fac','$telefono','$celular','$factura_a','$cuit','$razon_social')";
+            $sqlFac = "INSERT INTO `facturacion`(`pedido_id`, `nombre`, `apellido`, `dni`, `email`, `direccion`, `provincia`, `ciudad`, `cp`, `altura`, `telefono`, `celular`, `factura_a`, `cuit`, `cuil`, `razon_social`)
+                       VALUES ('$idpedido','$nombre','$apellido','$dni','$email','$direccion','$provincia','$ciudad','$cp','$altura_fac','$telefono','$celular','$factura_a','$cuit','$cuil','$razon_social')";
             $conectar->query($sqlFac);
         }
     } else {

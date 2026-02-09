@@ -184,11 +184,15 @@ try {
                     <div class="row mt-4 datos-envio">
                         <div class="col-md-8 p-4 shadowBox" id="datosEnvio">
                             <?php
+                            echo '<script>console.log("'.$row['envio'].'")</script>';
+                            echo '<script>console.log("'.$row['entrega'].'")</script>';
+
                             if ($row['envio'] == 'domicilio') {
                                 $titulo = 'Enviar a mi domicilio';
-                                $nombre = $row['nombre'];
+                                $nombre = $row['clientenombre'];
                                 $dni = $row['clientedni'];
                                 $ciudad = $row['clienteciudad'];
+                                $altura = $row['clientealtura'];
                                 $direccion = $row['clientedireccion'];
                                 $provincia = $row['clienteprovincia'];
                                 $cp = $row['clientecp'];
@@ -205,7 +209,7 @@ try {
 
                             switch ($row['entrega']) {
                                 case 'envio_2':
-                                    echo $titulo = '<strong>Datos de envio</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Ciudad:  ' . $ciudad = $row['clienteciudad'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
+                                    echo $titulo = '<strong>Datos de envio</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Ciudad:  ' . $ciudad = $row['clienteciudad'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' Altura: ' . $altura = $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
                                     break;
                                 case 'suc1':
                                     echo '<h5>Retiro Gratis por Sucursal</h5>
@@ -223,19 +227,10 @@ try {
                             <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' - Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
                                     break;
                                 case 'urbano':
-                                    echo '<h5 class="mt-4">' . $titulo . '</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p>Nombre y Apellido :' . $nombre . '</p>
-                                    <p>DNI :' . $dni . '</p>
-                                    <p>Dirección :' . $direccion . '</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p>Provincia : ' . $provincia . '</p>
-                                    <p>CP : ' . $cp . '</p>
-                                    <p>Teléfono/Celular : ' . $telefono . '</p>
-                                </div>
-                            </div>';
+                                    echo $titulo = '<strong>Datos de envio casco urbano</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Ciudad:  ' . $ciudad = $row['clienteciudad'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' Altura: ' . $altura = $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
+                                    break;
+                                case 'envio_1':
+                                    echo $titulo = '<strong>Datos de envio casco urbano</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Ciudad:  ' . $ciudad = $row['clienteciudad'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' Altura: ' . $altura = $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
                                     break;
                                 case 'recibir':
                                     echo '<h5 class="mt-4">' . $titulo . '</h5>
@@ -278,8 +273,7 @@ try {
                                     <div class="col-md-6">
                                         <p><strong>Nombre y Apellido:</strong> <?php echo $rowf['nombre'] . ' ' . $rowf['apellido']; ?></p>
                                         <p><strong>DNI:</strong> <?php echo $rowf['dni']; ?></p>
-                                        <p><strong>CUIT/CUIL:</strong> <?php echo $rowf['cuit']; ?></p>
-                                        <p><strong>Razon Social:</strong> <?php echo $rowf['razon_social']; ?></p>
+                                        <p><strong>CUIL:</strong> <?php echo $rowf['cuil']; ?></p>
                                         <p><strong>Email:</strong> <?php echo $rowf['email']; ?></p>
                                         <p><strong>Dirección:</strong> <?php echo $rowf['direccion']; ?> - Altura: <?php echo $rowf['altura']; ?></p>
                                     </div>
@@ -296,7 +290,9 @@ try {
 
                                 <?php if ($rowf['factura_a'] == 1): ?>
                                     <hr class="my-3">
-                                    <h5 class="text-danger">Requiere Factura A</h5>
+                                    <h5 class="text-danger mb-4">Requiere Factura A</h5>
+                                    <p><strong>CUIT:</strong> <?php echo $rowf['cuit']; ?></p>
+                                    <p><strong>Razon Social:</strong> <?php echo $rowf['razon_social']; ?></p>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -524,8 +520,8 @@ try {
                                                 </div>
                                                 <div class="col-md-6">
                                                     <p class="mb-1"><strong>Altura:</strong> <?php echo $row['clientealtura'] ? $row['clientealtura'] : 'S/N'; ?></p>
-                                                    <?php if($rowf && $rowf['cuit']): ?>
-                                                    <p class="mb-1"><strong>CUIT:</strong> <?php echo $rowf['cuit']; ?></p>
+                                                    <?php if ($rowf && $rowf['cuit']): ?>
+                                                        <p class="mb-1"><strong>CUIT:</strong> <?php echo $rowf['cuit']; ?></p>
                                                     <?php endif; ?>
                                                     <p class="mb-1"><strong>Servicio:</strong> ESTANDAR</p>
                                                     <p class="mb-1"><strong>Valor Declarado:</strong> $<?php echo $row['total']; ?></p>

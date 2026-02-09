@@ -1,5 +1,5 @@
 <?php include ('header.php'); ?>
-<?php 
+<?php
 include_once __DIR__.'/conexion/conectar.inc.php';
 include_once __DIR__.'/inc/funciones.inc.php';
 global $conectar;
@@ -13,13 +13,18 @@ if (isset($_GET['id'])) {
     $query="SELECT p.*,c.nombre categoria,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM productos p LEFT JOIN categorias c ON p.id_categoria=c.id WHERE p.stock>0 ORDER BY p.id DESC";
 }
 $productos=$conectar->query($query);
+
+// Obtener el coeficiente de impuestos
+$taxQuery = $conectar->query("SELECT coeficiente FROM tax WHERE id = 1");
+$taxData = $taxQuery->fetch_assoc();
+$taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
 ?>
 <style>
 .pagination .active .page{
         color: #fff !important;
     background-color: #DA0000;
     border-color: #DA0000;
-    
+
     }
 .pagination .page{
     color: #000 !important;
@@ -31,7 +36,15 @@ $productos=$conectar->query($query);
     color: #007bff;
     background-color: #fff;
     border: 1px solid #dee2e6;
-}    
+}
+.tag-percent {
+    background-color: #DA0000;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
 </style>
 <div class="position-relative portada-tienda d-flex align-items-center">
     <div class="container py-5">
@@ -104,6 +117,12 @@ $productos=$conectar->query($query);
             	if($row['color_violeta']=='1'){$colores.=' violeta';}
             	if($row['color_verde']=='1'){$colores.=' verde';}
             	if($row['color_amarillo']=='1'){$colores.=' amarillo';}
+
+            	// Calcular precios
+            	$precioLista = $row['precio'];
+            	$descuento_porcentaje = isset($row['descuento_final']) ? $row['descuento_final'] : 0;
+            	$precioFinal = $precioLista - ($precioLista * $descuento_porcentaje / 100);
+            	$precioConImpuestos = $precioFinal / $taxCoeficiente;
             	?>
                 <div class="col-md-4 d-flex flex-column justify-content-center mb-5">
                     <div class="contenedor-card">
@@ -119,7 +138,16 @@ $productos=$conectar->query($query);
                             <div class="contenido-card">
                                 <p class="nombre-producto orden-nombre"><?php echo $row['nombre']; ?></p>
                                 <p class="detalle-producto bsc-descripcion"><?php echo $row['descripcion']?></p>
-                                <p class="nombre-producto orden-precio"><?php echo $row['precio']?></p>
+
+                                <?php if ($descuento_porcentaje > 0): ?>
+                                    <p class="m-0" style="text-decoration: line-through; color: #999; font-size: 0.9rem;">$ <?php echo number_format($precioLista, 2); ?></p>
+                                    <p class="nombre-producto m-0 orden-precio">$ <?php echo number_format($precioFinal, 2); ?> <span class="tag-percent-tienda"><?php echo $descuento_porcentaje; ?>% OFF</span></p>
+                                <?php else: ?>
+                                    <p class="nombre-producto m-0 orden-precio">$ <?php echo number_format($precioLista, 2); ?></p>
+                                <?php endif; ?>
+
+                                <p class="text-muted small mb-0">Sin impuestos: $<?php echo number_format($precioConImpuestos, 2); ?></p>
+
 								<span style="display:none;" class="bsc-categoria"><?php echo $row['categoria']?></span>
 								<span style="display:none;" class="bsc-colores"><?php echo $colores;?></span>
                             </div>
