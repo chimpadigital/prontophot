@@ -520,7 +520,6 @@ button.btn-cargar-producto {
 .nombre-producto {
   font-weight: 800;
   font-size: 1.1em;
-  margin-top: 25px;
   display: flex;
   align-items: center;
   gap: 5px;
