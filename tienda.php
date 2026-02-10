@@ -140,10 +140,10 @@ $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
                                 <p class="detalle-producto bsc-descripcion"><?php echo $row['descripcion']?></p>
 
                                 <?php if ($descuento_porcentaje > 0): ?>
-                                    <p class="m-0" style="text-decoration: line-through; color: #999; font-size: 0.9rem;">$ <?php echo number_format($precioLista, 2); ?></p>
-                                    <p class="nombre-producto m-0 orden-precio">$ <?php echo number_format($precioFinal, 2); ?> <span class="tag-percent-tienda"><?php echo $descuento_porcentaje; ?>% OFF</span></p>
+                                    <p class="m-0" style="text-decoration: line-through; color: #999; font-size: 0.9rem;">$<?php echo number_format($precioLista, 2); ?></p>
+                                    <p class="nombre-producto m-0 orden-precio">$<?php echo number_format($precioFinal, 2); ?> <span class="tag-percent-tienda"><?php echo $descuento_porcentaje; ?>% OFF</span></p>
                                 <?php else: ?>
-                                    <p class="nombre-producto m-0 orden-precio">$ <?php echo number_format($precioLista, 2); ?></p>
+                                    <p class="nombre-producto m-0 orden-precio">$<?php echo number_format($precioLista, 2); ?></p>
                                 <?php endif; ?>
 
                                 <p class="text-muted small mb-0">Sin impuestos: $<?php echo number_format($precioConImpuestos, 2); ?></p>
