@@ -136,7 +136,7 @@ $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
                             </div>
                             <img class="w-100 image-fluid" src="<?php echo $row['imagen']; ?>" alt="">
                             <div class="contenido-card">
-                                <p class="nombre-producto orden-nombre"><?php echo $row['nombre']; ?></p>
+                                <p class="nombre-producto orden-nombre mb-2"><?php echo $row['nombre']; ?></p>
                                 <p class="detalle-producto bsc-descripcion"><?php echo $row['descripcion']?></p>
 
                                 <?php if ($descuento_porcentaje > 0): ?>

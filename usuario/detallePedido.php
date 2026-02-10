@@ -1,15 +1,15 @@
-<?php include ('header_usuario.php'); ?>
-<?php 
+<?php include('header_usuario.php'); ?>
+<?php
 include '../inc/funciones.inc.php';
 include_once '../conexion/conectar.inc.php';
 global $conectar;
-$id=$_GET['id'];
-$pedidod=$conectar->query("SELECT p.*,CONCAT(c.nombre,' ',c.apellido) as clientenombre,c.dni clientedni,CONCAT(c.direccion,' ',c.ciudad) as clientedireccion,c.cp clientecp,c.provincia clienteprovincia,c.telefono clientetelefono FROM pedidos p LEFT JOIN clientes c ON p.id_cliente=c.id WHERE p.id='$id'");
+$id = $_GET['id'];
+$pedidod = $conectar->query("SELECT p.*,CONCAT(c.nombre,' ',c.apellido) as clientenombre,c.dni clientedni,CONCAT(c.direccion,' ',c.ciudad) as clientedireccion,c.cp clientecp,c.provincia clienteprovincia,c.telefono clientetelefono FROM pedidos p LEFT JOIN clientes c ON p.id_cliente=c.id WHERE p.id='$id'");
 
-$pedido=$pedidod->fetch_assoc();
+$pedido = $pedidod->fetch_assoc();
 
-$imagenes=$conectar->query("SELECT * FROM pedidos_imagenes WHERE id_pedido='$id'");
-$productos=$conectar->query("SELECT pd.cantidad, pd.color, p.*,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$id'");
+$imagenes = $conectar->query("SELECT * FROM pedidos_imagenes WHERE id_pedido='$id'");
+$productos = $conectar->query("SELECT pd.cantidad, pd.color, p.*,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$id'");
 
 // Obtener datos de facturación
 $facturacion = $conectar->query("SELECT * FROM facturacion WHERE pedido_id='$id'");
@@ -68,79 +68,83 @@ $rowf = $facturacion->fetch_assoc();
                             aria-labelledby="home-tab">
 
                             <h5 class="titulo-tabs-user">Detalle de el pedido #<?php echo $pedido['id']; ?></h5>
-                            <?php if($productos->num_rows>0){ ?>
-                            <div class="row my-3">
-                            <?php
-                            while($rowp=$productos->fetch_assoc()){
-                                // Generar HTML del color
-                                $color_html = '';
-                                if (!empty($rowp['color'])) {
-                                    $color_html = '<span class="dot" style="background-color: ' . $rowp['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span>';
-                                }
-                            ?>
-                                <div class="col-12 p-4 col-categoria my-2">
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <img class="img-fluid w-100" src="<?php if(!empty($rowp['imagen'])){echo '../'.$rowp['imagen']; }else{echo 'https://via.placeholder.com/50';}?>" alt="">
-                                        </div>
-                                        <div class="col-md-10 d-block d-lg-flex flex-column">
-                                            <div class="d-block d-lg-flex">
-                                                <ul class="list-group">
-                                                    <li class="list-group-item bg-transparent border-0 mb-0 p-0"><strong><?php echo $rowp['nombre']; ?></strong></li>
-                                                    <?php if(!empty($rowp['color'])): ?>
-                                                    <li class="list-group-item bg-transparent border-0 mb-0 p-0">Color seleccionado: <?php echo $color_html; ?></li>
-                                                    <?php endif; ?>
-                                                    <li class="list-group-item bg-transparent border-0 mb-0 p-0">Cantidad: <?php echo $rowp['cantidad'] ?></li>
-                                                </ul>
+                            <?php if ($productos->num_rows > 0) { ?>
+                                <div class="row my-3">
+                                    <?php
+                                    while ($rowp = $productos->fetch_assoc()) {
+                                        // Generar HTML del color
+                                        $color_html = '';
+                                        if (!empty($rowp['color'])) {
+                                            $color_html = '<span class="dot" style="background-color: ' . $rowp['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span>';
+                                        }
+                                    ?>
+                                        <div class="col-12 p-4 col-categoria my-2">
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <img class="img-fluid w-100" src="<?php if (!empty($rowp['imagen'])) {
+                                                                                            echo '../' . $rowp['imagen'];
+                                                                                        } else {
+                                                                                            echo 'https://via.placeholder.com/50';
+                                                                                        } ?>" alt="">
+                                                </div>
+                                                <div class="col-md-10 d-block d-lg-flex flex-column">
+                                                    <div class="d-block d-lg-flex">
+                                                        <ul class="list-group">
+                                                            <li class="list-group-item bg-transparent border-0 mb-0 p-0"><strong><?php echo $rowp['nombre']; ?></strong></li>
+                                                            <?php if (!empty($rowp['color'])): ?>
+                                                                <li class="list-group-item bg-transparent border-0 mb-0 p-0">Color seleccionado: <?php echo $color_html; ?></li>
+                                                            <?php endif; ?>
+                                                            <li class="list-group-item bg-transparent border-0 mb-0 p-0">Cantidad: <?php echo $rowp['cantidad'] ?></li>
+                                                        </ul>
+                                                    </div>
+                                                    <p class="descripcion-pedido"><?php echo $rowp['descripcion'] ?></p>
+                                                </div>
                                             </div>
-                                            <p class="descripcion-pedido"><?php echo $rowp['descripcion']?></p>
                                         </div>
-                                    </div>
-                                </div>
-        					<?php } ?>	
-        					
-        					
-                            </div>
-                            <?php }?>
-                            <?php if($imagenes->num_rows>0){?>
-                            <h4 class="text-bold">Fotos Reveladas</h4>
+                                    <?php } ?>
 
-                            <div class="row align-items-lg-center mt-5">
-                                <div class="col-md-1 d-none d-md-block">
-                                    <button class="customNextBtn btn"><svg xmlns="http://www.w3.org/2000/svg" width="40"
-                                            height="40" fill="currentColor" class="text-danger bi bi-chevron-left"
-                                            viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-                                        </svg></button>
 
                                 </div>
-                                <div class="col-md-10 col-sm-12">
-                                    <div class="owl-carousel owl-theme">
-                                        <?php 
-                                        $i=1;
-                                        while($row=$imagenes->fetch_assoc()){?>
-                                        <div class="d-flex flex-column align-items-center">
-                                            <h5 class="align-self-baseline text-bold">Foto <?php echo $i;?> </h5>
-                                            <img class="shadow-sm" src="../<?php echo $row['thumb'];?>" alt="">
-                                            <p class="mt-3">Tamaño : <?php echo $row['formato']?>, acabado <?php echo $row['acabado'];?></p>
-                                            <p>Cantidad <?php echo $row['cantidad'];?></p>
+                            <?php } ?>
+                            <?php if ($imagenes->num_rows > 0) { ?>
+                                <h4 class="text-bold">Fotos Reveladas</h4>
+
+                                <div class="row align-items-lg-center mt-5">
+                                    <div class="col-md-1 d-none d-md-block">
+                                        <button class="customNextBtn btn"><svg xmlns="http://www.w3.org/2000/svg" width="40"
+                                                height="40" fill="currentColor" class="text-danger bi bi-chevron-left"
+                                                viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                                            </svg></button>
+
+                                    </div>
+                                    <div class="col-md-10 col-sm-12">
+                                        <div class="owl-carousel owl-theme">
+                                            <?php
+                                            $i = 1;
+                                            while ($row = $imagenes->fetch_assoc()) { ?>
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <h5 class="align-self-baseline text-bold">Foto <?php echo $i; ?> </h5>
+                                                    <img class="shadow-sm" src="../<?php echo $row['thumb']; ?>" alt="">
+                                                    <p class="mt-3">Tamaño : <?php echo $row['formato'] ?>, acabado <?php echo $row['acabado']; ?></p>
+                                                    <p>Cantidad <?php echo $row['cantidad']; ?></p>
+                                                </div>
+                                            <?php
+                                                $i++;
+                                            } ?>
                                         </div>
-                                        <?php 
-                                        $i++;
-                                        }?>
+                                    </div>
+                                    <div class="col-md-1 d-none d-md-block">
+                                        <button class="customNextBtn btn"><svg xmlns="http://www.w3.org/2000/svg" width="40"
+                                                height="40" fill="currentColor" class="text-danger bi bi-chevron-right"
+                                                viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                                            </svg></button>
                                     </div>
                                 </div>
-                                <div class="col-md-1 d-none d-md-block">
-                                    <button class="customNextBtn btn"><svg xmlns="http://www.w3.org/2000/svg" width="40"
-                                            height="40" fill="currentColor" class="text-danger bi bi-chevron-right"
-                                            viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
-                                        </svg></button>
-                                </div>
-                            </div>
-                            <?php }?>
+                            <?php } ?>
 
                             <div class="row align-items-lg-center mt-5">
                                 <div class="col-md-12 p-0">
@@ -151,108 +155,116 @@ $rowf = $facturacion->fetch_assoc();
 
                             <div class="row mt-4 mb-5 datos-envio">
                                 <div class="col-md-8 p-4 shadowBox">
-                                    <?php 
-                                	if ($pedido['envio']=='domicilio') {
-                                	    $titulo='Enviar a mi domicilio';
-                                	    $nombre=$pedido['clientenombre'];
-                                	    $dni=$pedido['clientedni'];
-                                	    $direccion=$pedido['clientedireccion'];
-                                	    $provincia=$pedido['clienteprovincia'];
-                                	    $cp=$pedido['clientecp'];
-                                	    $telefono=$pedido['clientetelefono'];
-                                	}else{
-                                	    $titulo='Enviar como regalo';
-                                	    $nombre=$pedido['nombre'];
-                                	    $dni=$pedido['dni'];
-                                	    $direccion=$pedido['direccion'];
-                                	    $provincia=$pedido['provincia'];
-                                	    $cp=$pedido['cp'];
-                                	    $telefono=$pedido['telefono'];
-                                	}
-                                	
-                                	switch ($pedido['entrega']){
-                                	    case 'envio_2': // Epresis
-                                	        echo '<strong>Datos de envio (EPSA)</strong><br>' .
-                                	             '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
-                                	             '<div> DNI:  ' . $dni . '</div>' .
-                                	             '<div>Dirección:  ' . $direccion . '</div>' .
-                                	             '<div> Provincia:  ' . $provincia . '</div>' .
-                                	             '<div>Código Postal:  ' . $cp . '</div>' .
-                                	             '<div>Teléfono:  ' . $telefono . '</div>';
-                                	    break;
-                                	    case 'suc1':
-                                	        echo '<h5>Retiro Gratis por Sucursal</h5>
+                                    <?php
+                                    if ($pedido['envio'] == 'domicilio') {
+                                        $titulo = 'Enviar a mi domicilio';
+                                        $nombre = $pedido['clientenombre'];
+                                        $dni = $pedido['clientedni'];
+                                        $direccion = $pedido['clientedireccion'];
+                                        $provincia = $pedido['clienteprovincia'];
+                                        $cp = $pedido['clientecp'];
+                                        $telefono = $pedido['clientetelefono'];
+                                    } else {
+                                        $titulo = 'Enviar como regalo';
+                                        $nombre = $pedido['nombre'];
+                                        $dni = $pedido['dni'];
+                                        $direccion = $pedido['direccion'];
+                                        $provincia = $pedido['provincia'];
+                                        $cp = $pedido['cp'];
+                                        $telefono = $pedido['telefono'];
+                                    }
+
+                                    switch ($pedido['entrega']) {
+                                        case 'envio_2': // Epresis
+                                            echo '<strong>Datos de envio (EPSA)</strong><br>' .
+                                                '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
+                                                '<div> DNI:  ' . $dni . '</div>' .
+                                                '<div>Dirección:  ' . $direccion . '</div>' .
+                                                '<div> Provincia:  ' . $provincia . '</div>' .
+                                                '<div>Código Postal:  ' . $cp . '</div>' .
+                                                '<div>Teléfono:  ' . $telefono . '</div>';
+                                            break;
+                                        case 'suc1':
+                                            echo '<h5>Retiro Gratis por Sucursal</h5>
                                     <p>Sucursal 1</p>
                                     <p>Calle 12 N°1108 e/55 y 56</p>' .
-                                    '<strong>Datos de usuario</strong><br>' .
-                                    '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
-                                    '<div> DNI:  ' . $dni . '</div>' .
-                                    '<div>Dirección:  ' . $direccion . '</div>' .
-                                    '<div> Provincia:  ' . $provincia . '</div>' .
-                                    '<div>Código Postal:  ' . $cp . '</div>' .
-                                    '<div>Teléfono:  ' . $telefono . '</div>';
-                                	    break;
-                                	    case 'suc2':
-                                	        echo '<h5>Retiro Gratis por Sucursal</h5>
+                                                '<strong>Datos de usuario</strong><br>' .
+                                                '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
+                                                '<div> DNI:  ' . $dni . '</div>' .
+                                                '<div>Dirección:  ' . $direccion . '</div>' .
+                                                '<div> Provincia:  ' . $provincia . '</div>' .
+                                                '<div>Código Postal:  ' . $cp . '</div>' .
+                                                '<div>Teléfono:  ' . $telefono . '</div>';
+                                            break;
+                                        case 'suc2':
+                                            echo '<h5>Retiro Gratis por Sucursal</h5>
                                     <p>Sucursal 2</p>
                                     <p>Calle 12 N°1108 e/55 y 56</p>' .
-                                    '<strong>Datos de usuario</strong><br>' .
-                                    '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
-                                    '<div> DNI:  ' . $dni . '</div>' .
-                                    '<div>Dirección:  ' . $direccion . '</div>' .
-                                    '<div> Provincia:  ' . $provincia . '</div>' .
-                                    '<div>Código Postal:  ' . $cp . '</div>' .
-                                    '<div>Teléfono:  ' . $telefono . '</div>';
-                                	    break;
-                                	    case 'suc3':
-                                	        echo '<h5>Retiro Gratis por Sucursal</h5>
+                                                '<strong>Datos de usuario</strong><br>' .
+                                                '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
+                                                '<div> DNI:  ' . $dni . '</div>' .
+                                                '<div>Dirección:  ' . $direccion . '</div>' .
+                                                '<div> Provincia:  ' . $provincia . '</div>' .
+                                                '<div>Código Postal:  ' . $cp . '</div>' .
+                                                '<div>Teléfono:  ' . $telefono . '</div>';
+                                            break;
+                                        case 'suc3':
+                                            echo '<h5>Retiro Gratis por Sucursal</h5>
                                     <p>Sucursal 3</p>
                                     <p>Calle 12 N°1108 e/55 y 56</p>' .
-                                    '<strong>Datos de usuario</strong><br>' .
-                                    '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
-                                    '<div> DNI:  ' . $dni . '</div>' .
-                                    '<div>Dirección:  ' . $direccion . '</div>' .
-                                    '<div> Provincia:  ' . $provincia . '</div>' .
-                                    '<div>Código Postal:  ' . $cp . '</div>' .
-                                    '<div>Teléfono:  ' . $telefono . '</div>';
-                                	    break;
-                                	    case 'urbano':
-                                	        echo '<h5 class="mt-4">'.$titulo.'</h5>
+                                                '<strong>Datos de usuario</strong><br>' .
+                                                '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
+                                                '<div> DNI:  ' . $dni . '</div>' .
+                                                '<div>Dirección:  ' . $direccion . '</div>' .
+                                                '<div> Provincia:  ' . $provincia . '</div>' .
+                                                '<div>Código Postal:  ' . $cp . '</div>' .
+                                                '<div>Teléfono:  ' . $telefono . '</div>';
+                                            break;
+                                        case 'envio_1':
+                                            '<strong>Datos de envio casco urbano</strong><br>' .
+                                                '<div> Nombre y Apellido:  ' . $nombre . '</div>' .
+                                                '<div> DNI:  ' . $dni . '</div>' .
+                                                '<div>Dirección:  ' . $direccion . '</div>' .
+                                                '<div> Provincia:  ' . $provincia . '</div>' .
+                                                '<div>Código Postal:  ' . $cp . '</div>' .
+                                                '<div>Teléfono:  ' . $telefono . '</div>';
+                                            break;
+                                        case 'urbano':
+                                            echo '<h5 class="mt-4">' . $titulo . '</h5>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <p>Nombre y Apellido :'.$nombre.'</p>
-                                            <p>DNI :'.$dni.'</p>
-                                            <p>Dirección :'.$direccion.'</p>
+                                            <p>Nombre y Apellido :' . $nombre . '</p>
+                                            <p>DNI :' . $dni . '</p>
+                                            <p>Dirección :' . $direccion . '</p>
                                         </div>
                                         <div class="col-md-6">
-                                            <p>Provincia : '.$provincia.'</p>
-                                            <p>CP : '.$cp.'</p>
-                                            <p>Teléfono/Celular : '.$telefono.'</p>
+                                            <p>Provincia : ' . $provincia . '</p>
+                                            <p>CP : ' . $cp . '</p>
+                                            <p>Teléfono/Celular : ' . $telefono . '</p>
                                         </div>
                                     </div>';
-                                	    break;
-                                	    case 'recibir':
-                                	        echo '<h5 class="mt-4">'.$titulo.'</h5>
+                                            break;
+                                        case 'recibir':
+                                            echo '<h5 class="mt-4">' . $titulo . '</h5>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <p>Nombre y Apellido :'.$nombre.'</p>
-                                            <p>DNI :'.$dni.'</p>
-                                            <p>Dirección :'.$direccion.'</p>
+                                            <p>Nombre y Apellido :' . $nombre . '</p>
+                                            <p>DNI :' . $dni . '</p>
+                                            <p>Dirección :' . $direccion . '</p>
                                         </div>
                                         <div class="col-md-6">
-                                            <p>Provincia : '.$provincia.'</p>
-                                            <p>CP : '.$cp.'</p>
-                                            <p>Teléfono/Celular : '.$telefono.'</p>
+                                            <p>Provincia : ' . $provincia . '</p>
+                                            <p>CP : ' . $cp . '</p>
+                                            <p>Teléfono/Celular : ' . $telefono . '</p>
                                         </div>
                                     </div>';
-                                	    break;
-
-                                	}?>
+                                            break;
+                                    } ?>
                                 </div>
                                 <div class="col-md-3 offset-0 offset-md-1 p-4 shadowBox my-3 my-lg-0">
                                     <h5>Método de Pago</h5>
-                                    <p class="text-bold"><?php echo metodoPago($pedido['metodo']);?></p>
-                                    <h4 class="text-bold">Total: $<?php echo $pedido['total']?></h4>
+                                    <p class="text-bold"><?php echo metodoPago($pedido['metodo']); ?></p>
+                                    <h4 class="text-bold">Total: $<?php echo $pedido['total'] ?></h4>
                                 </div>
                             </div>
 
@@ -269,9 +281,9 @@ $rowf = $facturacion->fetch_assoc();
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <p><strong>Nombre y Apellido:</strong> <?php echo $rowf['nombre'] . ' ' . $rowf['apellido']; ?></p>
-                                                <p><strong>DNI:</strong> <?php echo $rowf['dni']; ?></p> 
+                                                <p><strong>DNI:</strong> <?php echo $rowf['dni']; ?></p>
                                                 <?php if (!empty($rowf['cuil'])): ?>
-                                                <p><strong>CUIL:</strong> <?php echo $rowf['cuil']; ?></p>
+                                                    <p><strong>CUIL:</strong> <?php echo $rowf['cuil']; ?></p>
                                                 <?php endif; ?>
                                                 <p><strong>Email:</strong> <?php echo $rowf['email']; ?></p>
                                                 <p><strong>Dirección:</strong> <?php echo $rowf['direccion']; ?></p>
@@ -291,12 +303,12 @@ $rowf = $facturacion->fetch_assoc();
                                             <hr class="my-3">
                                             <div class="alert alert-info mb-0">
                                                 <i class="fa fa-file-text"></i> <strong>Requiere Factura A</strong>
-                                                
+
                                                 <?php if (!empty($rowf['cuit'])): ?>
-                                                <p><strong>CUIT:</strong> <?php echo $rowf['cuit']; ?></p>
+                                                    <p><strong>CUIT:</strong> <?php echo $rowf['cuit']; ?></p>
                                                 <?php endif; ?>
                                                 <?php if (!empty($rowf['razon_social'])): ?>
-                                                <p><strong>Razón Social:</strong> <?php echo $rowf['razon_social']; ?></p>
+                                                    <p><strong>Razón Social:</strong> <?php echo $rowf['razon_social']; ?></p>
                                                 <?php endif; ?>
                                             </div>
                                         <?php endif; ?>
@@ -344,7 +356,7 @@ $rowf = $facturacion->fetch_assoc();
                                                 <p class="mb-2"><i class="fa fa-info-circle"></i> <strong>Información del envío:</strong></p>
                                                 <p class="mb-1">Generada el <?php echo date('d/m/Y', strtotime($guia_existente['fecha_creacion'])); ?> a las <?php echo date('H:i', strtotime($guia_existente['fecha_creacion'])); ?>hs</p>
                                                 <?php if (!empty($pedido['epresis_tiempo_entrega'])): ?>
-                                                <p class="mb-0">Fecha estimada de entrega: <strong><?php echo $pedido['epresis_tiempo_entrega']; ?></strong></p>
+                                                    <p class="mb-0">Fecha estimada de entrega: <strong><?php echo $pedido['epresis_tiempo_entrega']; ?></strong></p>
                                                 <?php endif; ?>
                                                 <a target="_blank" href="https://epresis.epsared.com.ar/seguimiento" class="text-white link-underline" style="text-decoration: underline;">Seguir envio</a>
                                             </div>
@@ -353,7 +365,7 @@ $rowf = $facturacion->fetch_assoc();
                                                 <h5><i class="fa fa-clock-o"></i> Estamos preparando tu envío</h5>
                                                 <p class="mb-0">Tu pedido será procesado y la guía de envío se generará pronto. Te notificaremos cuando esté lista.</p>
                                                 <?php if (!empty($pedido['epresis_tiempo_entrega'])): ?>
-                                                <p class="mb-0 mt-2">Fecha estimada de entrega: <strong><?php echo $pedido['epresis_tiempo_entrega']; ?></strong></p>
+                                                    <p class="mb-0 mt-2">Fecha estimada de entrega: <strong><?php echo $pedido['epresis_tiempo_entrega']; ?></strong></p>
                                                 <?php endif; ?>
                                             </div>
                                         <?php endif; ?>
@@ -384,41 +396,41 @@ $rowf = $facturacion->fetch_assoc();
 <script src="../node_modules\owl.carousel\dist\owl.carousel.js"></script>
 
 <script>
-// Look for .hamburger
-var hamburger = document.querySelector(".hamburger");
-// On click
-hamburger.addEventListener("click", function() {
-    // Toggle class "is-active"
-    hamburger.classList.toggle("is-active");
-    // Do something else, like open/close menu
-});
+    // Look for .hamburger
+    var hamburger = document.querySelector(".hamburger");
+    // On click
+    hamburger.addEventListener("click", function() {
+        // Toggle class "is-active"
+        hamburger.classList.toggle("is-active");
+        // Do something else, like open/close menu
+    });
 </script>
 
 <!-- MOVER ESTO AL FOOTER -->
 <script>
-        var owl = $('.owl-carousel');
-        owl.owlCarousel();
-        // Go to the next item
-        $('.customNextBtn').click(function() {
-            owl.trigger('next.owl.carousel');
-        })
-        // Go to the previous item
-        $('.customPrevBtn').click(function() {
-            // With optional speed parameter
-            // Parameters has to be in square bracket '[]'
-            owl.trigger('prev.owl.carousel', [300]);
-        })
-        </script>
+    var owl = $('.owl-carousel');
+    owl.owlCarousel();
+    // Go to the next item
+    $('.customNextBtn').click(function() {
+        owl.trigger('next.owl.carousel');
+    })
+    // Go to the previous item
+    $('.customPrevBtn').click(function() {
+        // With optional speed parameter
+        // Parameters has to be in square bracket '[]'
+        owl.trigger('prev.owl.carousel', [300]);
+    })
+</script>
 
-        <script>
-        $(document).ready(function() {
-            $('.owl-carousel').owlCarousel();
-            $('.cerrarSesion').click(function(e){
-    			e.preventDefault();
-    			$.post('../inc/salir.php');
-    			window.location.reload();	
-    		});
+<script>
+    $(document).ready(function() {
+        $('.owl-carousel').owlCarousel();
+        $('.cerrarSesion').click(function(e) {
+            e.preventDefault();
+            $.post('../inc/salir.php');
+            window.location.reload();
         });
+    });
 </script>
 
 </body>
