@@ -407,7 +407,7 @@ if (isset($_POST['tamanogral'])) {
                         <label class="form-check-label d-flex flex-row" for="metodo_envio_<?php echo $metodo['id']; ?>">
                             <div>
                                 <p class="d-inline-block m-0"><?php 
-                                echo $metodo_counter == 2 ? 'Envío a domicilio' : $metodo['nombre'];
+                                echo $metodo_counter == 2 ? $metodo['nombre'] : $metodo['nombre'];
                                 ?></p>
                                 <?php if($metodo['id'] == 2){ // Epresis - cálculo dinámico ?>
                                 <span class="d-block text-bold" id="metodo_costo_label_<?php echo $metodo['id']; ?>"><i class="fa fa-spinner fa-spin"></i> Calculando...</span>

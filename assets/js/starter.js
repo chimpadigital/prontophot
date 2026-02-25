@@ -42,8 +42,19 @@ $(document).ready(function () {
 		var id = $(this).data('id');
 		var cat = $(this).data('categoria');
 		var precio = $(this).data('precio');
-		$.post('inc/set_cart.php', { id: id, color: color, cant: cantidad, cat: cat, precio: precio });
-		getCart();
+
+		$.post('inc/set_cart.php', { id: id, color: color, cant: cantidad, cat: cat, precio: precio }, function(data) {
+			console.log('Respuesta del carrito:', data);
+			if (data.success) {
+				getCart();
+				alert('Producto agregado al carrito exitosamente');
+			} else {
+				//alert(data.msg);
+			}
+		}, 'json').fail(function(xhr, status, error) {
+			console.error('Error al agregar al carrito:', error);
+			console.log('Respuesta:', xhr.responseText);
+		});
 	});
 	$('.cerrarSesion').click(function (e) {
 		e.preventDefault();
@@ -318,6 +329,9 @@ $('#success').on('click', function (e) {
 	var color = $('#color').val();
 	var id = $(this).data('id');
 
+	// Debug
+	console.log('Agregando al carrito - ID:', id, 'Color:', color, 'Cantidad:', cantidad);
+
 	// Limpiar mensaje previo
 	$('#color-error-message').remove();
 
@@ -345,9 +359,18 @@ $('#success').on('click', function (e) {
 		}
 	}
 
-	$.post('inc/set_cart.php', { id: id, color: color, cant: cantidad });
-	getCart();
-	$('#message').html('<div class="alert alert-success alert-dismissible fade show" role="alert">Se agregó tu producto al carrito! <a href="mi-pedido" class="alert-link">Ver pedido</a><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+	$.post('inc/set_cart.php', { id: id, color: color, cant: cantidad }, function(data) {
+		console.log('Respuesta del carrito (botón #success):', data);
+		if (data.success) {
+			getCart();
+			$('#message').html('<div class="alert alert-success alert-dismissible fade show" role="alert">Se agregó tu producto al carrito! <a href="mi-pedido" class="alert-link">Ver pedido</a><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+		} else {
+			$('#message').html('<div class="alert alert-warning alert-dismissible fade show" role="alert">' + data.msg + ' <a href="mi-pedido" class="alert-link">Ver carrito</a><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+		}
+	}, 'json').fail(function(xhr, status, error) {
+		console.error('Error al agregar al carrito:', error);
+		console.log('Respuesta:', xhr.responseText);
+	});
 })
 
 function getCart() {

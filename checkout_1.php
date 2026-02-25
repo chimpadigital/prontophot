@@ -111,10 +111,12 @@ if (isset($_SESSION['pronto']['cart'])) {
                     <p class="text-bold m-0 text-danger">Envío a Domicilio</p>
                     <?php
                     $metodo_counter = 0;
+                    $nombreEnvio = '';
                     while($metodo = $metodos_envio->fetch_assoc()){
                         $metodo_counter++;
                         // ID 2 es para Epresis, lo manejamos por separado
                         if($metodo['id'] == 2) {
+                            $nombreEnvio = $metodo['nombre'];
                             continue;
                         }
                     ?>
@@ -150,7 +152,7 @@ if (isset($_SESSION['pronto']['cart'])) {
                         <input class="form-check-input envioDomicilio" data-toggle='collapse' data-target='#collapsediv1' type="radio" aria-expanded="false" name="entrega" id="metodo_envio_2" value="envio_2" data-metodo-id="2" data-costo="0">
                         <label class="form-check-label d-flex flex-row" for="metodo_envio_2">
                             <div>
-                                <p class="d-inline-block m-0">Envío a domicilio</p>
+                                <p class="d-inline-block m-0"><?php echo $nombreEnvio; ?></p>
                                 <span class="d-block text-bold" id="epresis_precio_display">
                                     <i class="fa fa-spinner fa-spin"></i> Calculando...
                                 </span>
