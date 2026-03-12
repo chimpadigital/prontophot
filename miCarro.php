@@ -44,29 +44,34 @@ $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
                                     <?php
                                     $total = 0;
                                     foreach ($carro as $id => $datos) {
-
                                         // Verificar si es producto de revelado
                                         $esRevelado = isset($datos['tipo']) && $datos['tipo'] === 'revelado';
-
                                         if ($esRevelado) {
                                             // Datos del revelado desde el carrito
+                                            // Obtener la primera imagen del revelado para mostrar
+                                            $imagen_revelado = 'assets/img/revelado-icon.jpg'; // Default
+                                            if (isset($datos['datos_revelado']['imagenes']) && !empty($datos['datos_revelado']['imagenes'])) {
+                                                $primera_imagen = reset($datos['datos_revelado']['imagenes']);
+                                                if (isset($primera_imagen['archivo']) && file_exists($primera_imagen['archivo'])) {
+                                                    $imagen_revelado = $primera_imagen['archivo'];
+                                                }
+                                            }
+
                                             $row = [
                                                 'nombre' => 'Revelado de Fotos',
                                                 'descripcion' => $datos['descripcion'] ?? 'Impresión de fotografías',
                                                 'precio' => $datos['precio'],
                                                 'descuento_final' => 0,
-                                                'imagen' => 'assets/img/revelado-icon.jpg' // Imagen por defecto para revelado
+                                                'imagen' => $imagen_revelado
                                             ];
                                             $cant = $datos['cantidad'];
-                                            $precioUnitario = $datos['precio'] / $cant; // Precio ya viene calculado en el carrito
+                                            $precioUnitario = $datos['precio'] / $cant;
                                             $precio = $datos['precio'];
                                         } else {
                                             // Producto normal
                                             $res = $conectar->query("SELECT p.nombre,p.descripcion, p.precio, p.descuento_final,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
                                             $row = $res->fetch_assoc();
                                             $cant = $datos['cantidad'];
-
-                                            // Calcular precio con descuento si existe
                                             $precioUnitario = $row['precio'];
                                             $descuento = isset($row['descuento_final']) && $row['descuento_final'] > 0 ? $row['descuento_final'] : 0;
                                             if ($descuento > 0) {
@@ -79,8 +84,13 @@ $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
                                     ?>
                                         <div class="row mb-4">
                                             <div class="col-md-5 col-lg-3 col-xl-3">
-                                                <div class="view zoom overlay z-depth-1 rounded mb-3 mb-md-0">
-                                                    <img class="img-fluid w-100" src="<?php echo $row['imagen'] ?>" alt="Sample">
+                                                <div class="view zoom overlay z-depth-1 rounded mb-3 mb-md-0 <?php echo $esRevelado ? 'revelado-preview' : ''; ?>" style="position: relative;">
+                                                    <img class="img-fluid w-100" src="<?php echo $row['imagen'] ?>" alt="<?php echo $esRevelado ? 'Primera foto del revelado' : 'Producto'; ?>" style="object-fit: cover; height: 180px;">
+                                                    <?php if ($esRevelado): ?>
+                                                        <div class="badge-fotos-revelado" style="position: absolute; top: 10px; right: 10px; background: rgba(220, 53, 69, 0.9); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: bold;">
+                                                            <i class="fa fa-images"></i> <?php echo $cant; ?> fotos
+                                                        </div>
+                                                    <?php endif; ?>
                                                 </div>
                                             </div>
                                             <div class="col-md-7 col-lg-9 col-xl-9 d-flex flex-column justify-content-around">
@@ -101,7 +111,12 @@ $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
                                                             <?php } else { ?>
                                                                 <div class="input-group" style="width: 130px;">
                                                                     <div class="input-group-prepend">
-                                                                        <button class="btn btn-outline-secondary btn-sm btn-decrease" type="button" data-id="<?php echo $id; ?>">-</button>
+                                                                        <button class="btn btn-outline-secondary btn-sm btn-decrease" 
+                                                                        style="
+                                                                        height: calc(1.5em + .5rem + 2px);
+    align-items: center;
+    display: flex;"
+    type="button" data-id="<?php echo $id; ?>">-</button>
                                                                     </div>
                                                                     <input type="text" class="form-control form-control-sm text-center cantidad-input"
                                                                         value="<?php echo $datos['cantidad']; ?>"
@@ -109,7 +124,12 @@ $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
                                                                         readonly
                                                                         style="max-width: 50px;">
                                                                     <div class="input-group-append">
-                                                                        <button class="btn btn-outline-secondary btn-sm btn-increase" type="button" data-id="<?php echo $id; ?>">+</button>
+                                                                        <button class="btn btn-outline-secondary btn-sm btn-increase"
+                                                                            style="
+                                                                        height: calc(1.5em + .5rem + 2px);
+    align-items: center;
+    display: flex;"
+                                                                            type="button" data-id="<?php echo $id; ?>">+</button>
                                                                     </div>
                                                                 </div>
                                                             <?php } ?>
@@ -119,23 +139,23 @@ $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <div class="d-flex">
                                                         <?php if ($esRevelado) { ?>
+                                                            <div>
+                                                                <button type="button" class="btn btn-sm btn-outline-primary btn-ver-fotos" data-producto-id="<?php echo $id; ?>">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-images mb-1" viewBox="0 0 16 16">
+                                                                        <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+                                                                        <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z" />
+                                                                    </svg>
+                                                                    Ver mis fotos
+                                                                </button>
+                                                            </div>
+                                                        <?php } ?>
                                                         <div>
-                                                            <button type="button" class="btn btn-sm btn-outline-primary btn-ver-fotos" data-producto-id="<?php echo $id; ?>">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-images mb-1" viewBox="0 0 16 16">
-                                                                    <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
-                                                                    <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z" />
+                                                            <button data-id="<?php echo $id; ?>" type="button" class="p-0 btn-link btn card-link-secondary small text-uppercase mr-3 text-danger btn-remove">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill mb-1" viewBox="0 0 16 16">
+                                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
                                                                 </svg>
-                                                                Ver mis fotos
-                                                            </button>
+                                                                Eliminar artículo </button>
                                                         </div>
-                                                    <?php } ?>
-                                                    <div>
-                                                        <button data-id="<?php echo $id; ?>" type="button" class="p-0 btn-link btn card-link-secondary small text-uppercase mr-3 text-danger btn-remove">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill mb-1" viewBox="0 0 16 16">
-                                                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-                                                            </svg>
-                                                            Eliminar artículo </button>
-                                                    </div>
                                                     </div>
                                                     <p class="mb-0"><span><strong id="summary">$<?php echo $precio; ?></strong></span></p>
                                                 </div>

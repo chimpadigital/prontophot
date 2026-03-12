@@ -4,7 +4,7 @@ include_once __DIR__ . '/conexion/conectar.inc.php';
 include_once __DIR__ . '/inc/funciones.inc.php';
 global $conectar;
 
-$productos = $conectar->query("SELECT p.*,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM productos p WHERE p.stock>0  ORDER BY p.id DESC LIMIT 3");
+$productos = $conectar->query("SELECT p.*,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM productos p WHERE p.stock>0 AND p.tipo_producto!='revelado' ORDER BY p.id DESC LIMIT 3");
 $slider = $conectar->query("SELECT * FROM `sliders` ORDER BY pos ASC");
 
 

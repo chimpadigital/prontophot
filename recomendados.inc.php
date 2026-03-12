@@ -2,7 +2,7 @@
 include_once 'conexion/conectar.inc.php';
 include_once 'inc/funciones.inc.php';
 global $conectar;
-$recomendados=$conectar->query("SELECT p.*,c.nombre categoria,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM productos p LEFT JOIN categorias c ON p.id_categoria=c.id ORDER BY id DESC LIMIT 3");
+$recomendados=$conectar->query("SELECT p.*,c.nombre categoria,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM productos p LEFT JOIN categorias c ON p.id_categoria=c.id WHERE p.stock>0 AND p.tipo_producto!='revelado' ORDER BY id DESC LIMIT 3");
 echo $conectar->error;
 
 

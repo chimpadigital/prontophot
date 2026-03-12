@@ -8,10 +8,11 @@ $categorias=$conectar->query("SELECT * FROM categorias ORDER BY nombre ASC");
 if (isset($_GET['id'])) {
     //$cats=explode('_',$_GET['cat']);
     $idc=$_GET['id'];
-    $query="SELECT p.*,c.nombre categoria,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM productos p LEFT JOIN categorias c ON p.id_categoria=c.id WHERE p.stock>0 AND c.id = '$idc'  ORDER BY p.id DESC  ";
+    $query="SELECT p.*,c.nombre categoria,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM productos p LEFT JOIN categorias c ON p.id_categoria=c.id WHERE p.stock>0 AND c.id = '$idc' AND p.tipo_producto!='revelado'  ORDER BY p.id DESC  ";
 }else{
-    $query="SELECT p.*,c.nombre categoria,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM productos p LEFT JOIN categorias c ON p.id_categoria=c.id WHERE p.stock>0 ORDER BY p.id DESC";
+    $query="SELECT p.*,c.nombre categoria,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM productos p LEFT JOIN categorias c ON p.id_categoria=c.id WHERE p.stock>0 AND p.tipo_producto!='revelado' ORDER BY p.id DESC";
 }
+
 $productos=$conectar->query($query);
 
 // Obtener el coeficiente de impuestos
@@ -19,7 +20,9 @@ $taxQuery = $conectar->query("SELECT coeficiente FROM tax WHERE id = 1");
 $taxData = $taxQuery->fetch_assoc();
 $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
 ?>
+
 <style>
+
 .pagination .active .page{
         color: #fff !important;
     background-color: #DA0000;
@@ -45,7 +48,9 @@ $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
     font-size: 0.75rem;
     font-weight: bold;
 }
+
 </style>
+
 <div class="position-relative portada-tienda d-flex align-items-center">
     <div class="container py-5">
         <div class="row">

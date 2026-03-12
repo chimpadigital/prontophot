@@ -1,5 +1,6 @@
 <?php
 session_start();
+ini_set("error_log", "guardarrevelado.log");
 require_once(__DIR__ . '/../conexion/conectar.inc.php');
 
 function extension($ext){
@@ -133,12 +134,8 @@ try {
 
     // Preparar datos del carrito
     $hoy = time();
-    if (!isset($_SESSION['pronto']['cart_creado'])) {
-        $_SESSION['pronto']['cart_creado'] = $hoy;
-    }
-    if (!isset($_SESSION['pronto']['cart_expira'])) {
-        $_SESSION['pronto']['cart_expira'] = $hoy + 1800;
-    }
+    $_SESSION['pronto']['cart_creado'] = $hoy;
+    $_SESSION['pronto']['cart_expira'] = $hoy + 1800;
 
     // Contar total de fotos
     $total_fotos = 0;
@@ -167,6 +164,23 @@ try {
     }
     $descripcion = rtrim($descripcion, ' | ');
 
+    // Inicializar carrito si no existe
+    if (!isset($_SESSION['pronto'])) {
+        $_SESSION['pronto'] = array();
+        error_log("=== INICIANDO SESSION['pronto'] ===");
+    }
+
+    if (!isset($_SESSION['pronto']['cart'])) {
+        $_SESSION['pronto']['cart'] = array();
+        error_log("=== INICIANDO SESSION['pronto']['cart'] ===");
+    }
+
+    error_log("=== AGREGANDO REVELADO AL CARRITO ===");
+    error_log("ID Producto: $id_producto_revelado");
+    error_log("Total fotos: $total_fotos");
+    error_log("Precio total: $costototal");
+    error_log("Imágenes: " . count($_SESSION['archivos']));
+
     // Agregar al carrito
     $_SESSION['pronto']['cart'][$id_producto_revelado] = [
         'color' => 'N/A',
@@ -181,8 +195,10 @@ try {
         ]
     ];
 
+    error_log("=== REVELADO AGREGADO EXITOSAMENTE ===");
+
     // Redirigir al carrito
-    header('Location: ../miCarro.php');
+    header('Location: ../index.php');
     exit;
 
 } catch (Exception $e) {

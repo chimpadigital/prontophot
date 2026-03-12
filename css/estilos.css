@@ -34,6 +34,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 .top-bar-pronto a:hover {
   text-decoration: none;
+  color: var(--danger)!important;
 }
 .custom-control-input:checked ~ .custom-control-label::before {
   color: #fff;
@@ -302,6 +303,7 @@ input.form-control#sucursal {
     justify-content: center;
     margin-top: 10% !important;
   }
+
 }
 /* !important is needed sometimes */
 ::-webkit-scrollbar {
@@ -392,6 +394,10 @@ input.form-control#sucursal {
   .form-check-inline {
     width: 100% !important;
     margin-right: 0 !important;
+  }
+  
+  .top-bar-pronto {
+    font-size: 10px;
   }
 }
 
@@ -1192,6 +1198,10 @@ button.btn.btn-sm.btn-danger.removeImg {
     width: 67%;
   } */
 
+  .portada-tienda::after {
+  display: none !important;
+}
+
   .carousel-item {
     height: 300px;
   }
@@ -1199,7 +1209,7 @@ button.btn.btn-sm.btn-danger.removeImg {
   .img-slider {
     width: 100%;
     height: 300px;
-    object-fit: contain !important;
+    object-fit: cover !important;
   }
 
   body {

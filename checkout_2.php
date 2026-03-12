@@ -194,6 +194,18 @@ if (isset($_POST['entrega'])) {
                     </div>
                 </div>
 
+                <div class="row shadow-sm p-3 metodo-envio d-flex align-items-center my-4">
+                    <div class="col-9 col-md-10  order-md-1">
+                        <div class="custom-control contenedor-input custom-radio ">
+                            <input type="radio" id="getnet" name="metodoPago" class="custom-control-input no-transfer metodoPago" value="4">
+                            <label class="custom-control-label" for="getnet">GetNet</label>
+                        </div>
+                    </div>
+                    <div class="col-3 col-md-2 order-1 order-md-2">
+                        <img class="img-fluid" src="assets/img/getnet-logo.svg" alt="" style="max-height: 40px;">
+                    </div>
+                </div>
+
                 <!--
                 <div class="row shadow-sm p-3 metodo-envio d-flex align-items-center">
                     <div class="col-9 col-md-10  order-md-1">
@@ -462,6 +474,7 @@ if (isset($_POST['entrega'])) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous">
 </script>
 <script type="text/javascript" src="https://www.mercadopago.com/org-img/jsapi/mptools/buttons/render.js"></script>
+<script src="https://www.pre.globalgetnet.com/digital-checkout/loader.js"></script>
 <script>
     // Look for .hamburger
     var hamburger = document.querySelector(".hamburger");
@@ -493,7 +506,7 @@ if (isset($_POST['entrega'])) {
     $(function() {
         $('.metodoPago').change(function() {
             var meto = $(this).val();
-            if (meto != '2') {
+            if (meto != '2' && meto != '4') {
                 $('.btn-pagar').html('Finalizar pedido');
             } else {
                 $('.btn-pagar').html('Pagar');
@@ -528,6 +541,7 @@ if (isset($_POST['entrega'])) {
             $(this).prop('disabled', true);
 
             if (metodo == '2') {
+                // MercadoPago
                 $.post('inc/crear_pago2.php', {
                     metodo: metodo,
                     desc: desc,
@@ -548,7 +562,44 @@ if (isset($_POST['entrega'])) {
                     });
 
                 }, 'json');
+            } else if (metodo == '4') {
+                // GetNet
+                $.post('inc/crear_pago_getnet.php', {
+                    metodo: metodo,
+                    desc: desc,
+                    facturacion: facturacionData
+                }, function(data) {
+                    $('.btn-pagar').html('Pagar');
+                    $('.btn-pagar').prop('disabled', false);
+
+                    if (data.success && data.checkout_id) {
+                        // Abrir checkout de GetNet
+                        GetnetCheckout.open({
+                            checkoutId: data.checkout_id,
+                            onSuccess: function(response) {
+                                console.log('GetNet Success:', response);
+                                const config = { "paymentIntentId": response.payment_intent_id, "checkoutType": "lightbox" }; 
+                                const checkoutButton = () => { loader.init(config) }; 
+                            },
+                            onError: function(error) {
+                                console.error('GetNet Error:', error);
+                                alert('Error al realizar el pago con GetNet, intente nuevamente');
+                            },
+                            onClose: function() {
+                                console.log('GetNet Checkout cerrado');
+                            }
+                        });
+                    } else {
+                        alert('Error al crear el pago: ' + (data.error || 'Error desconocido'));
+                    }
+                }, 'json').fail(function(xhr, status, error) {
+                    $('.btn-pagar').html('Pagar');
+                    $('.btn-pagar').prop('disabled', false);
+                    console.error('Error AJAX:', error);
+                    alert('Error al procesar el pago, intente nuevamente');
+                });
             } else {
+                // Otros métodos de pago
                 $.post('inc/crear_pedido2.php', {
                     metodo: metodo,
                     desc: desc,

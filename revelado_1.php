@@ -20,7 +20,7 @@ unset($_SESSION['archivos']);
 <form id="formCargaProducto" method="post" enctype="multipart/form-data" style="overflow:hidden;" action="revelado_2.php" class="  mt-5 form-carga-producto" >
 <div class="container">
 	
-    <div class="row">
+    <div class="row d-none">
         <div class="col-md-12 steps-home">
 
             <div class="align-items-center d-flex d-md-none flex-column text-center mt-5 mt-md-0">
@@ -354,7 +354,7 @@ unset($_SESSION['archivos']);
 
 <div class="d-flex my-5 justify-content-center flex-column flex-md-row align-items-center">
 	<input type="hidden" id="login" value="<?php if(isset($_SESSION['prontoFront']['idcliente'])){echo '1';}else{echo '0';}?>">
-    <button  class="btn btn-warning btn-home-amarillo detalles-negros text-uppercase btn-continuar mb-3 mb-md-0 mr-md-3" type="button">Siguiente
+    <button  class="d-none btn btn-warning btn-home-amarillo detalles-negros text-uppercase btn-continuar mb-3 mb-md-0 mr-md-3" type="button">Siguiente
     		<svg xmlns="http://www.w3.org/2000/svg" width="6.911" height="11.876" viewBox="0 0 6.911 11.876"><g id="next_1_" data-name="next (1)" transform="translate(-101.741 0.553)"> <g id="Grupo_379" data-name="Grupo 379" transform="translate(102.297 0)"><path id="Trazado_140" data-name="Trazado 140" d="M107.976,5.089,103,.117a.414.414,0,0,0-.586.586L107.1,5.381l-4.679,4.679a.414.414,0,0,0,.586.586l4.972-4.972A.414.414,0,0,0,107.976,5.089Z" transform="translate(-102.297 0)" fill="#1e1e1e" stroke="#1e1e1e" stroke-width="1" /> </g></g>
             </svg>
     </button>
