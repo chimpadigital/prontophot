@@ -81,7 +81,6 @@ if ($pedido->success) {
 
     // Guardar detalles del pedido
     $carro = $_SESSION['pronto']['cart'];
-    $imagenes = $_SESSION['archivos'];
     $items = array();
 
     foreach ($carro as $id => $datos) {
@@ -111,7 +110,8 @@ if ($pedido->success) {
         $items[] = $item;
     }
 
-    if (isset($imagenes)) {
+    if (isset($_SESSION['archivos'])) {
+        $imagenes = $_SESSION['archivos'];
         pedidoImagenes($idpedido, $imagenes);
     }
     notificarPedido($idpedido, $items, $entrega);
