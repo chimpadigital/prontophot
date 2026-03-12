@@ -150,6 +150,8 @@ if ($pedido->success) {
     $auth_result = json_decode($auth_response);
     $access_token = $auth_result->access_token;
 
+
+
     // Paso 2: Crear payment intent con GetNet
     $facturacion = $_POST['facturacion'];
 
@@ -213,6 +215,8 @@ if ($pedido->success) {
             'document_type' => 'CPF',
             'document_number' => preg_replace('/[^0-9]/', '', $facturacion['dni']),
             'phone_number' => preg_replace('/[^0-9]/', '', $facturacion['telefono']),
+            "gender" => "Male",
+            "checked_email" => false,
             'billing_address' => array(
                 'street' => $facturacion['direccion'],
                 'number' => strval($facturacion['altura']),
@@ -224,7 +228,25 @@ if ($pedido->success) {
                 'postal_code' => preg_replace('/[^0-9]/', '', $facturacion['cp'])
             )
         ),
-        "pickup_store" => true,
+        "shipping" => [
+            "first_name" => $facturacion['nombre'],
+            "last_name" => $facturacion['apellido'],
+            "name" => $facturacion['nombre'] . ' ' . $facturacion['apellido'],
+            "phone_number" => preg_replace('/[^0-9]/', '', $facturacion['telefono']),
+            "shipping_amount" => 0,
+            "address" => [
+                "street" => $facturacion['direccion'],
+                "number" => strval($facturacion['altura']),
+                "complement" => "",
+                "district" => $facturacion['ciudad'],
+                "city" => $facturacion['ciudad'],
+                "state" => "RS",
+                "country" => "BR",
+                "postal_code" => preg_replace('/[^0-9]/', '', $facturacion['cp']),
+                "reference" => ""
+            ]
+        ],
+        "pickup_store" => false,
         "shipping_method" => "PAC"
     );
 
@@ -234,8 +256,7 @@ if ($pedido->success) {
     curl_setopt($payment_ch, CURLOPT_POSTFIELDS, json_encode($payment_data));
     curl_setopt($payment_ch, CURLOPT_HTTPHEADER, array(
         'Authorization: Bearer ' . $access_token,
-        'Content-Type: application/json',
-        'seller_id: ' . GETNET_SELLER_ID
+        'Content-Type: application/json'
     ));
 
     $payment_response = curl_exec($payment_ch);
@@ -265,9 +286,8 @@ if ($pedido->success) {
     $respuesta->success = false;
     error_log($pedido->error);
     $respuesta->error = $pedido->error;
-    unset($_SESSION['archivos']);  
+    unset($_SESSION['archivos']);
     unset($_SESSION['pronto']['cart']);
-
 }
 
 echo json_encode($respuesta);
