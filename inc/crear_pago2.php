@@ -114,8 +114,6 @@ if($pedido->success){
     notificarPedido($idpedido, $items, $entrega);
     //
 
-    
-    
     $preference = new MercadoPago\Preference();
     
     // Crea un �tem en la preferencia
@@ -141,6 +139,8 @@ if($pedido->success){
     $respuesta->id=$idventa;
     $respuesta->url=$link;
     
+    unset($_SESSION['archivos']);  
+    unset($_SESSION['pronto']['cart']);
 }else{
     $respuesta->success=false;
     error_log($pedido->error);
