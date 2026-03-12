@@ -23,47 +23,68 @@ $cp_destino = $_POST['cp_destino'];
 $productos_carrito = [];
 $total_fotos = 0;
 
-// Verificar si es revelado de fotos
-if (isset($_SESSION['archivos']) && !empty($_SESSION['archivos'])) {
-    // REVELADO DE FOTOS
-    // Contar total de fotos a revelar
+// Verificar si hay carrito
+if (isset($_SESSION['pronto']['cart'])) {
+    $carro = $_SESSION['pronto']['cart'];
+
+    foreach($carro as $id_producto => $datos){
+        // Verificar si es producto de revelado
+        if (isset($datos['tipo']) && $datos['tipo'] === 'revelado') {
+            // REVELADO DE FOTOS desde carrito
+            if (isset($datos['datos_revelado']['imagenes'])) {
+                foreach ($datos['datos_revelado']['imagenes'] as $foto) {
+                    $total_fotos += intval($foto['cantidad'] ?? 1);
+                }
+            }
+
+            // Calcular peso basado en cantidad de fotos
+            // 100 copias = 1 kg, entonces 1 foto = 0.01 kg
+            $peso_calculado = ($total_fotos * 0.01);
+
+            // Mínimo 2 kg para cotizar
+            $peso_final = max($peso_calculado, 2);
+
+            // Medidas estándar para revelado: 18x22 cm (0.18 x 0.22 metros)
+            $productos_carrito[] = [
+                'id' => 'revelado',
+                'cantidad' => 1, // Un bulto
+                'alto' => 0.22,  // 22 cm
+                'ancho' => 0.18, // 18 cm
+                'profundidad' => 0.05, // Altura del paquete (estimada)
+                'peso' => $peso_final
+            ];
+        } else {
+            // PRODUCTOS DE TIENDA
+            $res = $conectar->query("SELECT ancho, alto, profundidad, peso FROM productos WHERE id='$id_producto'");
+            if($row = $res->fetch_assoc()){
+                $productos_carrito[] = [
+                    'id' => $id_producto,
+                    'cantidad' => $datos['cantidad'],
+                    'ancho' => floatval($row['ancho'] ?? 0.25),
+                    'alto' => floatval($row['alto'] ?? 0.25),
+                    'profundidad' => floatval($row['profundidad'] ?? 0.25),
+                    'peso' => floatval($row['peso'] ?? 0.5)
+                ];
+            }
+        }
+    }
+} elseif (isset($_SESSION['archivos']) && !empty($_SESSION['archivos'])) {
+    // REVELADO DE FOTOS desde sesión archivos (flujo antiguo)
     foreach ($_SESSION['archivos'] as $foto) {
         $total_fotos += intval($foto['cantidad'] ?? 1);
     }
 
-    // Calcular peso basado en cantidad de fotos
-    // 100 copias = 1 kg, entonces 1 foto = 0.01 kg
     $peso_calculado = ($total_fotos * 0.01);
-
-    // Mínimo 2 kg para cotizar
     $peso_final = max($peso_calculado, 2);
 
-    // Medidas estándar para revelado: 18x22 cm (0.18 x 0.22 metros)
     $productos_carrito[] = [
         'id' => 'revelado',
-        'cantidad' => 1, // Un bulto
-        'alto' => 0.22,  // 22 cm
-        'ancho' => 0.18, // 18 cm
-        'profundidad' => 0.05, // Altura del paquete (estimada)
+        'cantidad' => 1,
+        'alto' => 0.22,
+        'ancho' => 0.18,
+        'profundidad' => 0.05,
         'peso' => $peso_final
     ];
-
-} elseif (isset($_SESSION['pronto']['cart'])) {
-    // PRODUCTOS DE TIENDA
-    $carro = $_SESSION['pronto']['cart'];
-    foreach($carro as $id_producto => $datos){
-        $res = $conectar->query("SELECT ancho, alto, profundidad, peso FROM productos WHERE id='$id_producto'");
-        if($row = $res->fetch_assoc()){
-            $productos_carrito[] = [
-                'id' => $id_producto,
-                'cantidad' => $datos['cantidad'],
-                'ancho' => floatval($row['ancho'] ?? 0.25),
-                'alto' => floatval($row['alto'] ?? 0.25),
-                'profundidad' => floatval($row['profundidad'] ?? 0.25),
-                'peso' => floatval($row['peso'] ?? 0.5)
-            ];
-        }
-    }
 }
 
 if (empty($productos_carrito)) {
@@ -91,6 +112,7 @@ foreach ($productos_carrito as $index => $producto) {
     $postFields["productos[$index][dimensiones][largo]"] = $producto['profundidad'];
     $postFields["productos[$index][dimensiones][profundidad]"] = $producto['ancho'];
 }
+
 
 // Realizar petición con cURL
 $ch = curl_init();

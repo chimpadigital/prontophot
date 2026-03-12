@@ -75,15 +75,13 @@ if(isset($_POST['facturacion'])){
 
 $pedido=crearPedido($param);
 
-
-
-
 if($pedido->success){
     $idpedido=$pedido->pedido;
     $respuesta->success=true;
     
     //
     $carro=$_SESSION['pronto']['cart'];
+    $imagenes=$_SESSION['archivos'];
     $items=array();
     foreach($carro as $id=>$datos){
         $res=$conectar->query("SELECT p.nombre,p.descripcion, p.precio, p.descuento_final,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
@@ -112,8 +110,11 @@ if($pedido->success){
         $items[]=$item;
     }
     
+    pedidoImagenes($idpedido, $imagenes);
     notificarPedido($idpedido, $items, $entrega);
     //
+
+    
     
     $preference = new MercadoPago\Preference();
     

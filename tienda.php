@@ -4,7 +4,7 @@ include_once __DIR__.'/conexion/conectar.inc.php';
 include_once __DIR__.'/inc/funciones.inc.php';
 global $conectar;
 //var_dump($_GET);
-$categorias=$conectar->query("SELECT * FROM categorias ");
+$categorias=$conectar->query("SELECT * FROM categorias ORDER BY nombre ASC");
 if (isset($_GET['id'])) {
     //$cats=explode('_',$_GET['cat']);
     $idc=$_GET['id'];
@@ -88,7 +88,6 @@ $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
                             <h2 class="mb-0">
                                 <a href="tienda/<?php echo $rowc['id'].'_'.getUrl($rowc['nombre'])?>" class="btn btn-link btn-block text-left " >
                                     <?php echo $rowc['nombre']; ?>
-                                    
                                 </a>
                             </h2>
                         </div>
@@ -101,9 +100,15 @@ $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
 			<div class="row justify-content-end">
 				<div class="col-12 col-sm-12 col-md-6 input-group mb-3">
                   <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-search" aria-hidden="true"></i></span>
+                    <span class="input-group-text" id="basic-addon1">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </span>
                   </div>
-                  <input type="text" class="search form-control" placeholder="Categoria, nombre, color" />
+                  <input 
+                  type="text" 
+                  class="search form-control" 
+                  placeholder="nombre" 
+                  />
                 </div>
 			</div>
             <!-- LISTADO DE PRODUCTOS -->
@@ -117,7 +122,6 @@ $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
             	if($row['color_violeta']=='1'){$colores.=' violeta';}
             	if($row['color_verde']=='1'){$colores.=' verde';}
             	if($row['color_amarillo']=='1'){$colores.=' amarillo';}
-
             	// Calcular precios
             	$precioLista = $row['precio'];
             	$descuento_porcentaje = isset($row['descuento_final']) ? $row['descuento_final'] : 0;
@@ -134,16 +138,22 @@ $taxCoeficiente = $taxData ? $taxData['coeficiente'] : 1.21;
                                     </svg>
                                 </a>
                             </div>
-                            <img class="w-100 image-fluid" src="<?php echo $row['imagen']; ?>" alt="">
+                            <img class="img-product w-100" src="<?php echo $row['imagen']; ?>" alt="">
                             <div class="contenido-card">
                                 <p class="nombre-producto orden-nombre mb-2"><?php echo $row['nombre']; ?></p>
-                                <p class="detalle-producto bsc-descripcion"><?php echo $row['descripcion']?></p>
 
                                 <?php if ($descuento_porcentaje > 0): ?>
+                                    
                                     <p class="m-0" style="text-decoration: line-through; color: #999; font-size: 0.9rem;">$<?php echo number_format($precioLista, 2); ?></p>
+
                                     <p class="nombre-producto orden-precio">$<?php echo number_format($precioFinal, 2); ?> <span class="tag-percent-tienda"><?php echo $descuento_porcentaje; ?>% OFF</span></p>
-                                <?php else: ?>
-                                    <p class="nombre-producto m-0 orden-precio">$<?php echo number_format($precioLista, 2); ?></p>
+
+                                <?php else: ?> 
+                                    
+                                    <p class="m-0" style="text-decoration: line-through; color: #999; font-size: 0.9rem; visibility: hidden;">0</p>
+
+                                    <p class="nombre-producto  orden-precio">$<?php echo number_format($precioLista, 2); ?></p>
+                                
                                 <?php endif; ?>
 
                                 <p class="text-muted small mb-0">Sin impuestos: $<?php echo number_format($precioConImpuestos, 2); ?></p>

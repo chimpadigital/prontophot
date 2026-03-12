@@ -16,6 +16,11 @@ if (isset($_SESSION['prontoFront']['token'])) {
 include 'conexion/conectar.inc.php';
 include_once 'inc/config.inc.php';
 global $conectar;
+
+// Obtener topbar
+$queryTopbar = "SELECT * FROM topbar WHERE id=1 AND activo=1 LIMIT 1";
+$resultTopbar = $conectar->query($queryTopbar);
+$topbarData = $resultTopbar && $resultTopbar->num_rows > 0 ? $resultTopbar->fetch_assoc() : null;
 ?>
 <!doctype html>
 <html lang="es">
@@ -26,7 +31,7 @@ global $conectar;
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
         integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/estilos.css?v=7">
+    <link rel="stylesheet" href="css/estilos.css?v=14">
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- GOOGLE FONTS -->
@@ -49,6 +54,18 @@ global $conectar;
 </head>
 
 <body>
+    <!-- Top Bar -->
+    <?php if ($topbarData): ?>
+    <div class="top-bar-pronto bg-white fw-bold text-dark text-center py-2">
+        <?php if (!empty($topbarData['link'])): ?>
+            <a href="<?php echo htmlspecialchars($topbarData['link']); ?>" class="fw-bold text-dark text-decoration-none">
+                <?php echo htmlspecialchars($topbarData['texto']); ?>
+            </a>
+        <?php else: ?>
+            <?php echo htmlspecialchars($topbarData['texto']); ?>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
     <!-- Modal Iniciar Sesion -->
     <div class="modal fade" id="iniciar-sesion" tabindex="-1" aria-labelledby="LoginLabel" aria-hidden="true">
         <div class="modal-dialog">

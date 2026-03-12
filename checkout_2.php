@@ -355,7 +355,7 @@ if (isset($_POST['entrega'])) {
 
                             $prod .= $row['nombre'] . ', ' . $datos['color'] . ' x ' . $datos['cantidad'] . '<br>';
 
-                            $resumen .= $row['nombre'] . ', <span class="dot" style="background-color: ' . $datos['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span> x ' . $datos['cantidad'] . '<br>';
+                            $resumen .= '<div class="d-block w-100">'.$row['nombre'] . ', <span class="dot" style="background-color: ' . $datos['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span> x ' . $datos['cantidad'] . '</div>';
 
                             if (isset($_SESSION['prontoFront']['cupon'])) {
                                 if ($_SESSION['prontoFront']['cupon']['categoria'] == $cat) {
@@ -370,7 +370,7 @@ if (isset($_POST['entrega'])) {
                         ?>
 
                         <?php } ?>
-                        <span class="descrip-pedido m-0 py-3 d-flex align-items-center"><?php echo $resumen; ?></span>
+                        <div class="descrip-pedido m-0 py-3 align-items-center"><?php echo $resumen; ?></div>
                         <input type="hidden" id="chk-desc" value="<?php echo $prod; ?>">
                         <hr class="divisor-resumen-compra">
                     </div>

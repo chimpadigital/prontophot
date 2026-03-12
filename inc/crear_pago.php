@@ -55,23 +55,55 @@ $pedido=crearPedido($param);
 if($pedido->success){
     $idpedido=$pedido->pedido;
     $respuesta->success=true;
+
+    error_log("=== crear_pago.php - Pedido creado: $idpedido ===");
+
     //
-    $imagenes=$_SESSION['archivos'];
-    $items=array();
-    foreach ($imagenes as $imagen){
-        $item['producto']='Impresion '.$imagen['tamano'].' '.$imagen['acabado'];
-        $cant=$imagen['cantidad'];
-        $item['cantidad']=$cant;
-        $idimp=$imagen['idimpresion'];
-        $calc=$conectar->query("SELECT * FROM `impresiones` WHERE id='$idimp'");
-        $rowi=$calc->fetch_assoc();
-        $p=$rowi['precio'];
-        $precio=($p * $cant);
-        $item['precio']=$precio;
-        $items[]=$item;
+    if (isset($_SESSION['archivos']) && !empty($_SESSION['archivos'])) {
+        $imagenes = $_SESSION['archivos'];
+        error_log("Archivos en sesión para pedido $idpedido: " . count($imagenes));
+
+        $items=array();
+        foreach ($imagenes as $imagen){
+            $item['producto']='Impresion '.$imagen['tamano'].' '.$imagen['acabado'];
+            $cant=$imagen['cantidad'];
+            $item['cantidad']=$cant;
+            $idimp = isset($imagen['idimpresion']) ? $imagen['idimpresion'] : 0;
+
+            if ($idimp > 0) {
+                $calc=$conectar->query("SELECT * FROM `impresiones` WHERE id='$idimp'");
+                $rowi=$calc->fetch_assoc();
+                $p=$rowi['precio'];
+            } else {
+                // Buscar por formato si no tiene idimpresion
+                $formato = $imagen['tamano'];
+                $calc=$conectar->query("SELECT * FROM `impresiones` WHERE formato='$formato' ORDER BY id DESC LIMIT 1");
+                if ($calc && $calc->num_rows > 0) {
+                    $rowi=$calc->fetch_assoc();
+                    $p=$rowi['precio'];
+                } else {
+                    $p = 0;
+                    error_log("WARNING: No se encontró precio para formato: $formato");
+                }
+            }
+
+            $precio=($p * $cant);
+            $item['precio']=$precio;
+            $items[]=$item;
+        }
+
+        notificarPedido($idpedido, $items, $entrega);
+
+        error_log("=== Llamando a pedidoImagenes() desde crear_pago.php ===");
+        pedidoImagenes($idpedido, $imagenes);
+        error_log("=== Fin pedidoImagenes() ===");
+    } else {
+        error_log("ERROR: No hay archivos en SESSION['archivos'] para el pedido $idpedido");
+        $respuesta->success=false;
+        $respuesta->error="No se encontraron imágenes para procesar";
+        echo json_encode($respuesta);
+        exit;
     }
-    notificarPedido($idpedido, $items, $entrega);
-    pedidoImagenes($idpedido, $imagenes);
     //
     $preference = new MercadoPago\Preference();
     

@@ -67,8 +67,9 @@ if($pedido->success){
         $item['precio']=$precio;
         $items[]=$item;
     }
-    notificarPedido($idpedido, $items, $entrega);
+
     pedidoImagenes($idpedido, $imagenes);
+    notificarPedido($idpedido, $items, $entrega);
     //
     
     $_SESSION['prontoFront']['pedido']=$idpedido;

@@ -17,20 +17,26 @@ $descuento=0;
 $porc=0;
 foreach($carro as $id=>$datos){
     $cant=$datos['cantidad'];
-    $cat=$datos['cat'];
+    $cat=isset($datos['cat']) ? $datos['cat'] : '';
 
-    // Obtener precio y descuento del producto
-    $prod_res=$conectar->query("SELECT precio, descuento_final FROM productos WHERE id='$id'");
-    $prod_row=$prod_res->fetch_assoc();
-    $precioUnitario=$prod_row['precio'];
-    $descuentoProducto=isset($prod_row['descuento_final']) && $prod_row['descuento_final'] > 0 ? $prod_row['descuento_final'] : 0;
+    // Verificar si es revelado
+    if (isset($datos['tipo']) && $datos['tipo'] === 'revelado') {
+        // El precio ya viene calculado en el carrito
+        $precio = $datos['precio'];
+    } else {
+        // Obtener precio y descuento del producto
+        $prod_res=$conectar->query("SELECT precio, descuento_final FROM productos WHERE id='$id'");
+        $prod_row=$prod_res->fetch_assoc();
+        $precioUnitario=$prod_row['precio'];
+        $descuentoProducto=isset($prod_row['descuento_final']) && $prod_row['descuento_final'] > 0 ? $prod_row['descuento_final'] : 0;
 
-    // Aplicar descuento del producto si existe
-    if($descuentoProducto > 0){
-        $precioUnitario=$prod_row['precio'] - ($prod_row['precio'] * $descuentoProducto / 100);
+        // Aplicar descuento del producto si existe
+        if($descuentoProducto > 0){
+            $precioUnitario=$prod_row['precio'] - ($prod_row['precio'] * $descuentoProducto / 100);
+        }
+
+        $precio=($cant * $precioUnitario);
     }
-
-    $precio=($cant * $precioUnitario);
 
     if(isset($_SESSION['prontoFront']['cupon'])){
         if ($_SESSION['prontoFront']['cupon']['categoria']==$cat) {
@@ -85,35 +91,72 @@ if($pedido->success){
     $carro=$_SESSION['pronto']['cart'];
     $items=array();
     foreach($carro as $id=>$datos){
-        $res=$conectar->query("SELECT p.nombre,p.descripcion, p.precio, p.descuento_final,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
-        $row=$res->fetch_assoc();
-        $cant=$datos['cantidad'];
+        // Verificar si es producto de revelado
+        if (isset($datos['tipo']) && $datos['tipo'] === 'revelado') {
+            // PROCESAR REVELADO DE FOTOS
+            $cant=$datos['cantidad'];
+            $precio=$datos['precio'];
 
-        // Aplicar descuento del producto si existe
-        $precioUnitario=$row['precio'];
-        $descuentoProducto=isset($row['descuento_final']) && $row['descuento_final'] > 0 ? $row['descuento_final'] : 0;
-        if($descuentoProducto > 0){
-            $precioUnitario=$row['precio'] - ($row['precio'] * $descuentoProducto / 100);
-        }
+            // Obtener ID real del producto revelado
+            $id_real = isset($datos['id_original']) ? $datos['id_original'] : $id;
 
-        $precio=($cant * $precioUnitario);
-        $color = isset($datos['color']) ? $conectar->real_escape_string($datos['color']) : NULL;
-        $item['producto']=$row['nombre'].' '.$datos['color'];
-        $item['cantidad']=$cant;
-        $item['precio']=$precio;
+            // Insertar en pedidos_detalle
+            $conectar->query("INSERT INTO `pedidos_detalle`( `id_pedido`, `id_producto`, `cantidad`, `tipo`) VALUES ('$idpedido','$id_real','$cant','revelado')");
 
-        // Guardar producto con color
-        if($color !== NULL){
-            $conectar->query("INSERT INTO `pedidos_detalle`( `id_pedido`, `id_producto`, `cantidad`, `color`) VALUES ('$idpedido','$id','$cant','$color')");
+            error_log("=== PRODUCTO DE REVELADO DETECTADO ===");
+            error_log("ID Pedido: $idpedido");
+            error_log("Cantidad fotos: $cant");
+            error_log("Las imágenes se guardarán con pedidoImagenes() al final");
+
+            // Item para notificación
+            $item = array();
+            $item['producto'] = 'Revelado de Fotos (' . $cant . ' fotos)';
+            $item['cantidad'] = $cant;
+            $item['precio'] = $precio;
+            $items[] = $item;
+
         } else {
-            $conectar->query("INSERT INTO `pedidos_detalle`( `id_pedido`, `id_producto`, `cantidad`) VALUES ('$idpedido','$id','$cant')");
+            // PROCESAR PRODUCTO NORMAL
+            $res=$conectar->query("SELECT p.nombre,p.descripcion, p.precio, p.descuento_final,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
+            $row=$res->fetch_assoc();
+            $cant=$datos['cantidad'];
+
+            // Aplicar descuento del producto si existe
+            $precioUnitario=$row['precio'];
+            $descuentoProducto=isset($row['descuento_final']) && $row['descuento_final'] > 0 ? $row['descuento_final'] : 0;
+            if($descuentoProducto > 0){
+                $precioUnitario=$row['precio'] - ($row['precio'] * $descuentoProducto / 100);
+            }
+
+            $precio=($cant * $precioUnitario);
+            $color = isset($datos['color']) ? $conectar->real_escape_string($datos['color']) : NULL;
+            $item['producto']=$row['nombre'].' '.$datos['color'];
+            $item['cantidad']=$cant;
+            $item['precio']=$precio;
+
+            // Guardar producto con color
+            if($color !== NULL){
+                $conectar->query("INSERT INTO `pedidos_detalle`( `id_pedido`, `id_producto`, `cantidad`, `color`) VALUES ('$idpedido','$id','$cant','$color')");
+            } else {
+                $conectar->query("INSERT INTO `pedidos_detalle`( `id_pedido`, `id_producto`, `cantidad`) VALUES ('$idpedido','$id','$cant')");
+            }
+            $items[]=$item;
         }
-        $items[]=$item;
     }
    
+    // Llamar a pedidoImagenes si hay revelado con imágenes
+    if (isset($_SESSION['archivos']) && !empty($_SESSION['archivos'])) {
+        error_log("=== LLAMANDO A pedidoImagenes() ===");
+        error_log("Archivos en sesión: " . count($_SESSION['archivos']));
+        pedidoImagenes($idpedido, $_SESSION['archivos']);
+        error_log("=== FIN pedidoImagenes() ===");
+    } else {
+        error_log("WARNING: No hay archivos en SESSION[archivos] para guardar");
+    }
+
     notificarPedido($idpedido, $items, $entrega);
     //
-    
+
     $_SESSION['prontoFront']['pedido']=$idpedido;
     
 }else{

@@ -93,45 +93,58 @@ try {
 
 
 
-                    <div class="row align-items-lg-center mt-0 mt-md-3">
-                        <div class="col-md-9 p-0">
-                            <h4 class="text-bold">Fotos a revelar</h4>
+                    <?php if ($imagenes->num_rows > 0): ?>
+                        <div class="row align-items-lg-center mt-0 mt-md-3">
+                            <div class="col-md-9 p-0">
+                                <h4 class="text-bold">Fotos a revelar (<?php echo $imagenes->num_rows; ?>)</h4>
+                            </div>
+                            <div class="col-md-3 text-left text-lg-right p-0">
+                                <a download href="<?php echo $archivo; ?>" class="btn btn-bg-transparent text-danger" id="descargaTodo">Descargar Todo</a>
+                            </div>
                         </div>
-                        <div class="col-md-3 text-left text-lg-right p-0">
-                            <a download href="<?php echo $archivo; ?>" class="btn btn-bg-transparent text-danger" id="descargaTodo">Descargar Todo</a>
-                        </div>
-                    </div>
 
-                    <div class="row mt-3">
-                        <?php
-                        $i = 1;
-                        $imagenes->data_seek(0);
-                        while ($rowi = $imagenes->fetch_assoc()) { ?>
-                            <div class="col-12 p-4 col-categoria my-2">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <img class="img-fluid w-100" src="<?php echo '../' . $rowi['thumb']; ?>" alt="">
-                                    </div>
-                                    <div class="col-md-7 d-block d-lg-flex flex-column mt-4 mt-md-0">
-                                        <div class="d-block d-lg-flex">
-                                            <p class="detalles-pedido">Foto <?php echo $i; ?></p>
+                        <div class="row mt-3">
+                            <?php
+                            $i = 1;
+                            $imagenes->data_seek(0);
+                            while ($rowi = $imagenes->fetch_assoc()) {
+                                // Usar imagen si thumb no existe
+                                $imagen_preview = !empty($rowi['thumb']) && file_exists('../' . $rowi['thumb'])
+                                    ? '../' . $rowi['thumb']
+                                    : '../' . $rowi['imagen'];
+                            ?>
+                                <div class="col-12 p-4 col-categoria my-2">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <img class="img-fluid w-100" src="<?php echo $imagen_preview; ?>" alt="" style="max-height: 150px; object-fit: cover;">
                                         </div>
-                                        <p class="descripcion-pedido">Tamaño <?php echo $rowi['formato']; ?> <br><?php echo $rowi['acabado']; ?> <br>Cant. :<?php echo $rowi['cantidad']; ?></p>
-                                    </div>
-                                    <div class="col-sm-12 col-md-3 d-block d-lg-flex flex-column justify-content-around">
-                                        <div class="d-block d-lg-flex align-items-center justify-content-end">
-                                            <a class="nav-link descargaImagen" href="<?php echo '../' . $rowi['imagen']; ?>" download><button type="button"
-                                                    class="btn bg-danger text-white btn-bg-red">Descargar Foto</button></a>
+                                        <div class="col-md-7 d-block d-lg-flex flex-column mt-4 mt-md-0">
+                                            <div class="d-block d-lg-flex">
+                                                <p class="detalles-pedido">Foto <?php echo $i; ?></p>
+                                            </div>
+                                            <p class="descripcion-pedido">Tamaño <?php echo $rowi['formato']; ?> <br><?php echo $rowi['acabado']; ?> <br>Cant. :<?php echo $rowi['cantidad']; ?></p>
+                                        </div>
+                                        <div class="col-sm-12 col-md-3 d-block d-lg-flex flex-column justify-content-around">
+                                            <div class="d-block d-lg-flex align-items-center justify-content-end">
+                                                <a class="nav-link descargaImagen" href="<?php echo '../' . $rowi['imagen']; ?>" download><button type="button"
+                                                        class="btn bg-danger text-white btn-bg-red">Descargar Foto</button></a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            <?php
+                                $i++;
+                            } ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle"></i> Este pedido no contiene fotos para revelar.
+                                </div>
                             </div>
-                        <?php
-                            $i++;
-                        } ?>
-
-
-                    </div>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="row align-items-lg-center mt-5">
                         <div class="col-md-12 p-0">
@@ -141,35 +154,98 @@ try {
                     </div>
 
                     <div class="row mt-3">
-                        <?php while ($rowp = $productos->fetch_assoc()) {
-                            // Generar HTML del color
-                            $color_html = '';
-                            if (!empty($rowp['color'])) {
-                                $color_html = '<span class="dot" style="background-color: ' . $rowp['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span>';
-                            }
+                        <?php
+                        // Primero obtener detalles del pedido con tipo
+                        $productos_detalle = $conectar->query("SELECT pd.*, p.nombre, p.descripcion, (SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as producto_imagen FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$id'");
+
+                        while ($rowp = $productos_detalle->fetch_assoc()) {
+                            // Verificar si es revelado
+                            $esRevelado = isset($rowp['tipo']) && $rowp['tipo'] === 'revelado';
+
+                            if ($esRevelado) {
+
+                                // Obtener imágenes del revelado desde pedidos_imagenes
+                                $imagenes_revelado = $conectar->query("SELECT * FROM pedidos_imagenes WHERE id_pedido='$id'");
+
+                                // Agrupar por tamaño y acabado
+                                $resumen = [];
+                                $total_imagenes_revelado = 0;
+                                while ($img = $imagenes_revelado->fetch_assoc()) {
+                                    $key = $img['formato'] . ' ' . $img['acabado'];
+                                    if (!isset($resumen[$key])) {
+                                        $resumen[$key] = 0;
+                                    }
+                                    $resumen[$key] += intval($img['cantidad']);
+                                    $total_imagenes_revelado += intval($img['cantidad']);
+                                }
                         ?>
-                            <div class="col-12 p-4 col-categoria my-2">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <img class="img-fluid w-100" src="<?php if (!empty($rowp['imagen'])) {
-                                                                                echo '../' . $rowp['imagen'];
-                                                                            } else {
-                                                                                echo 'https://via.placeholder.com/50';
-                                                                            } ?>" alt="">
-                                    </div>
-                                    <div class="col-md-10 d-block d-lg-flex flex-column">
-                                        <div class="d-block d-lg-flex">
-                                            <ul class="list-group">
-                                                <li class="list-group-item bg-transparent border-0 mb-0 p-0"><strong><?php echo $rowp['nombre']; ?></strong></li>
-                                                <li class="list-group-item bg-transparent border-0 mb-0 p-0">Color seleccionado: <?php echo $color_html; ?></li>
-                                                <li class="list-group-item bg-transparent border-0 mb-0 p-0">Cantidad: <?php echo $rowp['cantidad'] ?></li>
-                                            </ul>
+                                <div class="col-12 p-4 col-categoria my-2 bg-light">
+                                    <div class="row">
+                                        <div class="col-md-2 text-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-images text-danger" viewBox="0 0 16 16">
+                                                <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+                                                <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z" />
+                                            </svg>
                                         </div>
-                                        <p class="descripcion-pedido"><?php echo $rowp['descripcion'] ?></p>
+                                        <div class="col-md-10 d-block d-lg-flex flex-column">
+                                            <div class="d-block d-lg-flex">
+                                                <ul class="list-group">
+                                                    <li class="list-group-item bg-transparent border-0 mb-0 p-0"><strong class="text-danger">Revelado de Fotografías</strong></li>
+                                                    <li class="list-group-item bg-transparent border-0 mb-0 p-0">Total de fotografías: <strong><?php echo $total_imagenes_revelado; ?></strong></li>
+                                                    <?php if (!empty($resumen)): ?>
+                                                        <li class="list-group-item bg-transparent border-0 mb-0 p-0 mt-2"><strong>Detalle:</strong></li>
+                                                        <?php foreach ($resumen as $tipo => $cantidad): ?>
+                                                            <li class="list-group-item bg-transparent border-0 mb-0 p-0 pl-3">• <?php echo $cantidad . ' foto' . ($cantidad > 1 ? 's' : '') . ' ' . $tipo; ?></li>
+                                                        <?php endforeach; ?>
+                                                    <?php else: ?>
+                                                        <li class="list-group-item bg-transparent border-0 mb-0 p-0 mt-2 text-muted">
+                                                            <i class="fa fa-info-circle"></i> No se encontraron detalles de las fotos en pedidos_imagenes
+                                                        </li>
+                                                    <?php endif; ?>
+                                                </ul>
+                                            </div>
+                                            <p class="descripcion-pedido mt-2">
+                                                <?php if ($imagenes_revelado->num_rows > 0): ?>
+                                                    Las fotos individuales se encuentran en la sección "Fotos a revelar" arriba.
+                                                <?php else: ?>
+                                                    <span class="text-warning">⚠ Las fotos no se guardaron correctamente en pedidos_imagenes.</span>
+                                                <?php endif; ?>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        <?php } ?>
+                            <?php
+                            } else {
+                                // Producto normal
+                                // Generar HTML del color
+                                $color_html = '';
+                                if (!empty($rowp['color'])) {
+                                    $color_html = '<span class="dot" style="background-color: ' . $rowp['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span>';
+                                }
+
+                                // Obtener imagen del producto
+                                $imagen_prod = !empty($rowp['producto_imagen']) ? '../' . $rowp['producto_imagen'] : 'https://via.placeholder.com/50';
+                            ?>
+                                <div class="col-12 p-4 col-categoria my-2">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <img class="img-fluid w-100" src="<?php echo $imagen_prod; ?>" alt="">
+                                        </div>
+                                        <div class="col-md-10 d-block d-lg-flex flex-column">
+                                            <div class="d-block d-lg-flex">
+                                                <ul class="list-group">
+                                                    <li class="list-group-item bg-transparent border-0 mb-0 p-0"><strong><?php echo $rowp['nombre']; ?></strong></li>
+                                                    <li class="list-group-item bg-transparent border-0 mb-0 p-0">Color seleccionado: <?php echo $color_html; ?></li>
+                                                    <li class="list-group-item bg-transparent border-0 mb-0 p-0">Cantidad: <?php echo $rowp['cantidad'] ?></li>
+                                                </ul>
+                                            </div>
+                                            <p class="descripcion-pedido"><?php echo $rowp['descripcion'] ?></p>
+                                        </div>
+                                    </div>
+                                </div>
+                        <?php
+                            }
+                        } ?>
                     </div>
 
                     <div class="row align-items-lg-center mt-5">
@@ -184,8 +260,8 @@ try {
                     <div class="row mt-4 datos-envio">
                         <div class="col-md-8 p-4 shadowBox" id="datosEnvio">
                             <?php
-                            echo '<script>console.log("'.$row['envio'].'")</script>';
-                            echo '<script>console.log("'.$row['entrega'].'")</script>';
+                            echo '<script>console.log("' . $row['envio'] . '")</script>';
+                            echo '<script>console.log("' . $row['entrega'] . '")</script>';
 
                             if ($row['envio'] == 'domicilio') {
                                 $titulo = 'Enviar a mi domicilio';

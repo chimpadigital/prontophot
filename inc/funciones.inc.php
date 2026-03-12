@@ -152,7 +152,7 @@ function crearPedido($param)
         $respuesta->pedido = $idpedido;
 
         // Guardar datos de facturación en tabla separada
-        if(isset($param['facturacion'])){
+        if (isset($param['facturacion'])) {
             $fac = $param['facturacion'];
             $nombre = $conectar->real_escape_string($fac['nombre']);
             $apellido = $conectar->real_escape_string($fac['apellido']);
@@ -181,30 +181,77 @@ function crearPedido($param)
     return $respuesta;
 }
 
-if (!function_exists('pedidoImagenes')) {
-    function pedidoImagenes($pedido, $archivos)
-    {
-        global $conectar;
-        foreach ($archivos as $file) {
-            $archivo = $file['archivo'];
-            $ext = explode('.', $archivo);
-            $name = $ext[0];
-            $image = __DIR__ . '/../' . $archivo;
-            $thumb = $name . '.webp';
-            $nuevo = __DIR__ . '/../' . $name . '.webp';
-            $img = Image::make($image);
-            $img->resize(600, null, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-            $img->save($nuevo);
-            $formato = $file['tamano'];
-            $acabado = $file['acabado'];
-            $cant = $file['cantidad'];
-            $imp = $file['idimpresion'];
-            $query = "INSERT INTO `pedidos_imagenes`(`imagen`,`thumb`, `id_impresion`, `id_pedido`, `cantidad`, `formato`, `acabado`) VALUES ('$archivo','$thumb','$imp','$pedido','$cant','$formato','$acabado')";
-            $res2 = $conectar->query($query);
+function pedidoImagenes($pedido, $archivos)
+{
+    global $conectar;
+
+    error_log("=== FUNCION pedidoImagenes() - Pedido: $pedido ===");
+    error_log("Total de archivos a procesar: " . count($archivos));
+
+    foreach ($archivos as $key => $file) {
+        error_log("--- Procesando archivo $key ---");
+        error_log("Datos: " . print_r($file, true));
+
+        $archivo = $file['archivo'];
+        $ext = explode('.', $archivo);
+        $name = $ext[0];
+        $image = __DIR__ . '/../' . $archivo;
+        $thumb = $name . '.webp';
+        $nuevo = __DIR__ . '/../' . $name . '.webp';
+
+        // Crear thumbnail solo si no existe
+        if (!file_exists($nuevo)) {
+            try {
+                $img = Image::make($image);
+                $img->resize(600, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+                $img->save($nuevo);
+                error_log("✓ Thumbnail creado: $nuevo");
+            } catch (Exception $e) {
+                error_log("✗ Error al crear thumbnail: " . $e->getMessage());
+            }
+        } else {
+            error_log("ℹ Thumbnail ya existe: $nuevo");
+        }
+
+        $formato = $file['tamano'];
+        $acabado = $file['acabado'];
+        $cant = intval($file['cantidad']);
+
+        // Obtener id_impresion si no viene en el array
+        if (isset($file['idimpresion']) && $file['idimpresion'] > 0) {
+            $imp = intval($file['idimpresion']);
+            error_log("✓ idimpresion desde archivo: $imp");
+        } else {
+            // Buscar en BD
+            $query_imp = "SELECT id FROM `impresiones` WHERE formato='$formato' ORDER BY id DESC LIMIT 1";
+            $res_imp = $conectar->query($query_imp);
+            $imp = 0;
+            if ($res_imp && $res_imp->num_rows > 0) {
+                $row_imp = $res_imp->fetch_assoc();
+                $imp = intval($row_imp['id']);
+                error_log("✓ idimpresion encontrado en BD para formato '$formato': $imp");
+            } else {
+                error_log("✗ WARNING: No se encontró idimpresion para formato '$formato'");
+            }
+        }
+
+        $query = "INSERT INTO `pedidos_imagenes`(`imagen`,`thumb`, `id_impresion`, `id_pedido`, `cantidad`, `formato`, `acabado`) VALUES ('$archivo','$thumb','$imp','$pedido','$cant','$formato','$acabado')";
+        
+        error_log("SQL: $query");
+
+        $res2 = $conectar->query($query);
+
+        if ($res2) {
+            $insert_id = $conectar->insert_id;
+            error_log("✅ INSERT exitoso. ID: $insert_id");
+        } else {
+            error_log("❌ ERROR en INSERT: " . $conectar->error);
         }
     }
+
+    error_log("=== FIN pedidoImagenes() ===");
 }
 
 function extension($filename)
