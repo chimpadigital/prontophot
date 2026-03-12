@@ -52,7 +52,7 @@ if ($checkProducto->num_rows == 0) {
 $checkTipoDetalle = $conectar->query("SHOW COLUMNS FROM pedidos_detalle LIKE 'tipo'");
 
 if ($checkTipoDetalle->num_rows == 0) {
-    $alterDetalleQuery = "ALTER TABLE `pedidos_detalle` ADD `tipo` VARCHAR(50) NULL DEFAULT 'producto' AFTER `precio`";
+    $alterDetalleQuery = "ALTER TABLE `pedidos_detalle` ADD `tipo` VARCHAR(50) NULL DEFAULT 'producto' AFTER `color`";
 
     if ($conectar->query($alterDetalleQuery)) {
         echo "✓ Campo 'tipo' agregado exitosamente a la tabla pedidos_detalle<br>";
