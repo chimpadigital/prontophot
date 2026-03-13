@@ -496,7 +496,7 @@ $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
                         html += '<div class="row">';
 
                         data.fotos.forEach(function(foto, index) {
-                            html += '<div class="col-md-3 col-sm-6 mb-4">';
+                            html += '<div class="col-md-6 col-sm-6 mb-4">';
                             html += '<div class="card shadow-sm">';
                             html += '<img src="' + foto.archivo + '" class="card-img-top" alt="Foto ' + (index + 1) + '" style="height: 200px; object-fit: cover;">';
                             html += '<div class="card-body">';
