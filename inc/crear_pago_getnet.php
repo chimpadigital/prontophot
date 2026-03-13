@@ -246,11 +246,11 @@ if ($pedido->success) {
                 "reference" => ""
             ]
         ],
-        "pickup_store" => false,
+        "pickup_store" => true,
         "shipping_method" => "PAC"
     );
 
-    $payment_ch = curl_init(GETNET_API . "/dpy/web-checkout/v1/payment-intent");
+    $payment_ch = curl_init("https://api-sbx.pre.globalgetnet.com/dpy/web-checkout/v1/payment-intent");
     curl_setopt($payment_ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($payment_ch, CURLOPT_POST, true);
     curl_setopt($payment_ch, CURLOPT_POSTFIELDS, json_encode($payment_data));

@@ -1,0 +1,58 @@
+[13-Mar-2026 12:17:31 UTC] PHP Deprecated:  is_file(): Passing null to parameter #1 ($filename) of type string is deprecated in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Config.php on line 64
+[13-Mar-2026 12:17:33 UTC] === FUNCION pedidoImagenes() - Pedido: 492 ===
+[13-Mar-2026 12:17:33 UTC] Total de archivos a procesar: 4
+[13-Mar-2026 12:17:33 UTC] --- Procesando archivo 0 ---
+[13-Mar-2026 12:17:33 UTC] Datos: Array
+(
+    [archivo] => img/impresiones/polaroid__Brillante__1__69b325fb41ffe.jpg
+    [acabado] => Brillante
+    [tamano] => polaroid
+    [cantidad] => 1
+)
+
+[13-Mar-2026 12:17:33 UTC] ℹ Thumbnail ya existe: F:\laragonV8\www\prontophot\inc/../img/impresiones/polaroid__Brillante__1__69b325fb41ffe.webp
+[13-Mar-2026 12:17:33 UTC] ✓ idimpresion encontrado en BD para formato 'polaroid': 3364
+[13-Mar-2026 12:17:33 UTC] SQL: INSERT INTO `pedidos_imagenes`(`imagen`,`thumb`, `id_impresion`, `id_pedido`, `cantidad`, `formato`, `acabado`) VALUES ('img/impresiones/polaroid__Brillante__1__69b325fb41ffe.jpg','img/impresiones/polaroid__Brillante__1__69b325fb41ffe.webp','3364','492','1','polaroid','Brillante')
+[13-Mar-2026 12:17:33 UTC] ✅ INSERT exitoso. ID: 2624
+[13-Mar-2026 12:17:33 UTC] --- Procesando archivo 1 ---
+[13-Mar-2026 12:17:33 UTC] Datos: Array
+(
+    [archivo] => img/impresiones/polaroid__Brillante__1__69b325fb42872.png
+    [acabado] => Brillante
+    [tamano] => polaroid
+    [cantidad] => 1
+)
+
+[13-Mar-2026 12:17:33 UTC] ℹ Thumbnail ya existe: F:\laragonV8\www\prontophot\inc/../img/impresiones/polaroid__Brillante__1__69b325fb42872.webp
+[13-Mar-2026 12:17:33 UTC] ✓ idimpresion encontrado en BD para formato 'polaroid': 3364
+[13-Mar-2026 12:17:33 UTC] SQL: INSERT INTO `pedidos_imagenes`(`imagen`,`thumb`, `id_impresion`, `id_pedido`, `cantidad`, `formato`, `acabado`) VALUES ('img/impresiones/polaroid__Brillante__1__69b325fb42872.png','img/impresiones/polaroid__Brillante__1__69b325fb42872.webp','3364','492','1','polaroid','Brillante')
+[13-Mar-2026 12:17:33 UTC] ✅ INSERT exitoso. ID: 2625
+[13-Mar-2026 12:17:33 UTC] --- Procesando archivo 2 ---
+[13-Mar-2026 12:17:33 UTC] Datos: Array
+(
+    [archivo] => img/impresiones/polaroid__Brillante__1__69b325fb43520.webp
+    [acabado] => Brillante
+    [tamano] => polaroid
+    [cantidad] => 1
+)
+
+[13-Mar-2026 12:17:33 UTC] ℹ Thumbnail ya existe: F:\laragonV8\www\prontophot\inc/../img/impresiones/polaroid__Brillante__1__69b325fb43520.webp
+[13-Mar-2026 12:17:33 UTC] ✓ idimpresion encontrado en BD para formato 'polaroid': 3364
+[13-Mar-2026 12:17:33 UTC] SQL: INSERT INTO `pedidos_imagenes`(`imagen`,`thumb`, `id_impresion`, `id_pedido`, `cantidad`, `formato`, `acabado`) VALUES ('img/impresiones/polaroid__Brillante__1__69b325fb43520.webp','img/impresiones/polaroid__Brillante__1__69b325fb43520.webp','3364','492','1','polaroid','Brillante')
+[13-Mar-2026 12:17:33 UTC] ✅ INSERT exitoso. ID: 2626
+[13-Mar-2026 12:17:33 UTC] --- Procesando archivo 3 ---
+[13-Mar-2026 12:17:33 UTC] Datos: Array
+(
+    [archivo] => img/impresiones/polaroid__Brillante__1__69b325fb43d8d.png
+    [acabado] => Brillante
+    [tamano] => polaroid
+    [cantidad] => 1
+)
+
+[13-Mar-2026 12:17:33 UTC] ℹ Thumbnail ya existe: F:\laragonV8\www\prontophot\inc/../img/impresiones/polaroid__Brillante__1__69b325fb43d8d.webp
+[13-Mar-2026 12:17:33 UTC] ✓ idimpresion encontrado en BD para formato 'polaroid': 3364
+[13-Mar-2026 12:17:33 UTC] SQL: INSERT INTO `pedidos_imagenes`(`imagen`,`thumb`, `id_impresion`, `id_pedido`, `cantidad`, `formato`, `acabado`) VALUES ('img/impresiones/polaroid__Brillante__1__69b325fb43d8d.png','img/impresiones/polaroid__Brillante__1__69b325fb43d8d.webp','3364','492','1','polaroid','Brillante')
+[13-Mar-2026 12:17:34 UTC] ✅ INSERT exitoso. ID: 2627
+[13-Mar-2026 12:17:34 UTC] === FIN pedidoImagenes() ===
+[13-Mar-2026 12:17:38 UTC] {"message":"auto_return invalid. back_url.success must be defined","error":"invalid_auto_return","status":400,"cause":null}
+[13-Mar-2026 12:17:38 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in F:\laragonV8\www\prontophot\inc\vendor\mercadopago\dx-php\src\MercadoPago\Generic\RecuperableError.php on line 30

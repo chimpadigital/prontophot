@@ -1,0 +1,29 @@
+[13-Mar-2026 12:18:59 UTC] GetNet Products Array: [{"product_type":"physical_product","title":"Parlante bluetooth mini","description":"Parlante bluetooth mini, dimensiones peque\u00f1as, 5w de potencia. Colores a definir, autonomia maxima 2 horas,aproximadamente.","value":1843650,"quantity":1},{"product_type":"service","title":"Costo de Env\u00edo","description":"Env\u00edo: envio_1","value":150000,"quantity":1}]
+[13-Mar-2026 12:18:59 UTC] GetNet Total Amount (cents): 1993650
+[13-Mar-2026 12:18:59 UTC] GetNet Payment Response: <HTML><HEAD>
+<TITLE>Access Denied</TITLE>
+</HEAD><BODY>
+<H1>Access Denied</H1>
+ 
+You don't have permission to access "http&#58;&#47;&#47;api&#46;pre&#46;globalgetnet&#46;com&#47;dpy&#47;web&#45;checkout&#47;v1&#47;payment&#45;intent" on this server.<P>
+Reference&#32;&#35;18&#46;4e0fc417&#46;1773404338&#46;2507e0f2
+<P>https&#58;&#47;&#47;errors&#46;edgesuite&#46;net&#47;18&#46;4e0fc417&#46;1773404338&#46;2507e0f2</P>
+</BODY>
+</HTML>
+
+[13-Mar-2026 12:18:59 UTC] GetNet HTTP Code: 403
+[13-Mar-2026 12:18:59 UTC] GetNet Payment Error: <HTML><HEAD>
+<TITLE>Access Denied</TITLE>
+</HEAD><BODY>
+<H1>Access Denied</H1>
+ 
+You don't have permission to access "http&#58;&#47;&#47;api&#46;pre&#46;globalgetnet&#46;com&#47;dpy&#47;web&#45;checkout&#47;v1&#47;payment&#45;intent" on this server.<P>
+Reference&#32;&#35;18&#46;4e0fc417&#46;1773404338&#46;2507e0f2
+<P>https&#58;&#47;&#47;errors&#46;edgesuite&#46;net&#47;18&#46;4e0fc417&#46;1773404338&#46;2507e0f2</P>
+</BODY>
+</HTML>
+[13-Mar-2026 12:24:05 UTC] GetNet Products Array: [{"product_type":"physical_product","title":"Parlante bluetooth mini","description":"Parlante bluetooth mini, dimensiones peque\u00f1as, 5w de potencia. Colores a definir, autonomia maxima 2 horas,aproximadamente.","value":1843650,"quantity":1},{"product_type":"service","title":"Costo de Env\u00edo","description":"Env\u00edo: envio_1","value":150000,"quantity":1}]
+[13-Mar-2026 12:24:05 UTC] GetNet Total Amount (cents): 1993650
+[13-Mar-2026 12:24:06 UTC] GetNet Payment Response: { "statusCode": 404, "message": "Resource not found" }
+[13-Mar-2026 12:24:06 UTC] GetNet HTTP Code: 404
+[13-Mar-2026 12:24:06 UTC] GetNet Payment Error: { "statusCode": 404, "message": "Resource not found" }
