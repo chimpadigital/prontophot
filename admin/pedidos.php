@@ -129,7 +129,11 @@ function estados($esta)
                                 if (!is_null($idp)) {
                                     $imag = $conectar->query("SELECT * FROM imagenes WHERE id_producto='$idp'");
                                     $rowi = $imag->fetch_assoc();
-                                    $imagen = $rowi['imagen'];
+                                    if ($rowi && isset($rowi['imagen'])) {
+                                        $imagen = $rowi['imagen'];
+                                    } else {
+                                        $imagen = null;
+                                    }
                                 } else {
                                     $imagen = $row['imagen'];
                                 }
