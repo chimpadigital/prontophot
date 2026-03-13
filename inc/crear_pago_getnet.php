@@ -286,8 +286,6 @@ if ($pedido->success) {
     $respuesta->success = false;
     error_log($pedido->error);
     $respuesta->error = $pedido->error;
-    unset($_SESSION['archivos']);
-    unset($_SESSION['pronto']['cart']);
 }
 
 echo json_encode($respuesta);

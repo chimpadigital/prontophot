@@ -251,7 +251,7 @@ function pedidoImagenes($pedido, $archivos)
         }
     }
 
-    error_log("=== FIN pedidoImagenes() ===");
+    unset($_SESSION['archivos']);
 }
 
 function extension($filename)

@@ -138,9 +138,6 @@ if($pedido->success){
     //print_r($preference);
     $respuesta->id=$idventa;
     $respuesta->url=$link;
-    
-    unset($_SESSION['archivos']);  
-    unset($_SESSION['pronto']['cart']);
 }else{
     $respuesta->success=false;
     error_log($pedido->error);
