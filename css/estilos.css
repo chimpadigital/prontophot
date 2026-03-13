@@ -34,7 +34,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 .top-bar-pronto a:hover {
   text-decoration: none;
-  color: var(--danger)!important;
+  color: var(--danger) !important;
 }
 .custom-control-input:checked ~ .custom-control-label::before {
   color: #fff;
@@ -303,7 +303,6 @@ input.form-control#sucursal {
     justify-content: center;
     margin-top: 10% !important;
   }
-
 }
 /* !important is needed sometimes */
 ::-webkit-scrollbar {
@@ -395,7 +394,7 @@ input.form-control#sucursal {
     width: 100% !important;
     margin-right: 0 !important;
   }
-  
+
   .top-bar-pronto {
     font-size: 10px;
   }
@@ -548,7 +547,7 @@ button.btn-cargar-producto {
   align-items: center;
   gap: 5px;
   flex-wrap: wrap;
-  
+
   line-height: 1.2em;
   min-height: 2.4em; /* 2 líneas */
 }
@@ -911,6 +910,9 @@ form#consulta label {
   background-size: cover;
   background-position: center center;
 }
+.portada-tienda::after {
+  display: block;
+}
 .portada-revelado {
   background: url(../assets/img/portada-revelado.jpg);
   background-repeat: no-repeat;
@@ -1199,8 +1201,8 @@ button.btn.btn-sm.btn-danger.removeImg {
   } */
 
   .portada-tienda::after {
-  display: none !important;
-}
+    display: none !important;
+  }
 
   .carousel-item {
     height: 300px;
@@ -1272,7 +1274,7 @@ button.btn.btn-sm.btn-danger.removeImg {
   }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .col-md-8.columna-form-contacto:before {
     content: "";
     width: 14px;
@@ -1467,6 +1469,7 @@ button.btn.btn-sm.btn-danger.removeImg {
     width: 620px;
     height: 562px;
     z-index: 10;
+    display: block;
   }
   #contenido-paso-2,
   #contenido-paso-3,
