@@ -179,7 +179,6 @@ function crearPedido($param)
         $respuesta->error = $conectar->error;
     }
     
-    unset($_SESSION['pronto']['cart']);
     return $respuesta;
 }
 
