@@ -4,7 +4,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-use Intervention\Image\ImageManagerStatic as Image;
+use Intervention\Image\ImageManager;
 // Load Composer's autoloader
 require 'vendor/autoload.php';
 require_once 'config.inc.php';
@@ -185,6 +185,7 @@ function crearPedido($param)
 function pedidoImagenes($pedido, $archivos)
 {
     global $conectar;
+    $manager = new ImageManager(['driver' => 'imagick']);
 
     error_log("=== FUNCION pedidoImagenes() - Pedido: $pedido ===");
     error_log("Total de archivos a procesar: " . count($archivos));
@@ -203,7 +204,7 @@ function pedidoImagenes($pedido, $archivos)
         // Crear thumbnail solo si no existe
         if (!file_exists($nuevo)) {
             try {
-                $img = Image::make($image);
+                $img =  $manager->make($image);
                 $img->resize(600, null, function ($constraint) {
                     $constraint->aspectRatio();
                 });
