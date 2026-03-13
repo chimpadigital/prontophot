@@ -184,72 +184,46 @@ function crearPedido($param)
 
 function pedidoImagenes($pedido, $archivos)
 {
-    global $conectar;
-    $manager = new ImageManager(['driver' => 'imagick']);
+     global $conectar;
 
     error_log("=== FUNCION pedidoImagenes() - Pedido: $pedido ===");
-    error_log("Total de archivos a procesar: " . count($archivos));
 
     foreach ($archivos as $key => $file) {
-        error_log("--- Procesando archivo $key ---");
-        error_log("Datos: " . print_r($file, true));
 
-        $archivo = $file['archivo'];
-        $ext = explode('.', $archivo);
-        $name = $ext[0];
-        $image = __DIR__ . '/../' . $archivo;
-        $thumb = $name . '.webp';
-        $nuevo = __DIR__ . '/../' . $name . '.webp';
-
-        // Crear thumbnail solo si no existe
-        if (!file_exists($nuevo)) {
-            try {
-                $img =  $manager->make($image);
-                $img->resize(600, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
-                $img->save($nuevo);
-                error_log("✓ Thumbnail creado: $nuevo");
-            } catch (Exception $e) {
-                error_log("✗ Error al crear thumbnail: " . $e->getMessage());
-            }
-        } else {
-            error_log("ℹ Thumbnail ya existe: $nuevo");
-        }
+        $archivo = $file['archivo']; // ruta original
+        $thumb = $archivo; // usamos la misma imagen como thumbnail
 
         $formato = $file['tamano'];
         $acabado = $file['acabado'];
         $cant = intval($file['cantidad']);
 
-        // Obtener id_impresion si no viene en el array
+        // obtener id_impresion
         if (isset($file['idimpresion']) && $file['idimpresion'] > 0) {
             $imp = intval($file['idimpresion']);
-            error_log("✓ idimpresion desde archivo: $imp");
         } else {
-            // Buscar en BD
-            $query_imp = "SELECT id FROM `impresiones` WHERE formato='$formato' ORDER BY id DESC LIMIT 1";
+
+            $query_imp = "SELECT id FROM impresiones 
+                          WHERE formato='$formato' 
+                          ORDER BY id DESC LIMIT 1";
+
             $res_imp = $conectar->query($query_imp);
             $imp = 0;
+
             if ($res_imp && $res_imp->num_rows > 0) {
                 $row_imp = $res_imp->fetch_assoc();
                 $imp = intval($row_imp['id']);
-                error_log("✓ idimpresion encontrado en BD para formato '$formato': $imp");
-            } else {
-                error_log("✗ WARNING: No se encontró idimpresion para formato '$formato'");
             }
         }
 
-        $query = "INSERT INTO `pedidos_imagenes`(`imagen`,`thumb`, `id_impresion`, `id_pedido`, `cantidad`, `formato`, `acabado`) VALUES ('$archivo','$thumb','$imp','$pedido','$cant','$formato','$acabado')";
-        
-        error_log("SQL: $query");
+        $query = "INSERT INTO pedidos_imagenes
+        (imagen, thumb, id_impresion, id_pedido, cantidad, formato, acabado)
+        VALUES
+        ('$archivo','$thumb','$imp','$pedido','$cant','$formato','$acabado')";
 
-        $res2 = $conectar->query($query);
+        $res = $conectar->query($query);
 
-        if ($res2) {
-            $insert_id = $conectar->insert_id;
-            error_log("✅ INSERT exitoso. ID: $insert_id");
-        } else {
-            error_log("❌ ERROR en INSERT: " . $conectar->error);
+        if (!$res) {
+            error_log("ERROR SQL: " . $conectar->error);
         }
     }
 
