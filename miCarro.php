@@ -134,13 +134,9 @@ $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
                                                                 </div>
                                                             <?php } ?>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div class="d-flex">
                                                         <?php if ($esRevelado) { ?>
                                                             <div>
-                                                                <button type="button" class="btn btn-sm btn-outline-primary btn-ver-fotos" data-producto-id="<?php echo $id; ?>">
+                                                                <button type="button" class="p-0 btn-link btn card-link-primary small text-uppercase mr-3 text-primary btn-remove btn-ver-fotos" data-producto-id="<?php echo $id; ?>">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-images mb-1" viewBox="0 0 16 16">
                                                                         <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
                                                                         <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z" />
@@ -149,6 +145,10 @@ $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
                                                                 </button>
                                                             </div>
                                                         <?php } ?>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="d-flex">
                                                         <div>
                                                             <button data-id="<?php echo $id; ?>" type="button" class="p-0 btn-link btn card-link-secondary small text-uppercase mr-3 text-danger btn-remove">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill mb-1" viewBox="0 0 16 16">
@@ -206,8 +206,8 @@ $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
                                     </div>
 
                                     <!-- Botón Seguir Comprando -->
-                                    <div class="text-center mb-4">
-                                        <a href="tienda" class="btn btn-outline-danger btn-block">
+                                    <div class="text-start mb-4 mt-5">
+                                        <a href="tienda" class="btn btn-danger">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-plus mb-1 mr-1" viewBox="0 0 16 16">
                                                 <path d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9V5.5z" />
                                                 <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
