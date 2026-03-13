@@ -2,6 +2,18 @@
 if(session_status() === PHP_SESSION_NONE) session_start();
 ini_set("log_errors", 1);
 ini_set("error_log", "crearpago.log");
+
+set_error_handler(function ($severity, $message, $file, $line) {
+
+    // Si el error proviene del SDK de MercadoPago lo ignoramos
+    if (strpos($file, 'vendor/mercadopago') !== false) {
+        return true;
+    }
+
+    // Para el resto del sistema se maneja normalmente
+    return false;
+});
+
 include 'config.inc.php';
 require 'vendor/autoload.php';
 include 'funciones.inc.php';
