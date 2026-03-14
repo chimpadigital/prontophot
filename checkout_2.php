@@ -549,6 +549,7 @@ if (isset($_POST['entrega'])) {
                 }, function(data) {
                     $('.btn-pagar').html('Pagar');
                     $('.btn-pagar').prop('disabled', false);
+                    console.log(data)
                     if (data.success && data.url) {
                         $MPC.openCheckout({
                             url: data.url,
