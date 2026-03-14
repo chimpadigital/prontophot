@@ -549,19 +549,28 @@ if (isset($_POST['entrega'])) {
                 }, function(data) {
                     $('.btn-pagar').html('Pagar');
                     $('.btn-pagar').prop('disabled', false);
-                    $MPC.openCheckout({
-                        url: data.url,
-                        mode: "modal",
-                        onreturn: function(data) {
-                            if (data.collection_status == 'approved') {
-                                window.location.href = "checkout-resultado";
-                            } else {
-                                alert('Error al realizar el pago, intente nuevamente');
-                            }
-                        }
-                    });
 
-                }, 'json');
+                    if (data.success && data.url) {
+                        $MPC.openCheckout({
+                            url: data.url,
+                            mode: "modal",
+                            onreturn: function(data) {
+                                if (data.collection_status == 'approved') {
+                                    window.location.href = "checkout-resultado";
+                                } else {
+                                    redirigirErrorPago('MercadoPago', 'El pago no fue aprobado. Estado: ' + (data.collection_status || 'desconocido'), data.collection_status);
+                                }
+                            }
+                        });
+                    } else {
+                        redirigirErrorPago('MercadoPago', data.error || 'Error al crear la preferencia de pago');
+                    }
+
+                }, 'json').fail(function(xhr, status, error) {
+                    $('.btn-pagar').html('Pagar');
+                    $('.btn-pagar').prop('disabled', false);
+                    redirigirErrorPago('MercadoPago', 'Error de conexión con el servidor. Por favor intente nuevamente.');
+                });
             } else if (metodo == '4') {
                 // GetNet
                 $.post('inc/crear_pago_getnet.php', {
@@ -578,25 +587,38 @@ if (isset($_POST['entrega'])) {
                             checkoutId: data.checkout_id,
                             onSuccess: function(response) {
                                 console.log('GetNet Success:', response);
-                                const config = { "paymentIntentId": response.payment_intent_id, "checkoutType": "lightbox" }; 
-                                const checkoutButton = () => { loader.init(config) }; 
+                                if (response && response.payment_intent_id) {
+                                    window.location.href = "checkout-resultado";
+                                } else {
+                                    redirigirErrorPago('GetNet', 'Pago procesado pero sin confirmación válida');
+                                }
                             },
                             onError: function(error) {
                                 console.error('GetNet Error:', error);
-                                alert('Error al realizar el pago con GetNet, intente nuevamente');
+                                var mensajeError = 'Error al procesar el pago';
+                                var codigoError = '';
+                                if (error && error.message) {
+                                    mensajeError = error.message;
+                                } else if (error && error.error_description) {
+                                    mensajeError = error.error_description;
+                                }
+                                if (error && error.code) {
+                                    codigoError = error.code;
+                                }
+                                redirigirErrorPago('GetNet', mensajeError, codigoError);
                             },
                             onClose: function() {
-                                console.log('GetNet Checkout cerrado');
+                                console.log('GetNet Checkout cerrado por el usuario');
                             }
                         });
                     } else {
-                        alert('Error al crear el pago: ' + (data.error || 'Error desconocido'));
+                        redirigirErrorPago('GetNet', data.error || 'Error desconocido al crear el pago');
                     }
                 }, 'json').fail(function(xhr, status, error) {
                     $('.btn-pagar').html('Pagar');
                     $('.btn-pagar').prop('disabled', false);
                     console.error('Error AJAX:', error);
-                    alert('Error al procesar el pago, intente nuevamente');
+                    redirigirErrorPago('GetNet', 'Error de conexión con el servidor. Por favor intente nuevamente.');
                 });
             } else {
                 // Otros métodos de pago
@@ -686,6 +708,17 @@ if (isset($_POST['entrega'])) {
             }, 'json').fail(function() {
                 $('.totales p:contains("Envio")').html('Envio <span class="text-danger">Error de conexión</span>');
             });
+        }
+
+        // Función para redirigir a la página de error de pago
+        function redirigirErrorPago(plataforma, mensaje, codigo) {
+            codigo = codigo || '';
+            var url = 'checkout-error.php?plataforma=' + encodeURIComponent(plataforma) +
+                      '&mensaje=' + encodeURIComponent(mensaje);
+            if (codigo) {
+                url += '&codigo=' + encodeURIComponent(codigo);
+            }
+            window.location.href = url;
         }
 
     });
