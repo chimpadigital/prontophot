@@ -9,7 +9,7 @@ set_error_handler(function ($severity, $message, $file, $line) {
     }
     return false;
 });
-
+header('Content-Type: application/json');
 include 'config.inc.php';
 require 'vendor/autoload.php';
 include 'funciones.inc.php';
@@ -156,6 +156,5 @@ if ($pedido->success) {
     error_log($pedido->error);
     $respuesta->error = $pedido->error;
 }
-
 
 echo json_encode($respuesta);
