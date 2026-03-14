@@ -549,7 +549,6 @@ if (isset($_POST['entrega'])) {
                 }, function(data) {
                     $('.btn-pagar').html('Pagar');
                     $('.btn-pagar').prop('disabled', false);
-
                     if (data.success && data.url) {
                         $MPC.openCheckout({
                             url: data.url,
@@ -563,13 +562,12 @@ if (isset($_POST['entrega'])) {
                             }
                         });
                     } else {
-                        redirigirErrorPago('MercadoPago', data.error || 'Error al crear la preferencia de pago');
+                        //redirigirErrorPago('MercadoPago', data.error || 'Error al crear la preferencia de pago');
                     }
-
                 }, 'json').fail(function(xhr, status, error) {
                     $('.btn-pagar').html('Pagar');
                     $('.btn-pagar').prop('disabled', false);
-                    redirigirErrorPago('MercadoPago', 'Error de conexión con el servidor. Por favor intente nuevamente.');
+                    //redirigirErrorPago('MercadoPago', 'Error de conexión con el servidor. Por favor intente nuevamente.');
                 });
             } else if (metodo == '4') {
                 // GetNet
