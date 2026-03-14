@@ -566,6 +566,7 @@ if (isset($_POST['entrega'])) {
                         //redirigirErrorPago('MercadoPago', data.error || 'Error al crear la preferencia de pago');
                     }
                 }, 'json').fail(function(xhr, status, error) {
+                    console.log(data)
                     $('.btn-pagar').html('Pagar');
                     $('.btn-pagar').prop('disabled', false);
                     //redirigirErrorPago('MercadoPago', 'Error de conexión con el servidor. Por favor intente nuevamente.');

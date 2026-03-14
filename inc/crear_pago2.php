@@ -92,7 +92,7 @@ if ($pedido->success) {
     $carro = $_SESSION['pronto']['cart'];
     $items = array();
     foreach ($carro as $id => $datos) {
-        if (var_dump($id)) {
+        if ($id) {
             $res = $conectar->query("SELECT p.nombre,p.descripcion, p.precio, p.descuento_final,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
             $row = $res->fetch_assoc();
             $cant = $datos['cantidad'];
