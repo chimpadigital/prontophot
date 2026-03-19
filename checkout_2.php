@@ -598,7 +598,7 @@ if (isset($_POST['entrega'])) {
                         //};
 
                         //checkoutButton(config)
-                        //window.location.href = data.redirect_url;
+                        window.location.href = data.redirect_url;
                     } else {
                         //redirigirErrorPago('GetNet', data.error || 'Error desconocido al crear el pago');
                     }
