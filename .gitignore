@@ -4,5 +4,6 @@ admin/inc/seguridad.log
 admin/inc/error.log
 inc/seguridad.log
 inc/getnet.log
+inc/crearpago.log
 seguridad.log
 error.log
