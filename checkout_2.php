@@ -581,10 +581,9 @@ if (isset($_POST['entrega'])) {
                     $('.btn-pagar').html('Pagar');
                     $('.btn-pagar').prop('disabled', false);
 
-                    if (data.success && data.checkout_id) {
+                    if (data.success) {
                         // Abrir checkout de GetNet
                         GetnetCheckout.open({
-                            checkoutId: data.checkout_id,
                             onSuccess: function(response) {
                                 console.log('GetNet Success:', response);
                                 if (response && response.payment_intent_id) {
