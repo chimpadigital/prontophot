@@ -2,14 +2,14 @@
 include 'inc/seguridad.inc.php';
 //define('URL_SITIO','/photo/');
 if (isset($_SESSION['prontoFront']['token'])) {
-    $val=verificarToken($_SESSION['prontoFront']['token'], 'Pronto');
+    $val = verificarToken($_SESSION['prontoFront']['token'], 'Pronto');
     if (!$val->success) {
         unset($_SESSION['prontoFront']['token']);
         unset($_SESSION['prontoFront']['idcliente']);
-    }else{
-        $_SESSION['prontoFront']['idcliente']=$val->id;
+    } else {
+        $_SESSION['prontoFront']['idcliente'] = $val->id;
     }
-}else{
+} else {
     unset($_SESSION['prontoFront']['token']);
     unset($_SESSION['prontoFront']['idcliente']);
 }
@@ -26,14 +26,19 @@ $topbarData = $resultTopbar && $resultTopbar->num_rows > 0 ? $resultTopbar->fetc
 <html lang="es">
 
 <head>
-	<base href="<?php echo URL_SITIO; ?>">
+    <base href="<?php echo URL_SITIO; ?>">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' https://sandbox.src.mastercard.com 'unsafe-inline' 'unsafe-eval';
+">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
         integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link rel="stylesheet" href="css/estilos.css?v=19">
 
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- GOOGLE FONTS -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -45,26 +50,26 @@ $topbarData = $resultTopbar && $resultTopbar->num_rows > 0 ? $resultTopbar->fetc
 
     <!--OWL CAROUSEL-->
     <link rel="stylesheet" href="node_modules/owl.carousel/dist/assets/owl.carousel.min.css" />
-    <link rel="stylesheet" href="node_modules/owl.carousel/dist/assets/owl.theme.default.min.css" />  
+    <link rel="stylesheet" href="node_modules/owl.carousel/dist/assets/owl.theme.default.min.css" />
 
     <title>Prontophot</title>
-    
-    
-    
+
+
+
 </head>
 
 <body>
     <!-- Top Bar -->
     <?php if ($topbarData): ?>
-    <div class="top-bar-pronto bg-white fw-bold text-dark text-center py-2">
-        <?php if (!empty($topbarData['link'])): ?>
-            <a href="<?php echo htmlspecialchars($topbarData['link']); ?>" class="fw-bold text-dark text-decoration-none">
+        <div class="top-bar-pronto bg-white fw-bold text-dark text-center py-2">
+            <?php if (!empty($topbarData['link'])): ?>
+                <a href="<?php echo htmlspecialchars($topbarData['link']); ?>" class="fw-bold text-dark text-decoration-none">
+                    <?php echo htmlspecialchars($topbarData['texto']); ?>
+                </a>
+            <?php else: ?>
                 <?php echo htmlspecialchars($topbarData['texto']); ?>
-            </a>
-        <?php else: ?>
-            <?php echo htmlspecialchars($topbarData['texto']); ?>
-        <?php endif; ?>
-    </div>
+            <?php endif; ?>
+        </div>
     <?php endif; ?>
     <!-- Modal Iniciar Sesion -->
     <div class="modal fade" id="iniciar-sesion" tabindex="-1" aria-labelledby="LoginLabel" aria-hidden="true">
@@ -255,8 +260,8 @@ $topbarData = $resultTopbar && $resultTopbar->num_rows > 0 ? $resultTopbar->fetc
             </div>
         </div>
     </div>
-	<!-- Modal recuperar clave -->
-	<div class="modal fade" id="modal-recuperar-clave" tabindex="-1" aria-labelledby="UpdatePassLabel"
+    <!-- Modal recuperar clave -->
+    <div class="modal fade" id="modal-recuperar-clave" tabindex="-1" aria-labelledby="UpdatePassLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content px-5 py-3">
@@ -267,18 +272,18 @@ $topbarData = $resultTopbar && $resultTopbar->num_rows > 0 ? $resultTopbar->fetc
                 </div>
                 <div class="modal-body">
                     <h5 class="modal-title text-danger text-bold text-center mb-4" id="exampleModalLabel">Recuperar contraseña</h5>
-                    	<div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="contraseña">Ingrese su email</label>
-                                <input type="email" class="form-control " id="recuperar-clave">
-                            </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="contraseña">Ingrese su email</label>
+                            <input type="email" class="form-control " id="recuperar-clave">
                         </div>
-                        <div class="text-center mt-4">
-                        	<div class="respuesta"></div>
-                        </div>
-                        <div class="text-center mt-4">
-                            <button type="button" class="btn bg-danger text-white btn-bg-red btn-recuperar">Enviar</button>
-                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <div class="respuesta"></div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button type="button" class="btn bg-danger text-white btn-bg-red btn-recuperar">Enviar</button>
+                    </div>
 
 
                 </div>
@@ -303,7 +308,7 @@ $topbarData = $resultTopbar && $resultTopbar->num_rows > 0 ? $resultTopbar->fetc
                 <div class="modal-body">
                     <h5 class="modal-title text-danger text-bold text-center mb-4" id="exampleModalLabel">Actualizar contraseña</h5>
                     <form id="act-form" method="post">
-						<input type="hidden" name="code" id="act-code">
+                        <input type="hidden" name="code" id="act-code">
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label for="contraseña">Nueva Contraseña</label>
@@ -316,7 +321,7 @@ $topbarData = $resultTopbar && $resultTopbar->num_rows > 0 ? $resultTopbar->fetc
                                 <input type="password" class="form-control " name="pass2" id="act-pass2">
                             </div>
                         </div>
-						
+
                         <div class="text-center mt-4">
                             <button type="submit" class="btn bg-danger text-white btn-bg-red">Actualizar</button>
                         </div>
@@ -338,34 +343,36 @@ $topbarData = $resultTopbar && $resultTopbar->num_rows > 0 ? $resultTopbar->fetc
         <div class="container">
             <nav>
                 <ul class="nav justify-content-end">
-                	<?php
-                	if (isset($_SESSION['prontoFront']['token'])) {
-                	    $seg=verificarToken($_SESSION['prontoFront']['token'], 'Pronto');
-                	    if ($seg->success) { ?>
-                	    <li class="nav-item">
-                	    	<a href="usuario/index.php" class="nav-link"><button type="button" class="btn btn-bg-white " >Mi Cuenta</button></a>
-                	    </li>
-                	    <?php if($seg->nivel=='1'){?>
-                	    <li class="nav-item">
-                	    	<a href="admin" class="nav-link"><button type="button" class="btn btn-bg-white " >Admin</button></a>
-                	    </li>
-                	    <?php } ?>
-                	    <li class="nav-link active">
-                	        <button type="button" class="btn btn-bg-white cerrarSesion">Cerrar Sesión <i class="fa fa-sign-out" aria-hidden="true"></i>
-                	        </button>
-                	    </li>
-                	    <?php     
-                	    }
-                	}else{ ?>
-                    <li class="nav-link active">
-                        <button type="button" data-toggle="modal" data-target="#iniciar-sesion" class="btn btn-bg-white ">Iniciar Sesión</button>
-                    </li>
-                    <li class="nav-link">
-                        <button type="button" data-toggle="modal" data-target="#modal-registrarse" class="btn border-white text-white ">Crear cuenta</button>
-                    </li>
+                    <?php
+                    if (isset($_SESSION['prontoFront']['token'])) {
+                        $seg = verificarToken($_SESSION['prontoFront']['token'], 'Pronto');
+                        if ($seg->success) { ?>
+                            <li class="nav-item">
+                                <a href="usuario/index.php" class="nav-link"><button type="button" class="btn btn-bg-white ">Mi Cuenta</button></a>
+                            </li>
+                            <?php if ($seg->nivel == '1') { ?>
+                                <li class="nav-item">
+                                    <a href="admin" class="nav-link"><button type="button" class="btn btn-bg-white ">Admin</button></a>
+                                </li>
+                            <?php } ?>
+                            <li class="nav-link active">
+                                <button type="button" class="btn btn-bg-white cerrarSesion">Cerrar Sesión <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                </button>
+                            </li>
+                        <?php
+                        }
+                    } else { ?>
+                        <li class="nav-link active">
+                            <button type="button" data-toggle="modal" data-target="#iniciar-sesion" class="btn btn-bg-white ">Iniciar Sesión</button>
+                        </li>
+                        <li class="nav-link">
+                            <button type="button" data-toggle="modal" data-target="#modal-registrarse" class="btn border-white text-white ">Crear cuenta</button>
+                        </li>
                     <?php } ?>
                     <li class="nav-item">
-                        <a id="carrito-tienda" class="nav-link" href="mi-pedido"><button type="button" class="btn text-white btn-cart position-relative pr-0"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cart-fill" viewBox="0 0 16 16"><path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" /></svg><span id="cartContador" class="badge badge-dark">9</span></button></a>
+                        <a id="carrito-tienda" class="nav-link" href="mi-pedido"><button type="button" class="btn text-white btn-cart position-relative pr-0"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cart-fill" viewBox="0 0 16 16">
+                                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                                </svg><span id="cartContador" class="badge badge-dark">9</span></button></a>
                     </li>
                 </ul>
             </nav>
@@ -419,7 +426,8 @@ $topbarData = $resultTopbar && $resultTopbar->num_rows > 0 ? $resultTopbar->fetc
         <div class="container">
             <nav class="navbar navbar-mobile navbar-expand-lg navbar-dark">
                 <a class="navbar-brand" href="index.php"><img class="logo-blanco responsive" src="assets/img/logo-pronto-white.svg" alt=""></a>
-                <a class="nav-link active cerrar-sesion" href="mi-pedido"><button type="button" class="btn text-white btn-cart position-relative"><svg xmlns="http://www.w3.org/2000/svg"  width="30" height="30" fill="currentColor" class="bi bi-cart-fill" viewBox="0 0 16 16"><path </svg></button></a>
+                <a class="nav-link active cerrar-sesion" href="mi-pedido"><button type="button" class="btn text-white btn-cart position-relative"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cart-fill" viewBox="0 0 16 16">
+                            <path </svg></button></a>
 
                 <button class="hamburger hamburger--collapse" type="button" data-toggle="collapse"
                     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
