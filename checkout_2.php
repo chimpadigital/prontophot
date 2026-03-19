@@ -413,10 +413,6 @@ if (isset($_POST['entrega'])) {
                     <div class="col-md-12 p-0 m-0 mb-5">
                         <button type="button" class="btn btn-success btn-lg btn-block rounded-bottom btn-pagar">Pagar</button>
                     </div>
-
-                    <button onclick="checkoutButton()"> Go to Payment </button>
-
-                    <iframe id="checkout-frame" width="100%" height="600"></iframe>
                 </div>
             </div>
         </div>
@@ -596,12 +592,13 @@ if (isset($_POST['entrega'])) {
 
                     if (data.success) {
                         // Abrir checkout de GetNet
-                        const config = {
-                            "paymentIntentId": data.payment_intent_id,
-                            "checkoutType": "iframe"
-                        };
+                        //const config = {
+                        //    "paymentIntentId": data.payment_intent_id,
+                        //    "checkoutType": "iframe"
+                        //};
 
-                        checkoutButton(config)
+                        //checkoutButton(config)
+                        window.location.href = data.redirect_url;
                     } else {
                         //redirigirErrorPago('GetNet', data.error || 'Error desconocido al crear el pago');
                     }
