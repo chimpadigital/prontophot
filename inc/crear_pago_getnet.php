@@ -199,8 +199,8 @@ if ($pedido->success) {
     error_log("GetNet Total Amount (cents): " . $amount_cents);
 
     $payment_data = array(
-        "mode" => "instant",
-        'order_id' => strval($idpedido),
+        //"mode" => "instant",
+        //'order_id' => strval($idpedido),
         'payment' => [
             "currency" => 'ARS',
             "amount" => $amount_cents
@@ -228,26 +228,6 @@ if ($pedido->success) {
                 'postal_code' => preg_replace('/[^0-9]/', '', $facturacion['cp'])
             )
         ),
-        "shipping" => [
-            "first_name" => $facturacion['nombre'],
-            "last_name" => $facturacion['apellido'],
-            "name" => $facturacion['nombre'] . ' ' . $facturacion['apellido'],
-            "phone_number" => preg_replace('/[^0-9]/', '', $facturacion['telefono']),
-            "shipping_amount" => 0,
-            "address" => [
-                "street" => $facturacion['direccion'],
-                "number" => strval($facturacion['altura']),
-                "complement" => "",
-                "district" => $facturacion['ciudad'],
-                "city" => $facturacion['ciudad'],
-                "state" => "RS",
-                "country" => "BR",
-                "postal_code" => preg_replace('/[^0-9]/', '', $facturacion['cp']),
-                "reference" => ""
-            ]
-        ],
-        "pickup_store" => true,
-        "shipping_method" => "PAC"
     );
 
     $payment_ch = curl_init(GETNET_API . "/dpy/digital-checkout/v1/payment-intent");
