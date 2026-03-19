@@ -592,13 +592,13 @@ if (isset($_POST['entrega'])) {
 
                     if (data.success) {
                         // Abrir checkout de GetNet
-                        //const config = {
-                        //    "paymentIntentId": data.payment_intent_id,
-                        //    "checkoutType": "iframe"
-                        //};
+                        const config = {
+                            "paymentIntentId": data.payment_intent_id,
+                            "checkoutType": "iframe"
+                        };
 
-                        //checkoutButton(config)
-                        window.location.href = data.redirect_url;
+                        checkoutButton(config)
+                        //window.location.href = data.redirect_url;
                     } else {
                         //redirigirErrorPago('GetNet', data.error || 'Error desconocido al crear el pago');
                     }
