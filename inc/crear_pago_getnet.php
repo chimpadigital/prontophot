@@ -202,7 +202,7 @@ if ($pedido->success) {
         "mode" => "instant",
         'order_id' => strval($idpedido),
         'payment' => [
-            "currency" => 'USD',
+            "currency" => 'ARS',
             "amount" => $amount_cents
         ],
         'product' => $products_array,
@@ -250,7 +250,7 @@ if ($pedido->success) {
         "shipping_method" => "PAC"
     );
 
-    $payment_ch = curl_init(GETNET_API . "/dpy/web-checkout/v1/payment-intent");
+    $payment_ch = curl_init(GETNET_API . "/dpy/digital-checkout/v1/payment-intent");
     curl_setopt($payment_ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($payment_ch, CURLOPT_POST, true);
     curl_setopt($payment_ch, CURLOPT_POSTFIELDS, json_encode($payment_data));

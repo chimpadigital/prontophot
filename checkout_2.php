@@ -590,7 +590,7 @@ if (isset($_POST['entrega'])) {
                                 if (response && response.payment_intent_id) {
                                     window.location.href = "checkout-resultado";
                                 } else {
-                                    redirigirErrorPago('GetNet', 'Pago procesado pero sin confirmación válida');
+                                    //redirigirErrorPago('GetNet', 'Pago procesado pero sin confirmación válida');
                                 }
                             },
                             onError: function(error) {
@@ -605,20 +605,20 @@ if (isset($_POST['entrega'])) {
                                 if (error && error.code) {
                                     codigoError = error.code;
                                 }
-                                redirigirErrorPago('GetNet', mensajeError, codigoError);
+                                //redirigirErrorPago('GetNet', mensajeError, codigoError);
                             },
                             onClose: function() {
                                 console.log('GetNet Checkout cerrado por el usuario');
                             }
                         });
                     } else {
-                        redirigirErrorPago('GetNet', data.error || 'Error desconocido al crear el pago');
+                        //redirigirErrorPago('GetNet', data.error || 'Error desconocido al crear el pago');
                     }
                 }, 'json').fail(function(xhr, status, error) {
                     $('.btn-pagar').html('Pagar');
                     $('.btn-pagar').prop('disabled', false);
                     console.error('Error AJAX:', error);
-                    redirigirErrorPago('GetNet', 'Error de conexión con el servidor. Por favor intente nuevamente.');
+                    //redirigirErrorPago('GetNet', 'Error de conexión con el servidor. Por favor intente nuevamente.');
                 });
             } else {
                 // Otros métodos de pago
