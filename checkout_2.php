@@ -323,10 +323,10 @@ if (isset($_POST['entrega'])) {
                                     <label for="razon_social">Razón Social</label>
                                     <input type="text" class="form-control" id="razon_social" name="razon_social" placeholder="Razón Social">
                                 </div>
-                            <div class="form-group col-md-6" id="cuitContainer" style="display: none;">
-                                <label for="cuit">CUIT</label>
-                                <input type="text" class="form-control" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
-                            </div>
+                                <div class="form-group col-md-6" id="cuitContainer" style="display: none;">
+                                    <label for="cuit">CUIT</label>
+                                    <input type="text" class="form-control" id="cuit" name="cuit" placeholder="XX-XXXXXXXX-X">
+                                </div>
                             </div>
                         </div>
 
@@ -367,7 +367,7 @@ if (isset($_POST['entrega'])) {
 
                             $prod .= $row['nombre'] . ', ' . $datos['color'] . ' x ' . $datos['cantidad'] . '<br>';
 
-                            $resumen .= '<div class="d-block w-100">'.$row['nombre'] . ', <span class="dot" style="background-color: ' . $datos['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span> x ' . $datos['cantidad'] . '</div>';
+                            $resumen .= '<div class="d-block w-100">' . $row['nombre'] . ', <span class="dot" style="background-color: ' . $datos['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span> x ' . $datos['cantidad'] . '</div>';
 
                             if (isset($_SESSION['prontoFront']['cupon'])) {
                                 if ($_SESSION['prontoFront']['cupon']['categoria'] == $cat) {
@@ -398,11 +398,11 @@ if (isset($_POST['entrega'])) {
                     </div>
                     <div class="col-md-12 totales">
                         <p class="m-0 mb-2">Sub-Total $ <?php echo $total; ?></p>
-                        
-                        <?php if($enviotag == 'Retiro por sucursal') : ?>
-                        <p class="m-0 mb-2"><?php echo $enviotag; ?></p>
-                        <?php else: ?>    
-                        <p class="m-0 mb-2">Envio <?php echo $enviotag; ?></p>
+
+                        <?php if ($enviotag == 'Retiro por sucursal') : ?>
+                            <p class="m-0 mb-2"><?php echo $enviotag; ?></p>
+                        <?php else: ?>
+                            <p class="m-0 mb-2">Envio <?php echo $enviotag; ?></p>
                         <?php endif; ?>
                         <p class="m-0 mb-2">Cupón de descuento $ <?php echo $subd; ?></p>
                         <?php echo $cupon; ?>
@@ -413,6 +413,10 @@ if (isset($_POST['entrega'])) {
                     <div class="col-md-12 p-0 m-0 mb-5">
                         <button type="button" class="btn btn-success btn-lg btn-block rounded-bottom btn-pagar">Pagar</button>
                     </div>
+
+                    <button onclick="checkoutButton()"> Go to Payment </button>
+
+                    <iframe id="checkout-frame" width="100%" height="600"></iframe>
                 </div>
             </div>
         </div>
@@ -475,7 +479,6 @@ if (isset($_POST['entrega'])) {
 </script>
 <script type="text/javascript" src="https://www.mercadopago.com/org-img/jsapi/mptools/buttons/render.js"></script>
 <script src="https://www.pre.globalgetnet.com/digital-checkout/loader.js"></script>
-<script src="https://checkout.getnet.com.ar/checkout.js"></script>
 <script>
     // Look for .hamburger
     var hamburger = document.querySelector(".hamburger");
@@ -504,6 +507,15 @@ if (isset($_POST['entrega'])) {
 
 <script src="assets/js/starter.js"></script>
 <script>
+
+    const checkoutButton = (config) => {
+        loader.init(config);
+
+        const iframeSection = document.getElementById("iframe-section");
+        const iframe = document.querySelector("iframe");
+        iframeSection.appendChild(iframe);
+    };
+
     $(function() {
         $('.metodoPago').change(function() {
             var meto = $(this).val();
@@ -584,33 +596,12 @@ if (isset($_POST['entrega'])) {
 
                     if (data.success) {
                         // Abrir checkout de GetNet
-                        GetnetCheckout.open({
-                            onSuccess: function(response) {
-                                console.log('GetNet Success:', response);
-                                if (response && response.payment_intent_id) {
-                                    window.location.href = "checkout-resultado";
-                                } else {
-                                    //redirigirErrorPago('GetNet', 'Pago procesado pero sin confirmación válida');
-                                }
-                            },
-                            onError: function(error) {
-                                console.error('GetNet Error:', error);
-                                var mensajeError = 'Error al procesar el pago';
-                                var codigoError = '';
-                                if (error && error.message) {
-                                    mensajeError = error.message;
-                                } else if (error && error.error_description) {
-                                    mensajeError = error.error_description;
-                                }
-                                if (error && error.code) {
-                                    codigoError = error.code;
-                                }
-                                //redirigirErrorPago('GetNet', mensajeError, codigoError);
-                            },
-                            onClose: function() {
-                                console.log('GetNet Checkout cerrado por el usuario');
-                            }
-                        });
+                        const config = {
+                            "paymentIntentId": data.payment_intent_id,
+                            "checkoutType": "iframe"
+                        };
+
+                        checkoutButton(config)
                     } else {
                         //redirigirErrorPago('GetNet', data.error || 'Error desconocido al crear el pago');
                     }
@@ -634,6 +625,9 @@ if (isset($_POST['entrega'])) {
                 }, 'json');
             }
         });
+
+
+
 
         // Toggle para mostrar/ocultar datos de Factura A
         $('#facturaA').change(function() {
@@ -714,7 +708,7 @@ if (isset($_POST['entrega'])) {
         function redirigirErrorPago(plataforma, mensaje, codigo) {
             codigo = codigo || '';
             var url = 'checkout-error.php?plataforma=' + encodeURIComponent(plataforma) +
-                      '&mensaje=' + encodeURIComponent(mensaje);
+                '&mensaje=' + encodeURIComponent(mensaje);
             if (codigo) {
                 url += '&codigo=' + encodeURIComponent(codigo);
             }
