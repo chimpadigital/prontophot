@@ -475,6 +475,7 @@ if (isset($_POST['entrega'])) {
 </script>
 <script type="text/javascript" src="https://www.mercadopago.com/org-img/jsapi/mptools/buttons/render.js"></script>
 <script src="https://www.pre.globalgetnet.com/digital-checkout/loader.js"></script>
+<script src="https://checkout.getnet.com.ar/checkout.js"></script>
 <script>
     // Look for .hamburger
     var hamburger = document.querySelector(".hamburger");
