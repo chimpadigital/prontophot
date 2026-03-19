@@ -506,10 +506,6 @@ if (isset($_POST['entrega'])) {
 
     const checkoutButton = (config) => {
         loader.init(config);
-
-        const iframeSection = document.getElementById("iframe-section");
-        const iframe = document.querySelector("iframe");
-        iframeSection.appendChild(iframe);
     };
 
     $(function() {
