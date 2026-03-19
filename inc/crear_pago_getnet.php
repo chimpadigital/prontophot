@@ -213,7 +213,7 @@ if ($pedido->success) {
             'name' => $facturacion['nombre'] . ' ' . $facturacion['apellido'],
             'email' => $facturacion['email'],
             'document_type' => 'dni',
-            'document_number' => preg_replace('/[^0-9]/', '', $facturacion['dni']),
+            'document_number' => (int)preg_replace('/[^0-9]/', '', $facturacion['dni']),
             'phone_number' => preg_replace('/[^0-9]/', '', $facturacion['telefono']),
             "gender" => "Male",
             "checked_email" => false,
