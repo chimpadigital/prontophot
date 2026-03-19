@@ -258,7 +258,6 @@ if ($pedido->success) {
     $payment_result = json_decode($payment_response);
 
     // Guardar checkout_id en la sesión para el callback
-    $_SESSION['getnet_checkout_id'] = $payment_result->checkout_id;
     $_SESSION['getnet_pedido_id'] = $idpedido;
 
     $respuesta->payment_intent_id = $payment_result->payment_intent_id;
