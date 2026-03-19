@@ -199,7 +199,7 @@ if ($pedido->success) {
     error_log("GetNet Total Amount (cents): " . $amount_cents);
 
     $payment_data = array(
-        //"mode" => "instant",
+        "mode" => "instant",
         //'order_id' => strval($idpedido),
         'payment' => [
             "currency" => 'ARS',
@@ -230,7 +230,7 @@ if ($pedido->success) {
         ),
     );
 
-    $payment_ch = curl_init(GETNET_API . "/dpy/digital-checkout/v1/payment-intent");
+    $payment_ch = curl_init(GETNET_API . "/digital-checkout/v1/payment-intent");
     curl_setopt($payment_ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($payment_ch, CURLOPT_POST, true);
     curl_setopt($payment_ch, CURLOPT_POSTFIELDS, json_encode($payment_data));
