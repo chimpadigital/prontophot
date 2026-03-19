@@ -261,6 +261,7 @@ if ($pedido->success) {
     $_SESSION['getnet_pedido_id'] = $idpedido;
 
     $respuesta->payment_intent_id = $payment_result->payment_intent_id;
+    $respuesta->redirect_url = $payment_result->redirect_url;
     $respuesta->pedido = $idpedido;
 } else {
     $respuesta->success = false;
