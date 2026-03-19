@@ -176,7 +176,7 @@ if ($pedido->success) {
         $precio_centavos = intval($precioUnitario * 100);
 
         $products_array[] = array(
-            'product_type' => 'physical_product', // puede ser: physical_product, digital_content, service
+            'product_type' => 'physical_goods', // puede ser: physical_product, digital_content, service
             'title' => $row['nombre'],
             'description' => $row['descripcion'] ? $row['descripcion'] : $row['nombre'],
             'value' => $precio_centavos,
@@ -212,7 +212,7 @@ if ($pedido->success) {
             'last_name' => $facturacion['apellido'],
             'name' => $facturacion['nombre'] . ' ' . $facturacion['apellido'],
             'email' => $facturacion['email'],
-            'document_type' => 'CPF',
+            'document_type' => 'dni',
             'document_number' => preg_replace('/[^0-9]/', '', $facturacion['dni']),
             'phone_number' => preg_replace('/[^0-9]/', '', $facturacion['telefono']),
             "gender" => "Male",
@@ -220,11 +220,11 @@ if ($pedido->success) {
             'billing_address' => array(
                 'street' => $facturacion['direccion'],
                 'number' => strval($facturacion['altura']),
-                'complement' => '',
+                'complement' => 'N/A',
                 'district' => $facturacion['ciudad'],
                 'city' => $facturacion['ciudad'],
-                'state' => 'SP', // Adaptado para Brasil
-                'country' => 'Brasil',
+                'state' => $facturacion['ciudad'], 
+                'country' => 'AR',
                 'postal_code' => preg_replace('/[^0-9]/', '', $facturacion['cp'])
             )
         ),
