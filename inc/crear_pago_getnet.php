@@ -197,6 +197,7 @@ if ($pedido->success) {
 
     error_log("GetNet Products Array: " . json_encode($products_array));
     error_log("GetNet Total Amount (cents): " . $amount_cents);
+    error_log("GetNet DNI: " . preg_replace('/[^0-9]/', '', $facturacion['dni']));
 
     $payment_data = array(
         "mode" => "instant",
