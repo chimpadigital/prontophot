@@ -263,6 +263,7 @@ if ($pedido->success) {
     $respuesta->payment_intent_id = $payment_result->payment_intent_id;
     $respuesta->redirect_url = $payment_result->redirect_url;
     $respuesta->pedido = $idpedido;
+    $respuesta->getnet = $payment_result;
 } else {
     $respuesta->success = false;
     error_log($pedido->error);
