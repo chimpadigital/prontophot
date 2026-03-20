@@ -620,8 +620,6 @@ if (isset($_POST['entrega'])) {
         });
 
 
-
-
         // Toggle para mostrar/ocultar datos de Factura A
         $('#facturaA').change(function() {
             if ($(this).is(':checked')) {
