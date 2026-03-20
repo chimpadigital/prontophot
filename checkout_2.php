@@ -202,7 +202,7 @@ if (isset($_POST['entrega'])) {
                         </div>
                     </div>
                     <div class="col-3 col-md-2 order-1 order-md-2">
-                        <img class="img-fluid" src="assets/img/getnet-isotipo.png" alt="" style="max-height: 40px;">
+                        <img class="img-fluid" src="assets/img/getnet-isotipo.png" alt="" style="max-height: 63px;">
                     </div>
                 </div>
 
