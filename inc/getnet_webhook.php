@@ -22,20 +22,31 @@ if (!$data) {
     exit;
 }
 
+// Extraer datos según el formato real de GetNet
+$payment_intent_id = isset($data['payment_intent_id']) ? $conectar->real_escape_string($data['payment_intent_id']) : null;
+$checkout_id = isset($data['checkout_id']) ? $conectar->real_escape_string($data['checkout_id']) : null;
+$order_id = isset($data['order_id']) ? $conectar->real_escape_string($data['order_id']) : null;
+
+// Extraer datos del pago
+$payment_id = null;
+$status = null;
+$amount = null;
+$currency = 'ARS';
+
+if (isset($data['payment']) && isset($data['payment']['result'])) {
+    $payment_id = $conectar->real_escape_string($data['payment']['result']['payment_id']);
+    $status = $conectar->real_escape_string($data['payment']['result']['status']);
+    $amount = isset($data['payment']['amount']) ? $conectar->real_escape_string($data['payment']['amount']) : null;
+    $currency = isset($data['payment']['currency']) ? $conectar->real_escape_string($data['payment']['currency']) : 'ARS';
+}
+
 // Validar campos requeridos
-if (!isset($data['payment_id']) || !isset($data['status']) || !isset($data['order_id'])) {
-    error_log("GetNet Webhook: Missing required fields");
+if (!$payment_id || !$order_id || !$status) {
+    error_log("GetNet Webhook: Missing required fields - payment_id: $payment_id, order_id: $order_id, status: $status");
     http_response_code(400);
     echo json_encode(['error' => 'Missing required fields']);
     exit;
 }
-
-// Extraer datos del webhook
-$payment_id = $conectar->real_escape_string($data['payment_id']);
-$status = $conectar->real_escape_string($data['status']);
-$order_id = $conectar->real_escape_string($data['order_id']);
-$amount = isset($data['amount']) ? $conectar->real_escape_string($data['amount']) : null;
-$currency = isset($data['currency']) ? $conectar->real_escape_string($data['currency']) : 'ARS';
 
 // Validar que el pedido existe
 $pedido_check = $conectar->query("SELECT id FROM pedidos WHERE id='$order_id'");
@@ -58,9 +69,9 @@ if ($check_result->num_rows > 0) {
     if ($update_result) {
         error_log("GetNet Webhook: Payment updated - order_id: $order_id, payment_id: $payment_id, status: $status");
 
-        // Si el pago fue aprobado, actualizar estado del pedido
-        if ($status === 'approved') {
-            $conectar->query("UPDATE pedidos SET estado='confirmado' WHERE id='$order_id'");
+        // Si el pago fue aprobado o autorizado, actualizar estado del pedido
+        if ($status === 'approved' || $status === 'Authorized') {
+            $conectar->query("UPDATE pedidos SET estado='approved' WHERE id='$order_id'");
         }
 
         http_response_code(200);
@@ -78,8 +89,8 @@ if ($check_result->num_rows > 0) {
     if ($insert_result) {
         error_log("GetNet Webhook: Payment created - order_id: $order_id, payment_id: $payment_id, status: $status");
 
-        // Si el pago fue aprobado, actualizar estado del pedido
-        if ($status === 'approved') {
+        // Si el pago fue aprobado o autorizado, actualizar estado del pedido
+        if ($status === 'approved' || $status === 'Authorized') {
             $conectar->query("UPDATE pedidos SET estado='confirmado' WHERE id='$order_id'");
         }
 
