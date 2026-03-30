@@ -7,8 +7,8 @@ RewriteCond %{SCRIPT_FILENAME} !-d
 
 #RewriteRule ^(.*)$ /index.php/$1 [L]
 
-RewriteRule ^checkout-status$ checkout_status.php [L]
 RewriteRule ^checkout-status/$ checkout_status.php [L]
+RewriteRule ^checkout-status$ checkout_status.php [L]
 RewriteRule ^tienda/$  tienda.php [L]
 RewriteRule ^tienda$  tienda.php [L]
 RewriteRule ^contacto/$  contacto.php [L]
