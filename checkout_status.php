@@ -1,5 +1,5 @@
 <?php
-session_start();
+include 'header.php';
 include 'conexion/conectar.inc.php';
 include_once 'inc/config.inc.php';
 global $conectar;
@@ -18,8 +18,6 @@ if ($status === 'exito') {
     unset($_SESSION['archivos']);
     unset($_SESSION['prontoFront']['envio']);
 }
-
-include 'header.php';
 ?>
 
 <style>
@@ -184,5 +182,3 @@ include 'header.php';
         </div>
     </div>
 </div>
-
-<?php include 'footer.php'; ?>
