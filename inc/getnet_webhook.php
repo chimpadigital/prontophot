@@ -63,7 +63,11 @@ $check_result = $conectar->query($check_sql);
 
 if ($check_result->num_rows > 0) {
     // Ya existe, actualizar el status
-    $update_sql = "UPDATE pagos SET status='$status' WHERE id_pedido='$order_id' AND id_payment='$payment_id'";
+    if ($status === 'approved' || $status === 'Authorized') {
+        $status_payment = 'approved';
+    }
+
+    $update_sql = "UPDATE pagos SET status='$status_payment' WHERE id_pedido='$order_id' AND id_payment='$payment_id'";
     $update_result = $conectar->query($update_sql);
 
     if ($update_result) {
@@ -71,7 +75,7 @@ if ($check_result->num_rows > 0) {
 
         // Si el pago fue aprobado o autorizado, actualizar estado del pedido
         if ($status === 'approved' || $status === 'Authorized') {
-            $conectar->query("UPDATE pedidos SET estado='approved' WHERE id='$order_id'");
+            $conectar->query("UPDATE pedidos SET estado=1 WHERE id='$order_id'");
         }
 
         http_response_code(200);
@@ -83,7 +87,11 @@ if ($check_result->num_rows > 0) {
     }
 } else {
     // No existe, crear nuevo registro
-    $insert_sql = "INSERT INTO pagos (id_pedido, id_payment, status, creado) VALUES ('$order_id', '$payment_id', '$status', NOW())";
+    if ($status === 'approved' || $status === 'Authorized') {
+        $status_payment = 'approved';
+    }
+
+    $insert_sql = "INSERT INTO pagos (id_pedido, id_payment, status, creado) VALUES ('$order_id', '$payment_id', '$status_payment', NOW())";
     $insert_result = $conectar->query($insert_sql);
 
     if ($insert_result) {
@@ -91,7 +99,7 @@ if ($check_result->num_rows > 0) {
 
         // Si el pago fue aprobado o autorizado, actualizar estado del pedido
         if ($status === 'approved' || $status === 'Authorized') {
-            $conectar->query("UPDATE pedidos SET estado='confirmado' WHERE id='$order_id'");
+            $conectar->query("UPDATE pedidos SET estado=1 WHERE id='$order_id'");
         }
 
         http_response_code(200);
