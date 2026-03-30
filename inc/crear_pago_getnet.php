@@ -201,7 +201,7 @@ if ($pedido->success) {
 
     $payment_data = array(
         "mode" => "instant",
-        //'order_id' => strval($idpedido),
+        'order_id' => strval($idpedido),
         'payment' => [
             "currency" => 'ARS',
             "amount" => $amount_cents
