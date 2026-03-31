@@ -153,7 +153,6 @@ if ($idpedido) {
             </div>
             <div class="col-md-3 offset-0 offset-md-1 p-4 shadowBox my-3 my-lg-0">
                 <h5>Método de Pago</h5>
-                <p class="text-bold"><?php echo $pedido['metodo'];?></p>
                 <p class="text-bold"><?php echo metodoPago($pedido['metodo']);?></p>
                 <h4 class="text-bold">Total: $<?php echo $pedido['total'];?></h4>
             </div>
