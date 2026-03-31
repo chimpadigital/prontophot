@@ -1,184 +1,258 @@
+<?php include ('header.php'); ?>
 <?php
-include 'header.php';
+include 'inc/funciones.inc.php';
 include 'conexion/conectar.inc.php';
-include_once 'inc/config.inc.php';
 global $conectar;
 
-// Obtener el parámetro status de la URL
-$status = isset($_GET['status']) ? $_GET['status'] : 'error';
-$payment_intent_id = isset($_GET['payment_intent_id']) ? $_GET['payment_intent_id'] : '';
-$order_id = isset($_GET['order_id']) ? $_GET['order_id'] : '';
+// Obtener el ID del pedido desde la sesión
+$idpedido = isset($_SESSION['getnet_pedido_id']) ? $_SESSION['getnet_pedido_id'] : null;
 
-// Validar que el status sea válido
-$status = in_array($status, ['exito', 'error']) ? $status : 'error';
+if ($idpedido) {
+    // Consultar los datos del pedido
+    $ped = $conectar->query("SELECT p.*,CONCAT(c.nombre,' ',c.apellido) as clientenombre,c.dni clientedni,CONCAT(c.direccion,' ',c.ciudad) as clientedireccion,c.cp clientecp,c.provincia clienteprovincia,c.telefono clientetelefono FROM pedidos p LEFT JOIN clientes c ON p.id_cliente=c.id WHERE p.id='$idpedido'");
+    $pedido = $ped->fetch_assoc();
 
-// Si es éxito, limpiar el carrito
-if ($status === 'exito') {
-    unset($_SESSION['pronto']['cart']);
-    unset($_SESSION['archivos']);
-    unset($_SESSION['prontoFront']['envio']);
+    if ($pedido) {
+        $titulo = "Tu pedido ha sido iniciado";
+        // Limpiar el carrito y sesiones
+        unset($_SESSION['prontoFront']['envio']);
+        unset($_SESSION['prontoFront']['valor']);
+        unset($_SESSION['prontoFront']['cupon']);
+        unset($_SESSION['pronto']['cart']);
+    } else {
+        echo '<script>window.location.replace("checkout");</script>';
+        exit;
+    }
+} else {
+    echo '<script>window.location.replace("checkout");</script>';
+    exit;
 }
+
 ?>
-
-<style>
-    .status-container {
-        min-height: 60vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 20px;
-    }
-
-    .status-card {
-        max-width: 600px;
-        width: 100%;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        padding: 40px;
-        text-align: center;
-    }
-
-    .status-icon {
-        font-size: 80px;
-        margin-bottom: 20px;
-    }
-
-    .status-icon.success {
-        color: #28a745;
-    }
-
-    .status-icon.error {
-        color: #dc3545;
-    }
-
-    .status-title {
-        font-size: 28px;
-        font-weight: 600;
-        margin-bottom: 15px;
-    }
-
-    .status-message {
-        font-size: 16px;
-        color: #666;
-        margin-bottom: 30px;
-        line-height: 1.6;
-    }
-
-    .status-details {
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 30px;
-        text-align: left;
-    }
-
-    .status-details p {
-        margin: 10px 0;
-        font-size: 14px;
-    }
-
-    .status-details strong {
-        color: #333;
-    }
-
-    .btn-action {
-        margin: 10px 5px;
-        padding: 12px 30px;
-        font-size: 16px;
-        border-radius: 5px;
-    }
-
-    .getnet-logo {
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #eee;
-    }
-
-    .getnet-logo img {
-        max-width: 150px;
-        opacity: 0.7;
-    }
-</style>
-
-<div class="status-container">
-    <div class="status-card">
-        <?php if ($status === 'exito'): ?>
-            <!-- Pago Exitoso -->
-            <div class="status-icon success">
-                <i class="fa fa-check-circle"></i>
+<div class="">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-12">
+                <h5 class="titulo-tabs-user">¡Felicitaciones!. <?php echo $titulo; ?></h5>
+                <h5 class="text-medium">Número de pedido: #<?php echo $idpedido?></h5>
             </div>
-            <h1 class="status-title text-success">¡Pago Exitoso!</h1>
-            <p class="status-message">
-                Tu pago ha sido procesado correctamente a través de GetNet.
-                Recibirás un correo electrónico con la confirmación de tu pedido en breve.
-            </p>
-
-            <?php if ($order_id): ?>
-            <div class="status-details">
-                <p><strong>Número de pedido:</strong> #<?php echo htmlspecialchars($order_id); ?></p>
-                <?php if ($payment_intent_id): ?>
-                <p><strong>ID de transacción:</strong> <?php echo htmlspecialchars($payment_intent_id); ?></p>
-                <?php endif; ?>
-                <p><strong>Estado:</strong> <span class="text-success">Confirmado</span></p>
-            </div>
-            <?php endif; ?>
-
-            <div>
-                <a href="index.php" class="btn btn-danger btn-action">
-                    <i class="fa fa-home"></i> Volver al Inicio
-                </a>
-                <?php if (isset($_SESSION['prontoFront']['idcliente'])): ?>
-                <a href="versesion.php" class="btn btn-outline-danger btn-action">
-                    <i class="fa fa-list"></i> Ver mis Pedidos
-                </a>
-                <?php endif; ?>
-            </div>
-
-        <?php else: ?>
-            <!-- Pago con Error -->
-            <div class="status-icon error">
-                <i class="fa fa-times-circle"></i>
-            </div>
-            <h1 class="status-title text-danger">Error en el Pago</h1>
-            <p class="status-message">
-                Lo sentimos, no pudimos procesar tu pago a través de GetNet.
-                Por favor, intenta nuevamente o contacta con nuestro equipo de soporte.
-            </p>
-
-            <?php if ($order_id): ?>
-            <div class="status-details">
-                <p><strong>Número de pedido:</strong> #<?php echo htmlspecialchars($order_id); ?></p>
-                <?php if ($payment_intent_id): ?>
-                <p><strong>ID de transacción:</strong> <?php echo htmlspecialchars($payment_intent_id); ?></p>
-                <?php endif; ?>
-                <p><strong>Estado:</strong> <span class="text-danger">Pendiente de pago</span></p>
-            </div>
-            <?php endif; ?>
-
-            <p class="status-message" style="font-size: 14px;">
-                <strong>Posibles causas:</strong><br>
-                • Fondos insuficientes<br>
-                • Datos incorrectos de la tarjeta<br>
-                • Transacción rechazada por el banco<br>
-                • Tiempo de sesión expirado
-            </p>
-
-            <div>
-                <a href="checkout_1.php" class="btn btn-danger btn-action">
-                    <i class="fa fa-refresh"></i> Intentar Nuevamente
-                </a>
-                <a href="index.php" class="btn btn-outline-danger btn-action">
-                    <i class="fa fa-home"></i> Volver al Inicio
-                </a>
-            </div>
-        <?php endif; ?>
-
-        <!-- Logo GetNet -->
-        <div class="getnet-logo">
-            <p style="font-size: 12px; color: #999; margin-bottom: 10px;">Procesado por</p>
-            <img src="images/getnet-logo.png" alt="GetNet" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <p style="font-size: 14px; color: #999; font-weight: 600; display: none;">GetNet</p>
         </div>
     </div>
 </div>
+
+<div id="contenido-paso-4">
+    <div class="container">
+
+        <div class="row align-items-lg-center mt-5">
+            <div class="col-md-12 ">
+                <h4 class="text-bold">Datos de Envíos</h4>
+            </div>
+        </div>
+
+
+        <div class="row mt-4 datos-envio">
+            <div class="col-md-8 p-4 shadowBox">
+                <?php
+            	if ($pedido['envio']=='domicilio') {
+            	    $titulo='Enviar a mi domicilio';
+            	    $nombre=$pedido['clientenombre'];
+            	    $dni=$pedido['clientedni'];
+            	    $direccion=$pedido['clientedireccion'];
+            	    $provincia=$pedido['clienteprovincia'];
+            	    $cp=$pedido['clientecp'];
+            	    $telefono=$pedido['clientetelefono'];
+            	}else{
+            	    $titulo='Enviar como regalo';
+            	    $nombre=$pedido['nombre'];
+            	    $dni=$pedido['dni'];
+            	    $direccion=$pedido['direccion'];
+            	    $provincia=$pedido['provincia'];
+            	    $cp=$pedido['cp'];
+            	    $telefono=$pedido['telefono'];
+            	}
+
+            	switch ($pedido['entrega']){
+            	    case 'suc1':
+            	        echo '<h5>Retiro Gratis por Sucursal</h5>
+                <p>Sucursal 1</p>
+                <p>Calle 12 N°1108 e/55 y 56</p>';
+            	    break;
+            	    case 'suc2':
+            	        echo '<h5>Retiro Gratis por Sucursal</h5>
+                <p>Sucursal 2</p>
+                <p>Calle 12 N°1108 e/55 y 56</p>';
+            	    break;
+            	    case 'suc3':
+            	        echo '<h5>Retiro Gratis por Sucursal</h5>
+                <p>Sucursal 3</p>
+                <p>Calle 12 N°1108 e/55 y 56</p>';
+            	    break;
+            	    case 'urbano':
+            	        echo '<h5 class="mt-4">'.$titulo.'</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>Nombre y Apellido :'.$nombre.'</p>
+                        <p>DNI :'.$dni.'</p>
+                        <p>Dirección :'.$direccion.'</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Provincia : '.$provincia.'</p>
+                        <p>CP : '.$cp.'</p>
+                        <p>Teléfono/Celular : '.$telefono.'</p>
+                    </div>
+                </div>';
+            	    break;
+            	    case 'recibir':
+            	        echo '<h5 class="mt-4">'.$titulo.'</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>Nombre y Apellido :'.$nombre.'</p>
+                        <p>DNI :'.$dni.'</p>
+                        <p>Dirección :'.$direccion.'</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Provincia : '.$provincia.'</p>
+                        <p>CP : '.$cp.'</p>
+                        <p>Teléfono/Celular : '.$telefono.'</p>
+                    </div>
+                </div>';
+            	    break;
+            	    default:
+            	        // Manejo de métodos de envío dinámicos (envio_1, envio_2, etc)
+            	        if (strpos($pedido['entrega'], 'envio_') === 0) {
+            	            $metodo_id = str_replace('envio_', '', $pedido['entrega']);
+
+            	            // Si es Epresis (ID 2)
+            	            if ($metodo_id == 2) {
+            	                echo '<h5>Envío Epresis a Domicilio</h5>';
+            	            } else {
+            	                // Obtener nombre del método desde la BD
+            	                $metodo_res = $conectar->query("SELECT nombre FROM metodos_envio WHERE id='$metodo_id'");
+            	                if ($metodo_row = $metodo_res->fetch_assoc()) {
+            	                    echo '<h5>'.$metodo_row['nombre'].'</h5>';
+            	                }
+            	            }
+
+            	            echo '<h5 class="mt-4">'.$titulo.'</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>Nombre y Apellido: '.$nombre.'</p>
+                        <p>DNI: '.$dni.'</p>
+                        <p>Dirección: '.$direccion.'</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Provincia: '.$provincia.'</p>
+                        <p>CP: '.$cp.'</p>
+                        <p>Teléfono/Celular: '.$telefono.'</p>
+                    </div>
+                </div>';
+            	        }
+            	    break;
+
+            	}?>
+            </div>
+            <div class="col-md-3 offset-0 offset-md-1 p-4 shadowBox my-3 my-lg-0">
+                <h5>Método de Pago</h5>
+                <p class="text-bold"><?php echo metodoPago($pedido['metodo']);?></p>
+                <h4 class="text-bold">Total: $<?php echo $pedido['total'];?></h4>
+            </div>
+        </div>
+
+        <div class="row mt-3 mt-md-5">
+            <div class="col-md-12 my-3 my-md-5">
+                <div class="d-block d-md-flex align-items-center justify-content-center">
+                    <a href="usuario/misCompras.php"><button class="btn btn-border-yellow text-black text-uppercase btn-block" type="button">Ver Mis Compras</button></a>
+                    <a href="tienda"><button  class="btn btn-warning btn-cargar-producto ml-0 ml-md-3 my-3 my-md-0 btn-block" type="button">SEGUIR COMPRANDO</button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="bg-black">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="d-block d-md-flex text-center text-md-left flex-row align-items-center">
+                    <a href="#"><img src="assets/img/logo-pronto-white.svg" alt=""></a>
+                    <h4 class="text-white ml-0 ml-md-3 mt-3 mt-md-0">By Chimpancé</h4>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center">
+                <div class="mt-4 mt-md-0">
+                    <a href="https://es-la.facebook.com/pg/Prontophot/about/?ref=page_internal"><svg xmlns="http://www.w3.org/2000/svg" width="17.055" height="31.843"
+                            viewBox="0 0 17.055 31.843">
+                            <g id="Grupo_325" data-name="Grupo 325" transform="translate(402 -2245)">
+                                <path id="Icon_awesome-facebook-f" data-name="Icon awesome-facebook-f"
+                                    d="M17.547,17.912l.884-5.763H12.9V8.409c0-1.577.772-3.113,3.249-3.113h2.514V.389A30.656,30.656,0,0,0,14.2,0c-4.554,0-7.53,2.76-7.53,7.757v4.392H1.609v5.763H6.671V31.843H12.9V17.912Z"
+                                    transform="translate(-403.609 2245)" fill="#fff" />
+                            </g>
+                        </svg>
+                    </a>
+                    <a href="https://www.instagram.com/prontophotlp/?igshid=16xmcwskod733" class="ml-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="31.38" height="31.373"
+                            viewBox="0 0 31.38 31.373">
+                            <g id="Grupo_326" data-name="Grupo 326" transform="translate(402 -2298)">
+                                <path id="Icon_awesome-instagram" data-name="Icon awesome-instagram"
+                                    d="M15.688,9.881a8.044,8.044,0,1,0,8.044,8.044A8.031,8.031,0,0,0,15.688,9.881Zm0,13.273a5.229,5.229,0,1,1,5.229-5.229,5.239,5.239,0,0,1-5.229,5.229Zm10.249-13.6a1.876,1.876,0,1,1-1.876-1.876A1.872,1.872,0,0,1,25.937,9.552Zm5.327,1.9a9.285,9.285,0,0,0-2.534-6.574,9.346,9.346,0,0,0-6.574-2.534C19.567,2.2,11.8,2.2,9.213,2.348A9.332,9.332,0,0,0,2.639,4.875,9.315,9.315,0,0,0,.1,11.449C-.042,14.039-.042,21.8.1,24.393a9.285,9.285,0,0,0,2.534,6.574A9.358,9.358,0,0,0,9.213,33.5c2.59.147,10.354.147,12.944,0a9.285,9.285,0,0,0,6.574-2.534,9.346,9.346,0,0,0,2.534-6.574c.147-2.59.147-10.347,0-12.937ZM27.919,27.172a5.294,5.294,0,0,1-2.982,2.982c-2.065.819-6.966.63-9.248.63s-7.19.182-9.248-.63a5.294,5.294,0,0,1-2.982-2.982c-.819-2.065-.63-6.966-.63-9.248s-.182-7.19.63-9.248A5.294,5.294,0,0,1,6.441,5.694c2.065-.819,6.966-.63,9.248-.63s7.19-.182,9.248.63a5.294,5.294,0,0,1,2.982,2.982c.819,2.065.63,6.966.63,9.248S28.738,25.114,27.919,27.172Z"
+                                    transform="translate(-401.995 2295.762)" fill="#fff" />
+                            </g>
+                        </svg>
+
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a class="d-md-none d-lg-none d-block text-center wp" href="https://api.whatsapp.com/send?phone=+5492216784142  &amp;text=Buenos%20días,%20quiero%20mas%20info%20">
+         <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path></svg>
+ </a>
+<a class="d-xs-none d-sm-none d-md-block text-center wp" target="_blank" href="https://wa.me/542216976559? &amp;text=Buenos%20días,%20quiero%20mas%20info">
+       <svg fill="white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path></svg>
+</a>
+</footer>
+
+<!--Eliminar esto para que funciona el dropdown, pero deja de funcionar la animacion del menu hamburguesa-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous">
+</script>
+<script src="node_modules/owl.carousel/dist/owl.carousel.js"></script>
+
+<script>
+// Look for .hamburger
+var hamburger = document.querySelector(".hamburger");
+// On click
+hamburger.addEventListener("click", function() {
+    // Toggle class "is-active"
+    hamburger.classList.toggle("is-active");
+    // Do something else, like open/close menu
+});
+</script>
+<script>
+$(document).ready(function() {
+    $('.owl-carousel').owlCarousel();
+});
+</script>
+
+<!-- MOVER ESTO AL FOOTER -->
+<script>
+var owl = $('.owl-carousel');
+owl.owlCarousel();
+// Go to the next item
+$('.customNextBtn').click(function() {
+    owl.trigger('next.owl.carousel');
+})
+// Go to the previous item
+$('.customPrevBtn').click(function() {
+    // With optional speed parameter
+    // Parameters has to be in square bracket '[]'
+    owl.trigger('prev.owl.carousel', [300]);
+})
+</script>
+<script src="assets/js/starter.js"></script>
+
+</body>
+
+</html>
