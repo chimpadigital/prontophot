@@ -23,6 +23,9 @@ if (!function_exists('metodoPago')) {
             case '3':
                 return 'Paga al retirar';
                 break;
+            case '4':
+                return 'Getnet';
+                break;
         }
     }
 }
