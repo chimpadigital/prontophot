@@ -1215,12 +1215,12 @@ button.btn.btn-sm.btn-danger.removeImg {
     display: none !important;
   }
 
-  .carousel-caption .flex-column .contenedor-caption h3 {
+  .carousel-caption .contenedor-caption h3 {
     font-size: 1rem !important;
     width: 100%;
   }
 
-  .carousel-caption .flex-column .contenedor-caption a {
+  .carousel-caption .contenedor-caption a {
     font-size: 1rem !important;
   }
 
