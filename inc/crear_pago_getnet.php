@@ -20,18 +20,30 @@ foreach ($carro as $id => $datos) {
     $cant = $datos['cantidad'];
     $cat = $datos['cat'];
 
-    // Obtener precio y descuento del producto
-    $prod_res = $conectar->query("SELECT precio, descuento_final FROM productos WHERE id='$id'");
-    $prod_row = $prod_res->fetch_assoc();
-    $precioUnitario = $prod_row['precio'];
-    $descuentoProducto = isset($prod_row['descuento_final']) && $prod_row['descuento_final'] > 0 ? $prod_row['descuento_final'] : 0;
+    // Verificar si es un producto de revelado (precio ya es total)
+    if (isset($datos['tipo']) && $datos['tipo'] === 'revelado') {
+        $precio = floatval($datos['precio']);
+    } elseif (isset($datos['precio']) && $datos['precio'] > 0) {
+        // Precio del carrito (precio unitario)
+        $precioUnitario = floatval($datos['precio']);
+        $precio = ($cant * $precioUnitario);
+    } else {
+        // Obtener precio y descuento del producto
+        $id_producto = isset($datos['id_original']) ? $datos['id_original'] : $id;
+        $prod_res = $conectar->query("SELECT precio, descuento_final FROM productos WHERE id='$id_producto'");
+        if ($prod_row = $prod_res->fetch_assoc()) {
+            $precioUnitario = floatval($prod_row['precio']);
+            $descuentoProducto = isset($prod_row['descuento_final']) && $prod_row['descuento_final'] > 0 ? floatval($prod_row['descuento_final']) : 0;
 
-    // Aplicar descuento del producto si existe
-    if ($descuentoProducto > 0) {
-        $precioUnitario = $prod_row['precio'] - ($prod_row['precio'] * $descuentoProducto / 100);
+            // Aplicar descuento del producto si existe
+            if ($descuentoProducto > 0) {
+                $precioUnitario = $precioUnitario - ($precioUnitario * $descuentoProducto / 100);
+            }
+            $precio = ($cant * $precioUnitario);
+        } else {
+            $precio = 0;
+        }
     }
-
-    $precio = ($cant * $precioUnitario);
 
     if (isset($_SESSION['prontoFront']['cupon'])) {
         if ($_SESSION['prontoFront']['cupon']['categoria'] == $cat) {
@@ -85,28 +97,45 @@ if ($pedido->success) {
     $items = array();
 
     foreach ($carro as $id => $datos) {
-        $res = $conectar->query("SELECT p.nombre,p.descripcion, p.precio, p.descuento_final,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
-        $row = $res->fetch_assoc();
         $cant = $datos['cantidad'];
 
-        // Aplicar descuento del producto si existe
-        $precioUnitario = $row['precio'];
-        $descuentoProducto = isset($row['descuento_final']) && $row['descuento_final'] > 0 ? $row['descuento_final'] : 0;
-        if ($descuentoProducto > 0) {
-            $precioUnitario = $row['precio'] - ($row['precio'] * $descuentoProducto / 100);
+        // Verificar si es un producto de revelado
+        if (isset($datos['tipo']) && $datos['tipo'] === 'revelado') {
+            $precio = floatval($datos['precio']);
+            $nombreProducto = isset($datos['descripcion']) ? $datos['descripcion'] : 'Revelado de fotos';
+        } elseif (isset($datos['precio']) && $datos['precio'] > 0) {
+            $precioUnitario = floatval($datos['precio']);
+            $precio = ($cant * $precioUnitario);
+            $nombreProducto = isset($datos['nombre']) ? $datos['nombre'] : 'Producto';
+        } else {
+            $id_producto = isset($datos['id_original']) ? $datos['id_original'] : $id;
+            $res = $conectar->query("SELECT p.nombre,p.descripcion, p.precio, p.descuento_final,(SELECT imagen FROM `imagenes` WHERE id_producto='$id_producto' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id_producto' ");
+            if ($row = $res->fetch_assoc()) {
+                // Aplicar descuento del producto si existe
+                $precioUnitario = floatval($row['precio']);
+                $descuentoProducto = isset($row['descuento_final']) && $row['descuento_final'] > 0 ? floatval($row['descuento_final']) : 0;
+                if ($descuentoProducto > 0) {
+                    $precioUnitario = $precioUnitario - ($precioUnitario * $descuentoProducto / 100);
+                }
+                $precio = ($cant * $precioUnitario);
+                $nombreProducto = $row['nombre'];
+            } else {
+                $precio = 0;
+                $nombreProducto = 'Producto';
+            }
         }
 
-        $precio = ($cant * $precioUnitario);
         $color = isset($datos['color']) ? $conectar->real_escape_string($datos['color']) : NULL;
-        $item['producto'] = $row['nombre'] . ' ' . $datos['color'];
+        $item['producto'] = $nombreProducto . ' ' . $datos['color'];
         $item['cantidad'] = $cant;
         $item['precio'] = $precio;
 
         // Guardar producto con color
+        $id_producto_db = isset($datos['id_original']) ? $datos['id_original'] : $id;
         if ($color !== NULL) {
-            $conectar->query("INSERT INTO `pedidos_detalle`( `id_pedido`, `id_producto`, `cantidad`, `color`) VALUES ('$idpedido','$id','$cant','$color')");
+            $conectar->query("INSERT INTO `pedidos_detalle`( `id_pedido`, `id_producto`, `cantidad`, `color`) VALUES ('$idpedido','$id_producto_db','$cant','$color')");
         } else {
-            $conectar->query("INSERT INTO `pedidos_detalle`( `id_pedido`, `id_producto`, `cantidad`) VALUES ('$idpedido','$id','$cant')");
+            $conectar->query("INSERT INTO `pedidos_detalle`( `id_pedido`, `id_producto`, `cantidad`) VALUES ('$idpedido','$id_producto_db','$cant')");
         }
         $items[] = $item;
     }
@@ -161,24 +190,45 @@ if ($pedido->success) {
     // Construir array de productos para GetNet
     $products_array = array();
     foreach ($carro as $id => $datos) {
-        $res = $conectar->query("SELECT p.nombre, p.descripcion, p.precio, p.descuento_final FROM productos p WHERE p.id='$id'");
-        $row = $res->fetch_assoc();
         $cant = $datos['cantidad'];
 
-        // Aplicar descuento del producto si existe
-        $precioUnitario = $row['precio'];
-        $descuentoProducto = isset($row['descuento_final']) && $row['descuento_final'] > 0 ? $row['descuento_final'] : 0;
-        if ($descuentoProducto > 0) {
-            $precioUnitario = $row['precio'] - ($row['precio'] * $descuentoProducto / 100);
+        // Verificar si es un producto de revelado
+        if (isset($datos['tipo']) && $datos['tipo'] === 'revelado') {
+            // Para revelado, el precio ya es el total, dividir por cantidad para obtener unitario
+            $precioTotal = floatval($datos['precio']);
+            $precioUnitario = $cant > 0 ? ($precioTotal / $cant) : $precioTotal;
+            $nombreProducto = isset($datos['descripcion']) ? $datos['descripcion'] : 'Revelado de fotos';
+            $descripcionProducto = $nombreProducto;
+        } elseif (isset($datos['precio']) && $datos['precio'] > 0) {
+            $precioUnitario = floatval($datos['precio']);
+            $nombreProducto = isset($datos['nombre']) ? $datos['nombre'] : 'Producto';
+            $descripcionProducto = $nombreProducto;
+        } else {
+            $id_producto = isset($datos['id_original']) ? $datos['id_original'] : $id;
+            $res = $conectar->query("SELECT p.nombre, p.descripcion, p.precio, p.descuento_final FROM productos p WHERE p.id='$id_producto'");
+            if ($row = $res->fetch_assoc()) {
+                // Aplicar descuento del producto si existe
+                $precioUnitario = floatval($row['precio']);
+                $descuentoProducto = isset($row['descuento_final']) && $row['descuento_final'] > 0 ? floatval($row['descuento_final']) : 0;
+                if ($descuentoProducto > 0) {
+                    $precioUnitario = $precioUnitario - ($precioUnitario * $descuentoProducto / 100);
+                }
+                $nombreProducto = $row['nombre'];
+                $descripcionProducto = $row['descripcion'] ? $row['descripcion'] : $row['nombre'];
+            } else {
+                $precioUnitario = 0;
+                $nombreProducto = 'Producto';
+                $descripcionProducto = 'Producto';
+            }
         }
 
         // Convertir precio unitario a centavos
         $precio_centavos = intval($precioUnitario * 100);
 
         $products_array[] = array(
-            'product_type' => 'physical_goods', // puede ser: physical_product, digital_content, service
-            'title' => $row['nombre'],
-            'description' => $row['descripcion'] ? $row['descripcion'] : $row['nombre'],
+            'product_type' => 'physical_goods',
+            'title' => $nombreProducto,
+            'description' => $descripcionProducto,
             'value' => $precio_centavos,
             'quantity' => intval($cant)
         );

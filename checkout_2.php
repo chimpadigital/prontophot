@@ -102,18 +102,32 @@ if (isset($_POST['entrega'])) {
         $cat = $item['cat'];
         $cant = $item['cantidad'];
 
-        // Obtener precio y descuento del producto
-        $prod_res = $conectar->query("SELECT precio, descuento_final FROM productos WHERE id='$id'");
-        $prod_row = $prod_res->fetch_assoc();
-        $precioUnitario = $prod_row['precio'];
-        $descuento = isset($prod_row['descuento_final']) && $prod_row['descuento_final'] > 0 ? $prod_row['descuento_final'] : 0;
+        // Verificar si es un producto de revelado (precio ya es total)
+        if (isset($item['tipo']) && $item['tipo'] === 'revelado') {
+            // Para revelado, el precio guardado ya es el total, no multiplicar
+            $sub = floatval($item['precio']);
+        } elseif (isset($item['precio']) && $item['precio'] > 0) {
+            // Precio del carrito (precio unitario)
+            $precioUnitario = floatval($item['precio']);
+            $sub = ($precioUnitario * $cant);
+        } else {
+            // Obtener precio y descuento del producto desde la base de datos
+            $id_producto = isset($item['id_original']) ? $item['id_original'] : $id;
+            $prod_res = $conectar->query("SELECT precio, descuento_final FROM productos WHERE id='$id_producto'");
+            if ($prod_row = $prod_res->fetch_assoc()) {
+                $precioUnitario = floatval($prod_row['precio']);
+                $descuento = isset($prod_row['descuento_final']) && $prod_row['descuento_final'] > 0 ? floatval($prod_row['descuento_final']) : 0;
 
-        // Aplicar descuento si existe
-        if ($descuento > 0) {
-            $precioUnitario = $prod_row['precio'] - ($prod_row['precio'] * $descuento / 100);
+                // Aplicar descuento si existe
+                if ($descuento > 0) {
+                    $precioUnitario = $precioUnitario - ($precioUnitario * $descuento / 100);
+                }
+                $sub = ($precioUnitario * $cant);
+            } else {
+                $sub = 0;
+            }
         }
 
-        $sub = ($precioUnitario * $cant);
         $t = $t + $sub;
     }
     if (isset($_SESSION['prontoFront']['cupon'])) {
@@ -351,23 +365,44 @@ if (isset($_POST['entrega'])) {
                         $porc = 0;
                         $subd = 0;
                         foreach ($carro as $id => $datos) {
-                            $res = $conectar->query("SELECT p.nombre,p.descripcion, p.precio, p.descuento_final,(SELECT imagen FROM `imagenes` WHERE id_producto='$id' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id' ");
-                            $row = $res->fetch_assoc();
                             $cant = $datos['cantidad'];
                             $cat = $datos['cat'];
 
-                            // Calcular precio con descuento si existe
-                            $precioUnitario = $row['precio'];
-                            $descuento = isset($row['descuento_final']) && $row['descuento_final'] > 0 ? $row['descuento_final'] : 0;
-                            if ($descuento > 0) {
-                                $precioUnitario = $row['precio'] - ($row['precio'] * $descuento / 100);
+                            // Verificar si es un producto de revelado
+                            if (isset($datos['tipo']) && $datos['tipo'] === 'revelado') {
+                                // Para revelado, el precio guardado ya es el total
+                                $precio = floatval($datos['precio']);
+                                $nombreProducto = isset($datos['descripcion']) ? $datos['descripcion'] : 'Revelado de fotos';
+                                $imagenProducto = '';
+                            } elseif (isset($datos['precio']) && $datos['precio'] > 0) {
+                                // Precio del carrito (precio unitario)
+                                $precioUnitario = floatval($datos['precio']);
+                                $nombreProducto = isset($datos['nombre']) ? $datos['nombre'] : 'Producto';
+                                $imagenProducto = '';
+                                $precio = ($cant * $precioUnitario);
+                            } else {
+                                // Consultar producto desde DB
+                                $id_producto = isset($datos['id_original']) ? $datos['id_original'] : $id;
+                                $res = $conectar->query("SELECT p.nombre,p.descripcion, p.precio, p.descuento_final,(SELECT imagen FROM `imagenes` WHERE id_producto='$id_producto' ORDER BY id ASC LIMIT 1) as imagen FROM productos p  WHERE p.id='$id_producto' ");
+                                if ($row = $res->fetch_assoc()) {
+                                    $nombreProducto = $row['nombre'];
+                                    $imagenProducto = $row['imagen'];
+                                    $precioUnitario = floatval($row['precio']);
+                                    $descuento = isset($row['descuento_final']) && $row['descuento_final'] > 0 ? floatval($row['descuento_final']) : 0;
+                                    if ($descuento > 0) {
+                                        $precioUnitario = $precioUnitario - ($precioUnitario * $descuento / 100);
+                                    }
+                                    $precio = ($cant * $precioUnitario);
+                                } else {
+                                    $nombreProducto = 'Producto';
+                                    $imagenProducto = '';
+                                    $precio = 0;
+                                }
                             }
 
-                            $precio = ($cant * $precioUnitario);
+                            $prod .= $nombreProducto . ', ' . $datos['color'] . ' x ' . $datos['cantidad'] . '<br>';
 
-                            $prod .= $row['nombre'] . ', ' . $datos['color'] . ' x ' . $datos['cantidad'] . '<br>';
-
-                            $resumen .= '<div class="d-block w-100">' . $row['nombre'] . ', <span class="dot" style="background-color: ' . $datos['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span> x ' . $datos['cantidad'] . '</div>';
+                            $resumen .= '<div class="d-block w-100">' . $nombreProducto . ', <span class="dot" style="background-color: ' . $datos['color'] . '; width: 15px; height: 15px; display: inline-block; border-radius: 50%; border: 2px solid #ddd; margin-left: 5px;"></span> x ' . $datos['cantidad'] . '</div>';
 
                             if (isset($_SESSION['prontoFront']['cupon'])) {
                                 if ($_SESSION['prontoFront']['cupon']['categoria'] == $cat) {
