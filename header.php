@@ -425,6 +425,13 @@ $topbarData = $resultTopbar && $resultTopbar->num_rows > 0 ? $resultTopbar->fetc
                 <a class="nav-link active cerrar-sesion" href="mi-pedido"><button type="button" class="btn text-white btn-cart position-relative"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cart-fill" viewBox="0 0 16 16">
                             <path </svg></button></a>
 
+
+                <li class="nav-item">
+                    <a id="carrito-tienda" class="nav-link" href="mi-pedido"><button type="button" class="btn text-white btn-cart position-relative pr-0"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cart-fill" viewBox="0 0 16 16">
+                                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                            </svg><span id="cartContador" class="badge badge-dark">9</span></button></a>
+                </li>
+
                 <button class="hamburger hamburger--collapse" type="button" data-toggle="collapse"
                     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                     aria-label="Toggle navigation">
@@ -450,17 +457,36 @@ $topbarData = $resultTopbar && $resultTopbar->num_rows > 0 ? $resultTopbar->fetc
                         <li class="nav-item">
                             <a class="nav-link text-medium" href="contacto">Contacto</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-medium" href="" data-toggle="modal"
-                                data-target="#iniciar-sesion">Iniciar Sesión</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-medium" href="" data-toggle="modal"
-                                data-target="#modal-registrarse">Crear Cuenta</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-medium" href="#">Salir</a>
-                        </li>
+
+
+                        <?php
+                        if (isset($_SESSION['prontoFront']['token'])) {
+                            $seg = verificarToken($_SESSION['prontoFront']['token'], 'Pronto');
+                            if ($seg->success) { ?>
+                                <li class="nav-item text-medium">
+                                    <a href="usuario/index.php" class="nav-link">Mi Cuenta</a>
+                                </li>
+                                <?php if ($seg->nivel == '1') { ?>
+                                    <li class="nav-item text-medium">
+                                        <a href="admin" class="nav-link">Admin</a>
+                                    </li>
+                                <?php } ?>
+                                <li class="nav-link active text-medium">
+                                    <button type="button" class="p-0 bg-transparent text-white border-0 text-medium cerrarSesion">Cerrar Sesión <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                    </button>
+                                </li>
+                            <?php
+                            }
+                        } else { ?>
+                            <li class="nav-item">
+                                <a class="nav-link text-medium" href="" data-toggle="modal"
+                                    data-target="#iniciar-sesion">Iniciar Sesión</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-medium" href="" data-toggle="modal"
+                                    data-target="#modal-registrarse">Crear Cuenta</a>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </div>
             </nav>

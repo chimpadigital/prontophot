@@ -185,24 +185,24 @@ if (isset($_POST['entrega'])) {
                 <div class="row shadow-sm p-3 metodo-envio d-flex align-items-center my-4">
                     <div class="col-9 col-md-10  order-md-1">
                         <div class="custom-control contenedor-input custom-radio ">
-                            <input type="radio" id="mp" name="metodoPago" class="custom-control-input no-transfer metodoPago" value="2" checked>
-                            <label class="custom-control-label" for="mp">Mercado Pago</label>
+                            <input type="radio" id="getnet" name="metodoPago" class="custom-control-input no-transfer metodoPago" value="4" checked>
+                            <label class="custom-control-label" for="getnet">Tarjeta de crédito y débito</label>
                         </div>
                     </div>
                     <div class="col-3 col-md-2 order-1 order-md-2">
-                        <img class="img-fluid" src="assets/img/MP.svg" alt="">
+                        <img class="img-fluid" src="assets/img/getnet-isotipo.png?v=2" alt="" style="max-height: 63px;">
                     </div>
                 </div>
 
                 <div class="row shadow-sm p-3 metodo-envio d-flex align-items-center my-4">
                     <div class="col-9 col-md-10  order-md-1">
                         <div class="custom-control contenedor-input custom-radio ">
-                            <input type="radio" id="getnet" name="metodoPago" class="custom-control-input no-transfer metodoPago" value="4">
-                            <label class="custom-control-label" for="getnet">GetNet</label>
+                            <input type="radio" id="mp" name="metodoPago" class="custom-control-input no-transfer metodoPago" value="2">
+                            <label class="custom-control-label" for="mp">Mercado Pago</label>
                         </div>
                     </div>
                     <div class="col-3 col-md-2 order-1 order-md-2">
-                        <img class="img-fluid" src="assets/img/getnet-isotipo.png?v=2" alt="" style="max-height: 63px;">
+                        <img class="img-fluid" src="assets/img/MP.svg" alt="">
                     </div>
                 </div>
 

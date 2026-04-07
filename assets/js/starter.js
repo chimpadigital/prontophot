@@ -43,13 +43,40 @@ $(document).ready(function () {
 		var cat = $(this).data('categoria');
 		var precio = $(this).data('precio');
 
+		// Limpiar mensaje previo
+		$('#color-error-message').remove();
+
+		// Verificar si hay múltiples colores disponibles
+		var imagenesPorColorJson = $('#imagenesPorColor').val();
+		if (imagenesPorColorJson) {
+			try {
+				var imagenesPorColor = JSON.parse(imagenesPorColorJson);
+				var coloresDisponibles = [];
+
+				// Contar cuántos colores válidos hay (excluyendo 'sin_color')
+				for (var colorKey in imagenesPorColor) {
+					if (colorKey !== 'sin_color') {
+						coloresDisponibles.push(colorKey);
+					}
+				}
+
+				// Si hay colores disponibles y no se ha seleccionado ninguno (o se seleccionó 'sin_color')
+				if (coloresDisponibles.length > 0 && (color === 'sin_color' || color === '')) {
+					$(this).after('<p id="color-error-message" class="text-danger mt-2 mb-0">Por favor, seleccione un color antes de agregar el producto al carrito.</p>');
+					return false;
+				}
+			} catch (e) {
+				console.error('Error al validar colores:', e);
+			}
+		}
+
 		$.post('inc/set_cart.php', { id: id, color: color, cant: cantidad, cat: cat, precio: precio }, function(data) {
 			console.log('Respuesta del carrito:', data);
 			if (data.success) {
 				getCart();
-				alert('Producto agregado al carrito exitosamente');
+				$('#message').html('<div class="alert alert-success alert-dismissible fade show" role="alert">Se agregó tu producto al carrito! <a href="mi-pedido" class="alert-link">Ver pedido</a><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 			} else {
-				//alert(data.msg);
+				$('#message').html('<div class="alert alert-warning alert-dismissible fade show" role="alert">' + data.msg + ' <a href="mi-pedido" class="alert-link">Ver carrito</a><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 			}
 		}, 'json').fail(function(xhr, status, error) {
 			console.error('Error al agregar al carrito:', error);
