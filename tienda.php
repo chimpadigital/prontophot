@@ -259,7 +259,7 @@ hamburger.addEventListener("click", function() {
 });
 </script>
 
-<script src="assets/js/starter.js"></script>
+<script src="assets/js/starter.js?v=1"></script>
 
 </body>
 

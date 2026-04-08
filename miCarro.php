@@ -375,7 +375,7 @@ $epresis_valor_gratis = $epresis_row['valor_gratis'] ?? 0;
     })
 </script>
 
-<script src="assets/js/starter.js"></script>
+<script src="assets/js/starter.js?v=1"></script>
 <script>
     $(function() {
         $('.btn-remove').click(function(e) {

@@ -254,7 +254,7 @@ $('.customPrevBtn').click(function() {
     owl.trigger('prev.owl.carousel', [300]);
 })
 </script>
-<script src="assets/js/starter.js"></script>
+<script src="assets/js/starter.js?v=1"></script>
 
 </body>
 

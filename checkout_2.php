@@ -536,7 +536,7 @@ if (isset($_POST['entrega'])) {
     })
 </script>
 
-<script src="assets/js/starter.js"></script>
+<script src="assets/js/starter.js?v=1"></script>
 <script>
 
     const checkoutButton = (config) => {
