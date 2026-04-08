@@ -40,7 +40,7 @@
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-dark">
                 <a class="navbar-brand" href="index.php"><img class="logo-blanco responsive" src="assets\img\logo-pronto-white.svg" alt=""></a>
-                <a class="nav-link active cerrar-sesion" href="../"><button type="button" class="btn btn-bg-white btn-sm">Salir</button></a>
+                <a class="nav-link active" href="../"><button type="button" class="btn btn-bg-white btn-sm cerrarSesion">Salir</button></a>
                 
                 <button class="hamburger hamburger--collapse" type="button" data-toggle="collapse"
                     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
