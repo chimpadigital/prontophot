@@ -5,5 +5,6 @@
     <script src="js/printThis.js"></script>
     <script src="js/jszip.min.js"></script>
     <script src="js/FileSaver.min.js"></script>
+    <script src="assets/js/starter.js"></script>
   </body>
 </html>
