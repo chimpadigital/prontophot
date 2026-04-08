@@ -403,6 +403,7 @@ $('#success').on('click', function (e) {
 function getCart() {
 	$.post('inc/get_cart.php', function (data) {
 		$('#cartContador').html(data);
+		$('#cartContador-mov').html(data);
 	});
 }
 function limpiarDiv(div) {
