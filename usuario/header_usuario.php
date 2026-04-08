@@ -65,8 +65,8 @@ if (isset($_SESSION['prontoFront']['token'])) {
                 <a class="navbar-brand" href="index.php">
                 	<img class="logo-blanco responsive" src="../assets/img/logo-pronto-white.svg" alt="">
                 </a>
-                <a class="nav-link active cerrar-sesion" href="#">
-                	<button type="button" class="btn btn-bg-white btn-sm">Salir</button>
+                <a class="nav-link active cerrar-sesion">
+                	<button type="button" class="btn btn-bg-white btn-sm cerrarSesion">Salir</button>
                 </a>
                 <button class="hamburger hamburger--collapse" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="hamburger-box mt-1">
