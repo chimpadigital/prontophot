@@ -1,39 +1,40 @@
-<?php include ('header.php'); ?>
-<?php 
-include __DIR__.'/conexion/conectar.inc.php';
+<?php include('header.php'); ?>
+<?php
+include __DIR__ . '/conexion/conectar.inc.php';
 global $conectar;
-$productos=$conectar->query("SELECT p.*,c.nombre categoria,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM productos p LEFT JOIN categorias c ON p.id_categoria=c.id ORDER BY id DESC");
+$productos = $conectar->query("SELECT p.*,c.nombre categoria,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM productos p LEFT JOIN categorias c ON p.id_categoria=c.id ORDER BY id DESC");
 
 ?>
 <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
 <script>
-$(function(){
-	var monkeyList = new List('productosCarga', {
-		  valueNames: ['nombre-producto','categoria-producto','codigo-producto'],
-		  page: 6,
-		  pagination: true
-		});
-			
-});
+    $(function() {
+        var monkeyList = new List('productosCarga', {
+            valueNames: ['nombre-producto', 'categoria-producto', 'codigo-producto'],
+            page: 6,
+            pagination: true
+        });
+
+    });
 </script>
 <style>
-.pagination .active .page{
+    .pagination .active .page {
         color: #fff !important;
-    background-color: #DA0000;
-    border-color: #DA0000;
-    
+        background-color: #DA0000;
+        border-color: #DA0000;
+
     }
-.pagination .page{
-    color: #000 !important;
-    position: relative;
-    display: block;
-    padding: .5rem .75rem;
-    margin-left: -1px;
-    line-height: 1.25;
-    color: #007bff;
-    background-color: #fff;
-    border: 1px solid #dee2e6;
-}    
+
+    .pagination .page {
+        color: #000 !important;
+        position: relative;
+        display: block;
+        padding: .5rem .75rem;
+        margin-left: -1px;
+        line-height: 1.25;
+        color: #007bff;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+    }
 </style>
 <div class="container-fluid bg-black border-top border-white">
     <div class="row">
@@ -45,7 +46,7 @@ $(function(){
             <hr class="solid my-4">
 
             <!-- TABS ADMIN  -->
-          <div class="nav flex-column nav-pills sidebar-admin" id="v-pills-tab" role="tablist"
+            <div class="nav flex-column nav-pills sidebar-admin" id="v-pills-tab" role="tablist"
                 aria-orientation="vertical">
                 <a class="nav-link active" id="v-pills-home-tab" href="index.php"><svg class="bi text-yellow mr-3" width="32"
                         height="32">
@@ -55,7 +56,7 @@ $(function(){
                         width="32" height="32">
                         <use xlink:href="node_modules/bootstrap-icons/bootstrap-icons.svg#file-earmark-image" />
                     </svg>Pedidos</a>
-                <a class="nav-link" id="v-pills-profile-tab" href="sliders.php"><i class="fa fa-2x fa-picture-o mr-3" aria-hidden="true"></i>Slider</a>    
+                <a class="nav-link" id="v-pills-profile-tab" href="sliders.php"><i class="fa fa-2x fa-picture-o mr-3" aria-hidden="true"></i>Slider</a>
                 <a class="nav-link" id="v-pills-messages-tab" href="cupones.php"><svg class="bi text-yellow mr-3" width="32"
                         height="32">
                         <use xlink:href="node_modules/bootstrap-icons/bootstrap-icons.svg#cash" />
@@ -120,33 +121,37 @@ $(function(){
                             </div>
                             <!-- BUSQUEDAS RECIENTES -->
                             <div class="row mt-4 list">
-								<?php while($row=$productos->fetch_assoc()){ ?>
-                                <div class="col-12 col-sm-6 col-md-4 d-flex flex-column justify-content-center align-items-center mb-5">
+                                <?php while ($row = $productos->fetch_assoc()) { ?>
+                                    <div class="col-12 col-sm-6 col-md-4 d-flex flex-column justify-content-center align-items-center mb-5">
                                         <div class="contenedor-card">
                                             <div class="card-producto text-center effect-hover">
                                                 <div class="mask d-flex justify-content-center align-items-center">
-                                                    <a href="producto.php?id=<?php echo $row['id'];?>">
+                                                    <a href="producto.php?id=<?php echo $row['id']; ?>">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-search text-white" viewBox="0 0 16 16">
                                                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                                                         </svg>
                                                     </a>
                                                 </div>
-                                                <img class="w-100 image-fluid" src="<?php if(!empty($row['imagen'])){echo '../'.$row['imagen'];}else{echo 'https://via.placeholder.com/150';}?>" alt="">
-                                                <div class="contenido-card">                                                
-                                                    <p class="nombre-producto"><?php echo $row['nombre'];?></p>
+                                                <img class="w-100 image-fluid" src="<?php if (!empty($row['imagen'])) {
+                                                                                        echo '../' . $row['imagen'];
+                                                                                    } else {
+                                                                                        echo 'https://via.placeholder.com/150';
+                                                                                    } ?>" alt="">
+                                                <div class="contenido-card">
+                                                    <p class="nombre-producto"><?php echo $row['nombre']; ?></p>
                                                     <p class="detalle-producto">
-                                                    	Codigo : <?php echo '<span class="codigo-producto">'.$row['codigo'].'</span>'; ?>
-                                                    	<br>
-														<?php echo '<span class="categoria-producto">'.$row['categoria'].'</span>';?>
-														<br>
-														<?php echo $row['alto'].'x'.$row['ancho'].'x'.$row['profundidad']; ?>
-													</p>
-                                                </div>                                            
+                                                        Codigo : <?php echo '<span class="codigo-producto">' . $row['codigo'] . '</span>'; ?>
+                                                        <br>
+                                                        <?php echo '<span class="categoria-producto">' . $row['categoria'] . '</span>'; ?>
+                                                        <br>
+                                                        <?php echo $row['alto'] . 'x' . $row['ancho'] . 'x' . $row['profundidad']; ?>
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <a href="producto.php?id=<?php echo $row['id'];?>" class="btn bg-danger text-white btn-bg-red w-100">Más Información</a>
+                                            <a href="producto.php?id=<?php echo $row['id']; ?>" class="btn bg-danger text-white btn-bg-red w-100">Más Información</a>
                                         </div>
-                                </div>
-								<?php } ?>
+                                    </div>
+                                <?php } ?>
                             </div>
 
                             <div class="row mt-4">
@@ -169,10 +174,10 @@ $(function(){
                                         </ul>
                                     </nav>
                                 </div>
-                                
+
                             </div>
-							
-                            
+
+
                             <!-- FIN BUSQUEDAS RECIENTES -->
 
                         </div>
@@ -183,6 +188,7 @@ $(function(){
                 </div>
             </div>
         </div>
-	</div>
-</div>	
-<?php include ('footer.php'); ?>
+    </div>
+</div>
+
+<?php include('footer.php'); ?>

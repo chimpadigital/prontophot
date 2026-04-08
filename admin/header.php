@@ -85,6 +85,17 @@
             // Do something else, like open/close menu
         });
     </script>
+    <script>
+        $(document).ready(function() {
+            $('.cerrarSesion').click(function(e) {
+                console.log("salir")
+                e.preventDefault();
+                $.post('../inc/salir.php', function(data) {
+                    window.location.reload();
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
