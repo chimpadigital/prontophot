@@ -26,7 +26,7 @@
             <nav>
                 <ul class="nav justify-content-end">
                     <li class="nav-item">
-                        <a class="nav-link active" href="../"><button type="button" class="btn btn-bg-white">Cerrar
+                        <a class="nav-link active"><button type="button" class="btn btn-bg-white cerrarSesion">Cerrar
                                 Sesión</button></a>
                     </li>
                 </ul>

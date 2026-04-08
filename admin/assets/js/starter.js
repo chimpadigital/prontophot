@@ -46,6 +46,7 @@ $(document).ready(function() {
 			getCart();
 		});
 	$('.cerrarSesion').click(function(e){
+		console.log("salir")
 		e.preventDefault();
 		$.post('inc/salir.php',function(data){
 			window.location.reload();
