@@ -19,6 +19,10 @@ $pedidos=$conectar->query($sql);
             <!-- TABS ADMIN  -->
             <div class="nav flex-column nav-pills sidebar-admin" id="v-pills-tab" role="tablist"
                 aria-orientation="vertical">
+                <a class="nav-link active" id="v-pills-home-tab" href="index.php"><svg
+                        class="bi text-yellow mr-3" width="32" height="32">
+                        <use xlink:href="../node_modules/bootstrap-icons/bootstrap-icons.svg#cart-fill" />
+                    </svg>Mis Compras</a>
                 <a class="nav-link" id="v-pills-profile-tab" href="miPerfil.php"><svg class="bi text-yellow mr-3"
                         width="32" height="32">
                         <use xlink:href="../node_modules/bootstrap-icons/bootstrap-icons.svg#person-circle" />
@@ -38,9 +42,6 @@ $pedidos=$conectar->query($sql);
                     <!-- TABS MIS COMPRAS -->
                     <ul class="nav nav-tabs tab-cargar-productos tabs-admin pl-0 pl-lg-5" id="tabMisCompras"
                         role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="cargarProducto" href="index.php">Nuevo Revelado</a>
-                        </li>
                         <li class="nav-item" role="presentation">
                             <a class="nav-link active" id="productosCargados" href="misCompras.php">Mis Compras</a>
                         </li>
