@@ -19,10 +19,6 @@ $pedidos=$conectar->query($sql);
             <!-- TABS ADMIN  -->
             <div class="nav flex-column nav-pills sidebar-admin" id="v-pills-tab" role="tablist"
                 aria-orientation="vertical">
-                <a class="nav-link active" id="v-pills-home-tab" href="index.php"><svg
-                        class="bi text-yellow mr-3" width="32" height="32">
-                        <use xlink:href="../node_modules/bootstrap-icons/bootstrap-icons.svg#cart-fill" />
-                    </svg>Mis Compras</a>
                 <a class="nav-link" id="v-pills-profile-tab" href="miPerfil.php"><svg class="bi text-yellow mr-3"
                         width="32" height="32">
                         <use xlink:href="../node_modules/bootstrap-icons/bootstrap-icons.svg#person-circle" />
