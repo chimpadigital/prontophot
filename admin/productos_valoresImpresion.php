@@ -1,6 +1,6 @@
 <?php include ('header.php'); ?>
 <?php 
-include __DIR__.'/conexion/conectar.inc.php';
+include ('../conexion/conectar.inc.php');
 global $conectar;
 
 $query="SELECT i.*

@@ -1,6 +1,6 @@
 <?php include('header.php'); ?>
 <?php
-include __DIR__ . '/conexion/conectar.inc.php';
+include ('../conexion/conectar.inc.php');
 global $conectar;
 $productos = $conectar->query("SELECT p.*,c.nombre categoria,(SELECT imagen FROM imagenes WHERE id_producto=p.id LIMIT 1) as imagen FROM productos p LEFT JOIN categorias c ON p.id_categoria=c.id ORDER BY id DESC");
 

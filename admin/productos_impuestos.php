@@ -16,7 +16,7 @@ if (isset($_SESSION['prontoFront']['token'])) {
 ?>
 <?php include ('header.php'); ?>
 <?php
-include __DIR__.'/conexion/conectar.inc.php';
+include ('../conexion/conectar.inc.php');
 global $conectar;
 
 // Obtener el registro de tax con id 1

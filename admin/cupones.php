@@ -1,6 +1,6 @@
 <?php include ('header.php'); ?>
 <?php 
-include __DIR__.'/conexion/conectar.inc.php';
+include ('../conexion/conectar.inc.php');
 global $conectar;
 $query="SELECT categorias,seccion,id,nombre,descuento,DATE_FORMAT(desde, '%d-%m-%Y') as desde,DATE_FORMAT(hasta, '%d-%m-%Y') as hasta FROM cupones";
 $cupones=$conectar->query($query);

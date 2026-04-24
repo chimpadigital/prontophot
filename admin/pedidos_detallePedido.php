@@ -1,7 +1,7 @@
 <?php include('header.php'); ?>
 <?php
-include __DIR__ . '/../inc/funciones.inc.php';
-include __DIR__ . '/conexion/conectar.inc.php';
+include ('../inc/funciones.inc.php');
+include ('../conexion/conectar.inc.php');
 global $conectar;
 $id = $_GET['id'];
 $pedidos = $conectar->query("SELECT p.*,(SELECT id_producto FROM pedidos_detalle WHERE id_pedido=p.id LIMIT 1 ) as producto,(SELECT imagen FROM imagenes WHERE id_pedido=p.id LIMIT 1 ) as imagen,DATE_FORMAT(fecha, '%d-%m-%Y') as fecha,CONCAT(c.nombre,' ',c.apellido) as clientenombre,c.dni clientedni,CONCAT(c.direccion) as clientedireccion,c.cp clientecp, c.ciudad clienteciudad, c.altura clientealtura,c.provincia clienteprovincia,c.telefono clientetelefono FROM pedidos p LEFT JOIN clientes c ON p.id_cliente=c.id WHERE p.id='$id' ");

@@ -1,6 +1,6 @@
 <?php include ('header.php'); ?>
 <?php 
-include __DIR__.'/conexion/conectar.inc.php';
+include ('../conexion/conectar.inc.php');
 global $conectar;
 $sql="SELECT p.*,(SELECT CONCAT(nombre,' ',apellido) FROM clientes WHERE id=p.id_cliente LIMIT 1 ) as cliente,(SELECT id_producto FROM pedidos_detalle WHERE id_pedido=p.id LIMIT 1 ) as producto,(SELECT thumb FROM pedidos_imagenes WHERE id_pedido=p.id LIMIT 1 ) as imagen,DATE_FORMAT(fecha, '%d-%m-%Y') as fecha FROM pedidos p ORDER BY p.id DESC, p.estado_pedido,p.fecha ASC";
 $pedidos=$conectar->query($sql);
