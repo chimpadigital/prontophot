@@ -21,7 +21,7 @@ $puedeContinuar = false;
 
 // Para carrito de productos
 if (isset($_SESSION['pronto']['cart']) && isset($_SESSION['prontoFront']['monto'])) {
-    include __DIR__.'/../conexion/conectar.inc.php';
+    include ('../../conexion/conectar.inc.php');
     global $conectar;
 
     $cart = $_SESSION['pronto']['cart'];
@@ -46,7 +46,7 @@ if (isset($_SESSION['pronto']['cart']) && isset($_SESSION['prontoFront']['monto'
 }
 // Para revelado de fotos
 elseif (isset($_SESSION['archivos'])) {
-    include __DIR__.'/../conexion/conectar.inc.php';
+    include ('../../conexion/conectar.inc.php');
     global $conectar;
 
     $tama = array();

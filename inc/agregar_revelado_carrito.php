@@ -10,7 +10,7 @@ try {
     }
 
     // Obtener ID del producto especial de revelado
-    include_once __DIR__ . '/../conexion/conectar.inc.php';
+    include_once ('../../conexion/conectar.inc.php');
     global $conectar;
 
     $queryProducto = $conectar->query("SELECT id FROM productos WHERE tipo_producto='revelado' LIMIT 1");

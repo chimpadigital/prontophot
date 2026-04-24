@@ -2,7 +2,7 @@
 if(session_status() === PHP_SESSION_NONE) session_start();
 ini_set("log_errors", 1);
 ini_set("error_log", "seguridad.log");
-require __DIR__."/vendor/autoload.php";
+require "/vendor/autoload.php";
 
 use \Firebase\JWT\JWT;
 //inicio seguridad

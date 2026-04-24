@@ -1,6 +1,6 @@
 <?php
-include __DIR__.'/../conexion/conectar.inc.php';
-include __DIR__.'/funciones.inc.php';
+include ('../../conexion/conectar.inc.php');
+include ('funciones.inc.php');
 global $conectar;
 $respuesta= new stdClass();
 

@@ -1,8 +1,8 @@
 <?php
 session_start();
-include __DIR__.'/../conexion/conectar.inc.php';
-include __DIR__.'/funciones.inc.php';
-include __DIR__.'/seguridad.inc.php';
+include ('../../conexion/conectar.inc.php');
+include 'funciones.inc.php';
+include 'seguridad.inc.php';
 global $conectar;
 $respuesta= new stdClass();
 

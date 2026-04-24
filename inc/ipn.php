@@ -2,7 +2,7 @@
 session_start();
 require_once 'vendor/autoload.php';
 include 'config.inc.php';
-include_once("../conexion/conectar.inc.php");
+include_once ("../conexion/conectar.inc.php");
 include 'funciones.php';
 MercadoPago\SDK::setAccessToken(ML_TOKEN);
 global $conectar;
