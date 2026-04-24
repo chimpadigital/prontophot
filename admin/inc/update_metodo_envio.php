@@ -15,7 +15,7 @@ if (isset($_SESSION['prontoFront']['token'])) {
     exit();
 }
 
-include __DIR__.'/../conexion/conectar.inc.php';
+include ('../../conexion/conectar.inc.php');
 global $conectar;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

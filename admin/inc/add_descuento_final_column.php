@@ -1,5 +1,5 @@
 <?php
-include __DIR__.'/../conexion/conectar.inc.php';
+include ('../../conexion/conectar.inc.php');
 global $conectar;
 
 echo "<h3>Agregando columna 'descuento_final' a la tabla productos...</h3>";

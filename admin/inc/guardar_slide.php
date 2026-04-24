@@ -1,5 +1,5 @@
 <?php
-include __DIR__.'/../conexion/conectar.inc.php';
+include ('../../conexion/conectar.inc.php');
 global $conectar;
 function extension($filename){
     return substr(strrchr($filename, '.'), 1);

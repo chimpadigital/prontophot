@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include_once __DIR__.'/../conexion/conectar.inc.php';
+include_once ('../../conexion/conectar.inc.php');
 global $conectar;
 
 try {

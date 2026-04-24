@@ -1,5 +1,5 @@
 <?php
-include __DIR__.'/../conexion/conectar.inc.php';
+include ('../../conexion/conectar.inc.php');
 global $conectar;
 $polaroid=$_POST['polaroid_p'];
 $polaroidd=$_POST['polaroid_d'];

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include __DIR__.'/../conexion/conectar.inc.php';
+include ('../../conexion/conectar.inc.php');
 global $conectar;
 include 'seguridad.inc.php';
 $usuario=$_POST['usuario'];

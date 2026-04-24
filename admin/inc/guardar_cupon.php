@@ -1,5 +1,5 @@
 <?php
-include __DIR__.'/../conexion/conectar.inc.php';
+include ('../../conexion/conectar.inc.php');
 global $conectar;
 $respuesta= new stdClass();
 $id=isset($_POST['id'])?$_POST['id']:'';

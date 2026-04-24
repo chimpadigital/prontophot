@@ -5,7 +5,7 @@
 session_start();
 header('Content-Type: application/json');
 
-include __DIR__.'/../../inc/epresis_guia.php';
+include ('../../inc/epresis_guia.php');
 
 $respuesta = ['success' => false];
 
