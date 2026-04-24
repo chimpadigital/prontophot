@@ -2,7 +2,7 @@
 session_start();
 header('Content-Type: application/json');
 
-include ('../../conexion/conectar.inc.php');
+include ('../conexion/conectar.inc.php');
 global $conectar;
 
 // Verificar si cURL está disponible

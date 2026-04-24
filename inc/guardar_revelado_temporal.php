@@ -1,7 +1,7 @@
 <?php
 session_start();
 ini_set("error_log", "guardarrevelado.log");
-require_once ('../../conexion/conectar.inc.php');
+require_once ('../conexion/conectar.inc.php');
 
 function extension($ext){
     switch ($ext){

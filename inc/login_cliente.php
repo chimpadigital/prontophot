@@ -1,6 +1,6 @@
 <?php
 session_start();
-include ('../../conexion/conectar.inc.php');
+include ('../conexion/conectar.inc.php');
 include 'funciones.inc.php';
 include 'seguridad.inc.php';
 global $conectar;

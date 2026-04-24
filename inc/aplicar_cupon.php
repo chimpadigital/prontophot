@@ -1,6 +1,6 @@
 <?php
 session_start();
-include ('../../conexion/conectar.inc.php');
+include ('../conexion/conectar.inc.php');
 include ('funciones.inc.php');
 global $conectar;
 $respuesta= new stdClass();

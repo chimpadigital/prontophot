@@ -1,5 +1,5 @@
 <?php
-include ('../../conexion/conectar.inc.php');
+include ('../conexion/conectar.inc.php');
 global $conectar;
 
 /**
