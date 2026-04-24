@@ -155,7 +155,7 @@ if ($pedido->success) {
         'client_secret' => GETNET_CLIENT_SECRET
     );
 
-    $auth_ch = curl_init("https://api.pre.globalgetnet.com/authentication/oauth2/access_token");
+    $auth_ch = curl_init("https://api.globalgetnet.com/authentication/oauth2/access_token");
     curl_setopt($auth_ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($auth_ch, CURLOPT_POST, true);
     curl_setopt($auth_ch, CURLOPT_POSTFIELDS, http_build_query($auth_data));

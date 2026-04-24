@@ -20,8 +20,10 @@ define('CODIGO_SUCURSAL', '1104190026680');
 define('API_TOKEN','UWJ1W5ZZXchvkNifYzQH0kYBSK2JCHiy6UTOrE06wq4ooN8KLCVoT2rJcr0r');
 
 // GetNet credentials
-define('GETNET_CLIENT_ID', 'cid_f50ef033-059e-4246-aa43-cf5592e57574');
-define('GETNET_CLIENT_SECRET', '48741a7e-9cf6-454c-ad60-cae3fab1c769');
+##define('GETNET_CLIENT_ID', 'cid_f50ef033-059e-4246-aa43-cf5592e57574');
+##define('GETNET_CLIENT_SECRET', '48741a7e-9cf6-454c-ad60-cae3fab1c769');
+define('GETNET_CLIENT_ID', 'cid_c393c5db-6563-494d-b532-6743b4632006');
+define('GETNET_CLIENT_SECRET', 'fe73f75e-cdb9-479c-9623-9e0f63718d30');
 define('GETNET_SELLER_ID', '0000204415');
-define('GETNET_WEB', 'https://api.pre.globalgetnet.com');
-define('GETNET_API', 'https://api.pre.globalgetnet.com'); 
+define('GETNET_WEB', 'https://api.globalgetnet.com');
+define('GETNET_API', 'https://api.globalgetnet.com'); 
