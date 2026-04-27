@@ -1,7 +1,7 @@
 <?php
 ini_set("log_errors", 1);
 ini_set("error_log", "error.log");
-include ('../conexion/conectar.inc.php');
+include (__DIR__ . '/../conexion/conectar.inc.php');
 global $conectar;
 $respuesta=new stdClass();
 function extension($filename){
