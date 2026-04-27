@@ -124,6 +124,8 @@ curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
 $response = curl_exec($ch);
+$response = ltrim($response, "\xEF\xBB\xBF");
+$response = trim($response);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlError = curl_error($ch);
 curl_close($ch);
@@ -141,13 +143,19 @@ if ($httpCode !== 200) {
 }
 
 // Decodificar respuesta
-$data = json_decode($response, true);
+if (is_string($response)) {
+    $data = json_decode($response, true);
 
-if (json_last_error() !== JSON_ERROR_NONE) {
-    echo json_encode(['success' => false, 'error' => 'Error al decodificar respuesta']);
-    exit;
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Error al decodificar respuesta'
+        ]);
+        exit;
+    }
+} else {
+    $data = $response;
 }
-
 // Procesar respuesta de Epresis
 if (isset($data[0]['precio'])) {
     $precio = $data[0]['precio'];
