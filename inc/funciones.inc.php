@@ -7,7 +7,7 @@ use PHPMailer\PHPMailer\Exception;
 use Intervention\Image\ImageManager;
 // Load Composer's autoloader
 require 'vendor/autoload.php';
-require 'config.inc.php';
+require_once 'config.inc.php';
 include '../conexion/conectar.inc.php';
 
 if (!function_exists('metodoPago')) {
