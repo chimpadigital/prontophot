@@ -1,5 +1,5 @@
 <?php
-include ('../conexion/conectar.inc.php');
+include('../conexion/conectar.inc.php');
 global $conectar;
 
 /**
@@ -219,6 +219,8 @@ function generarGuiaEpresis($pedido_id, $datos_personalizados = [])
     ]);
 
     $response = curl_exec($ch);
+    $response = curl_exec($ch);
+    $response = ltrim($response, "\xEF\xBB\xBF");
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlError = curl_error($ch);
     curl_close($ch);
