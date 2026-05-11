@@ -33,6 +33,12 @@ if (!function_exists('metodoRetiro')) {
     function metodoRetiro($metodo)
     {
         switch ($metodo) {
+            
+            case 'envio_1': return 'Envio a domicilio dentro del casco urbano ';
+                break;
+            case 'envio_2':
+                return 'Envio a domicilio resto del país';
+                break;
             case 'suc1':
                 return 'Retiro por sucursal 1, Calle 12 N°1108 e/55 y 56';
                 break;
