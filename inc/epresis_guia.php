@@ -240,13 +240,19 @@ function generarGuiaEpresis($pedido_id, $datos_personalizados = [])
     }
 
     // Decodificar respuesta
-    $data = json_decode($response, true);
+    if (is_string($response)) {
+        $data = json_decode($response, true);
 
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        $respuesta->error = 'Error al decodificar respuesta: ' . json_last_error_msg();
-        return $respuesta;
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Error al decodificar respuesta'
+            ]);
+            exit;
+        }
+    } else {
+        $data = $response;
     }
-
     // Procesar respuesta exitosa
     if (isset($data['guia'])) {
         $codigo_guia = $data['guia'];

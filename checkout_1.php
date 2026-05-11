@@ -206,7 +206,7 @@ if (isset($_SESSION['pronto']['cart'])) {
                         <label class="ml-0">
                         	<span class="text-bold">Mi direccion</span>
                             <h5 class="mt-3">Direccion</h5>
-                            <p class="text-muted"><?php echo $rowc['direccion'].', '.$rowc['ciudad']?></p>
+                            <p class="text-muted"><?php echo $rowc['direccion'].' '.$rowc['altura'].', '.$rowc['ciudad']?></p>
                             <h5>Provincia</h5>
                             <p class="text-muted"><?php echo $rowc['provincia'];?></p>
                             <h5>CP</h5>
