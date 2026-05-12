@@ -95,7 +95,8 @@ if (empty($productos_carrito)) {
 // Configuración de Epresis
 $api_token = "UWJ1W5ZZXchvkNifYzQH0kYBSK2JCHiy6UTOrE06wq4ooN8KLCVoT2rJcr0r";
 $sucursal = "1104190026680";
-$url = "https://epresis-desa.epsared.com.ar/api/v2/precio-servicio.json";
+$url_dev = "https://epresis-desa.epsared.com.ar/api/v2/precio-servicio.json";
+$url = "https://epresis.epsared.com.ar/api/v2/precio-servicio.json";
 
 // Preparar los datos para la petición
 $postFields = [
