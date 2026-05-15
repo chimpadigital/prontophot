@@ -421,6 +421,7 @@ function notificarRetiro($pedido)
     $asunto = 'Pedido listo Prontophot';
     enviar_mail($correo, $nombre, $asunto, $cuerpo, $cuerpo);
 }
+
 function notificarPedido($pedido, $items, $metodo)
 {
     global $conectar;
@@ -430,7 +431,7 @@ function notificarPedido($pedido, $items, $metodo)
     $correo = $rowc['email'];
     $nombre = $rowc['nombre'] . ' ' . $rowc['apellido'];
     $envio = 0;
-    if ($metodo == 'envio_2') {
+    if ($metodo == 'envio_1') {
         $envio = COSTO_ENVIO;
         $costoenvio = '<tfoot>
 					<tr>
@@ -439,7 +440,7 @@ function notificarPedido($pedido, $items, $metodo)
 					</tr>
 				</tfoot>';
     }
-    if ($metodo == 'envio_1') {
+    if ($metodo == 'envio_2') {
         $envio = COSTO_ENVIO;
         $costoenvio = '<tfoot>
 					<tr>
@@ -468,7 +469,7 @@ function notificarPedido($pedido, $items, $metodo)
 		</div>
 		<div class="cuerpo" style="display:block; padding: 10px 50px;background-color:#fff; width:calc(100% - 100px);position: relative; min-height: 200px;">
 			<h2 style="font: normal normal bold 18px/21px Arial;letter-spacing: 0px;color: #DA0000;">&iexcl;Hola ' . $nombre . '!</h2>
-			<p style="text-align: left;font: normal normal normal 18px/21px Arial;letter-spacing: 0px;color: #333333;">Tu pedido #' . $pedido . ' ha sido realizado correctamente.</p>
+			<p style="text-align: left;font: normal normal normal 18px/21px Arial;letter-spacing: 0px;color: #333333;">Tu pedido #' . $pedido . ' se encuentra impago. Comunicate con nosotros para finalizar el pago.</p>
 			<table style="font: normal normal normal 16px/18px Arial; width:100%;">
 				<thead  style="background: #F8F8F8 0% 0% no-repeat padding-box;">
 					<tr>
@@ -490,7 +491,6 @@ function notificarPedido($pedido, $items, $metodo)
 			<p style="text-align: left;font: normal normal normal 16px/29px Arial;letter-spacing: 0px;">' . $metodoretiro . '</p>
 			<br>
 			<br>
-			<p style="text-align: left;font: normal normal normal 18px/21px Arial;letter-spacing: 0px;">Nos comunicaremos cuando tu pedido se encuentre listo.</p>
 			<p style="text-align: left;font: normal normal normal 18px/21px Arial;letter-spacing: 0px;color: #DA0000;">&iexcl;Muchas gracias!<br>Equipo Prontophot.</p>
 		</div>
 		<div class="pie" style="padding: 10px 50px;display:flex; width:calc(100% - 100px); background-color: #000; position:relative; height:20px;">
