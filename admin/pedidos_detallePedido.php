@@ -45,6 +45,8 @@ try {
     //throw $th;
 }
 
+
+echo json_encode($row);
 ?>
 <div class="container-fluid bg-black border-top border-white">
     <div class="row">
