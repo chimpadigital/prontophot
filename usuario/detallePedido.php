@@ -145,6 +145,26 @@ $rowf = $facturacion->fetch_assoc();
 
                             <div class="row align-items-lg-center mt-5">
                                 <div class="col-md-12 p-0">
+                                    <h4 class="text-bold">Estado del Pedido</h4>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3 mb-3">
+                                <div class="col-md-12">
+                                    <?php if ($pedido['status'] == 1): ?>
+                                        <div class="alert alert-success">
+                                            <strong>✓ Pedido Pagado</strong> - Tu pedido #<?php echo $pedido['id']; ?> ha sido confirmado y está siendo procesado.
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="alert alert-warning">
+                                            <strong>⚠ Pedido Impago</strong> - Tu pedido #<?php echo $pedido['id']; ?> se encuentra impago. Comunicate con nosotros para finalizar el pago.
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <div class="row align-items-lg-center mt-4">
+                                <div class="col-md-12 p-0">
                                     <h4 class="text-bold">Datos de Envíos</h4>
                                 </div>
                             </div>
