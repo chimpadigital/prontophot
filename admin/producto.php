@@ -236,15 +236,15 @@ if (isset($_GET['id'])) {
 
                                     <div class="form-row align-items-center">
                                         <div class="col-md-2 mb-3">
-                                            <label for="validationCustom04">Ancho (cm)</label>
+                                            <label for="validationCustom04">Ancho (Cm)</label>
                                             <input type="text" name="ancho" value="<?php echo $row['ancho'];?>" class="form-control" id="validationCustom04">
                                         </div>
                                         <div class="col-md-2 mb-3 mx-0 mx-md-5">
-                                            <label for="validationCustom05">Alto (cm)</label>
+                                            <label for="validationCustom05">Alto (Cm)</label>
                                             <input type="text" name="alto" value="<?php echo $row['alto'];?>" class="form-control" id="validationCustom05">
                                         </div>
                                         <div class="col-md-2 mb-3">
-                                            <label for="validationCustom06">Profundidad (cm)</label>
+                                            <label for="validationCustom06">Profundidad (Cm)</label>
                                             <input type="text" name="profundidad" value="<?php echo $row['profundidad'];?>" class="form-control" id="validationCustom06">
                                         </div>
                                         <div class="col-md-2 mb-3 mx-0 mx-md-5">
