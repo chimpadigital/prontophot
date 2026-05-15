@@ -430,7 +430,7 @@ function notificarPedido($pedido, $items, $metodo)
     $correo = $rowc['email'];
     $nombre = $rowc['nombre'] . ' ' . $rowc['apellido'];
     $envio = 0;
-    if ($rowc['entrega'] == 'envio_2') {
+    if ($metodo == 'envio_2') {
         $envio = COSTO_ENVIO;
         $costoenvio = '<tfoot>
 					<tr>
@@ -439,7 +439,7 @@ function notificarPedido($pedido, $items, $metodo)
 					</tr>
 				</tfoot>';
     }
-    if ($rowc['entrega'] == 'envio_1') {
+    if ($metodo == 'envio_1') {
         $envio = COSTO_ENVIO;
         $costoenvio = '<tfoot>
 					<tr>
