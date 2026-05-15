@@ -444,7 +444,6 @@ function notificarPedido($pedido, $items, $metodo)
     }
 
     
-    $total = $rowc['total'];
     $envio = $rowc['total'] - $totalProductos;
 
     if ($metodo == 'envio_1') {
@@ -487,7 +486,7 @@ function notificarPedido($pedido, $items, $metodo)
                 <tfoot>
 					<tr>
 						<th colspan="2" style="text-align: left;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">Total</th>
-						<th style="text-align: left; font-weight:bold;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">$ ' . $total . '</th>
+						<th style="text-align: left; font-weight:bold;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">$ ' . $rowc['total'] . '</th>
 					</tr>
 				</tfoot>	
                 ' . $costoenvio . '
