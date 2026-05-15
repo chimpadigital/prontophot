@@ -505,3 +505,88 @@ function notificarPedido($pedido, $items, $metodo)
     $asunto = 'Nuevo Pedido Prontophot';
     enviar_mail($correo, $nombre, $asunto, $cuerpo, $cuerpo);
 }
+
+
+function notificarPago($pedido, $items, $metodo)
+{
+    global $conectar;
+    $cl = $conectar->query("SELECT c.email,c.nombre,c.apellido,p.entrega,p.total FROM pedidos p LEFT JOIN clientes c ON p.id_cliente=c.id WHERE p.id='$pedido'");
+    $rowc = $cl->fetch_assoc();
+    $metodoretiro = metodoRetiro($metodo);
+    $correo = $rowc['email'];
+    $nombre = $rowc['nombre'] . ' ' . $rowc['apellido'];
+    $envio = 0;
+    $total = 0;
+    $totalProductos = 0;
+    $it = '';
+    foreach ($items as $item) {
+        $it .= '<tr>
+						<td style="text-align: left;padding: 10px 15px;">' . $item['producto'] . '</td>
+						<td style="text-align: left;padding: 10px 15px;">' . $item['cantidad'] . '</td>
+						<td style="text-align: left;padding: 10px 15px; font-weight:bold;">$ ' . $item['precio'] . '</td>
+					</tr>';
+        $totalProductos =  $item['precio'] + $totalProductos;
+    }
+
+    
+    $envio = $rowc['total'] - $totalProductos;
+
+    if ($metodo == 'envio_1') {
+        $costoenvio = '<tfoot>
+					<tr>
+						<th colspan="2" style="text-align: left;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">Envio</th>
+						<th style="text-align: left; font-weight:bold;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">$ ' . $envio . '</th>
+					</tr>
+				</tfoot>';
+    }
+    if ($metodo == 'envio_2') {
+        $costoenvio = '<tfoot>
+					<tr>
+						<th colspan="2" style="text-align: left;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">Envio</th>
+						<th style="text-align: left; font-weight:bold;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">$ ' . $envio . '</th>
+					</tr>
+				</tfoot>';
+    } else {
+        $costoenvio = '';
+        $envio = 0;
+    }
+
+
+    $cuerpo = '<div style="display:block;position:relative; min-width:400px; max-width:700px;">
+		<div style="display:block; width: 100%; height:auto">
+			<img src="' . URL_SITIO . 'img/header.png" style="width:100%;">
+		</div>
+		<div class="cuerpo" style="display:block; padding: 10px 50px;background-color:#fff; width:calc(100% - 100px);position: relative; min-height: 200px;">
+			<h2 style="font: normal normal bold 18px/21px Arial;letter-spacing: 0px;color: #DA0000;">&iexcl;Hola ' . $nombre . '!</h2>
+			<p style="text-align: left;font: normal normal normal 18px/21px Arial;letter-spacing: 0px;color: #333333;">Tu pedido #' . $pedido . ' ah sido realizado correctamente.</p>
+			<table style="font: normal normal normal 16px/18px Arial; width:100%;">
+				<thead  style="background: #F8F8F8 0% 0% no-repeat padding-box;">
+					<tr>
+						<th style="width:50%;text-align: left; font-weight:bold;padding: 10px 15px;">Producto</th>
+						<th style="width:25%;text-align: left; font-weight:bold;padding: 10px 15px;">Cantidad</th>
+						<th style="width:25%;text-align: left; font-weight:bold;padding: 10px 15px;">Precio</th>
+					</tr>
+				</thead>
+				<tbody>' . $it . '</tbody>
+                <tfoot>
+					<tr>
+						<th colspan="2" style="text-align: left;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">Total</th>
+						<th style="text-align: left; font-weight:bold;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">$ ' . $rowc['total'] . '</th>
+					</tr>
+				</tfoot>	
+                ' . $costoenvio . '
+			</table>
+			<p style="text-align: left;font: normal normal bold 16px/18px Arial;letter-spacing: 0px;">M&eacute;todo de env&iacute;o</p>
+			<p style="text-align: left;font: normal normal normal 16px/29px Arial;letter-spacing: 0px;">' . $metodoretiro . '</p>
+			<br>
+			<br>
+			<p style="text-align: left;font: normal normal normal 18px/21px Arial;letter-spacing: 0px;color: #DA0000;">&iexcl;Muchas gracias!<br>Equipo Prontophot.</p>
+		</div>
+		<div class="pie" style="padding: 10px 50px;display:flex; width:calc(100% - 100px); background-color: #000; position:relative; height:20px;">
+			<a href="#" target="_blank" style="display:inline-block; width:25px;"><img alt="logo fb" style="height:20px;" src="' . URL_SITIO . 'img/face.png"></a>
+			<a href="#" target="_blank" style="display:inline-block; width:25px;"><img alt="logo instagram" style="height:20px;" src="' . URL_SITIO . 'img/insta.png"></a>
+		</div>
+	</div>';
+    $asunto = 'Nuevo Pedido Prontophot';
+    enviar_mail($correo, $nombre, $asunto, $cuerpo, $cuerpo);
+}

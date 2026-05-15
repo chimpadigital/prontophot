@@ -4,6 +4,7 @@ require_once 'vendor/autoload.php';
 include 'config.inc.php';
 include_once ("../conexion/conectar.inc.php");
 include 'funciones.php';
+include 'funciones.inc.php';
 MercadoPago\SDK::setAccessToken(ML_TOKEN);
 global $conectar;
 $get=serialize($_GET);
@@ -39,7 +40,22 @@ if($paid_amount >= $merchant_order->total_amount){
         $idt=$merchant_order->id;
         $idpedido=$merchant_order->external_reference;
         guardarPago($idt, '1', $idpedido);
-        
+
+        // Enviar notificación de pago al cliente
+        $items_query = $conectar->query("SELECT pd.cantidad, p.nombre as producto, (pd.cantidad * p.precio) as precio FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$idpedido'");
+        $items = [];
+        while ($item_row = $items_query->fetch_assoc()) {
+            $items[] = $item_row;
+        }
+
+        $pedido_data = $conectar->query("SELECT entrega FROM pedidos WHERE id='$idpedido'");
+        if ($pedido_data && $pedido_data->num_rows > 0) {
+            $pedido_info = $pedido_data->fetch_assoc();
+            $metodo_entrega = $pedido_info['entrega'];
+
+            notificarPago($idpedido, $items, $metodo_entrega);
+            file_put_contents("./test.log", 'Notificacion de pago enviada para pedido: '.$idpedido.'//r//n', FILE_APPEND);
+        }
         //
     }
 } else {
