@@ -425,7 +425,7 @@ function notificarRetiro($pedido)
 function notificarPedido($pedido, $items, $metodo)
 {
     global $conectar;
-    $cl = $conectar->query("SELECT c.email,c.nombre,c.apellido,p.entrega FROM pedidos p LEFT JOIN clientes c ON p.id_cliente=c.id WHERE p.id='$pedido'");
+    $cl = $conectar->query("SELECT c.email,c.nombre,c.apellido,p.entrega,p.total FROM pedidos p LEFT JOIN clientes c ON p.id_cliente=c.id WHERE p.id='$pedido'");
     $rowc = $cl->fetch_assoc();
     $metodoretiro = metodoRetiro($metodo);
     $correo = $rowc['email'];
