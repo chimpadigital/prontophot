@@ -34,7 +34,6 @@ while ($rowi = $imagenes->fetch_assoc()) {
     $image[] = $im;
 }
 
-
 $archivo = 'pedido_' . $row['id'] . '.zip';
 $path = "../img/impresiones/";
 
@@ -45,8 +44,6 @@ try {
     //throw $th;
 }
 
-
-echo json_encode($row);
 ?>
 <div class="container-fluid bg-black border-top border-white">
     <div class="row">
