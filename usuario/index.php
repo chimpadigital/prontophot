@@ -13,7 +13,8 @@ if (!$ingresar) {
 $id = $ingresar->id;
 $sql = "SELECT p.*,DATE_FORMAT(p.fecha, '%d-%m-%Y') as fecha ,(SELECT id_producto FROM pedidos_detalle WHERE id_pedido=p.id LIMIT 1) as idproducto,(SELECT thumb FROM pedidos_imagenes WHERE id_pedido=p.id ORDER BY id ASC LIMIT 1) as imagen FROM `pedidos` p WHERE p.id_cliente='$id' AND p.estado='1' ORDER BY p.id DESC";
 $pedidos = $conectar->query($sql);
-//echo $conectar->error.$sql;
+
+echo $conectar->error.$sql;
 ?>
 <div class="container-fluid bg-black border-top border-white">
     <div class="row">
@@ -127,18 +128,18 @@ $pedidos = $conectar->query($sql);
 
 <!-- MOVER ESTO AL FOOTER -->
 <script>
-    var owl = $('.owl-carousel');
-    owl.owlCarousel();
+    //var owl = $('.owl-carousel');
+    //owl.owlCarousel();
     // Go to the next item
-    $('.customNextBtn').click(function() {
-        owl.trigger('next.owl.carousel');
-    })
+    //$('.customNextBtn').click(function() {
+    //    owl.trigger('next.owl.carousel');
+    //})
     // Go to the previous item
-    $('.customPrevBtn').click(function() {
+    //$('.customPrevBtn').click(function() {
         // With optional speed parameter
         // Parameters has to be in square bracket '[]'
-        owl.trigger('prev.owl.carousel', [300]);
-    })
+    //    owl.trigger('prev.owl.carousel', [300]);
+    //})
 </script>
 
 <script>
