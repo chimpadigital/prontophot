@@ -71,7 +71,7 @@ if($pedido->success){
         $items[]=$item;
     }
     
-    notificarPedido($idpedido, $items, $entrega);
+    //notificarPedido($idpedido, $items, $entrega);
     //
     
     $preference = new MercadoPago\Preference();

@@ -124,7 +124,7 @@ if ($pedido->success) {
         $imagenes = $_SESSION['archivos'];
         pedidoImagenes($idpedido, $imagenes);
     }
-    notificarPedido($idpedido, $items, $entrega);
+    //notificarPedido($idpedido, $items, $entrega);
     //
 
     $preference = new MercadoPago\Preference();
