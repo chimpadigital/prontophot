@@ -430,7 +430,16 @@ function notificarPedido($pedido, $items, $metodo)
     $correo = $rowc['email'];
     $nombre = $rowc['nombre'] . ' ' . $rowc['apellido'];
     $envio = 0;
-    if ($rowc['entrega'] == 'urbano') {
+    if ($rowc['entrega'] == 'envio_2') {
+        $envio = COSTO_ENVIO;
+        $costoenvio = '<tfoot>
+					<tr>
+						<th colspan="2" style="text-align: left;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">Envio</th>
+						<th style="text-align: left; font-weight:bold;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">$ ' . COSTO_ENVIO . '</th>
+					</tr>
+				</tfoot>';
+    }
+    if ($rowc['entrega'] == 'envio_1') {
         $envio = COSTO_ENVIO;
         $costoenvio = '<tfoot>
 					<tr>
