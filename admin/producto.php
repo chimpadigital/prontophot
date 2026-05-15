@@ -236,19 +236,19 @@ if (isset($_GET['id'])) {
 
                                     <div class="form-row align-items-center">
                                         <div class="col-md-2 mb-3">
-                                            <label for="validationCustom04">Ancho</label>
+                                            <label for="validationCustom04">Ancho (cm)</label>
                                             <input type="text" name="ancho" value="<?php echo $row['ancho'];?>" class="form-control" id="validationCustom04">
                                         </div>
                                         <div class="col-md-2 mb-3 mx-0 mx-md-5">
-                                            <label for="validationCustom05">Alto</label>
+                                            <label for="validationCustom05">Alto (cm)</label>
                                             <input type="text" name="alto" value="<?php echo $row['alto'];?>" class="form-control" id="validationCustom05">
                                         </div>
                                         <div class="col-md-2 mb-3">
-                                            <label for="validationCustom06">Profundidad</label>
+                                            <label for="validationCustom06">Profundidad (cm)</label>
                                             <input type="text" name="profundidad" value="<?php echo $row['profundidad'];?>" class="form-control" id="validationCustom06">
                                         </div>
                                         <div class="col-md-2 mb-3 mx-0 mx-md-5">
-                                            <label for="validationCustom07">Peso</label>
+                                            <label for="validationCustom07">Peso (Kg)</label>
                                             <input type="number" step="0.01" name="peso" value="<?php echo $row['peso'];?>" class="form-control" id="validationCustom07" placeholder="kg">
                                         </div>
                                     </div>
