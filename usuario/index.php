@@ -51,7 +51,7 @@ $pedidos = $conectar->query($sql);
                     <ul class="nav nav-tabs tab-cargar-productos tabs-admin pl-0 pl-lg-5" id="tabMisCompras"
                         role="tablist">
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link active" id="productosCargados" href="misCompras.php">Mis Compras</a>
+                            <a class="nav-link active" id="productosCargados" href="index.php">Mis Compras</a>
                         </li>
                     </ul>
                     <!-- FIN TABS MIS COMPRAS -->
