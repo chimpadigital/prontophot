@@ -52,9 +52,6 @@ $rowf = $facturacion->fetch_assoc();
                     <ul class="nav nav-tabs tab-cargar-productos tabs-admin pl-0 pl-lg-5" id="tabMisCompras"
                         role="tablist">
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="cargarProducto" href="index.php">Nuevo Revelado</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
                             <a class="nav-link active" id="productosCargados" href="misCompras.php">Mis
                                 Compras</a>
                         </li>
