@@ -431,28 +431,8 @@ function notificarPedido($pedido, $items, $metodo)
     $correo = $rowc['email'];
     $nombre = $rowc['nombre'] . ' ' . $rowc['apellido'];
     $envio = 0;
-    if ($metodo == 'envio_1') {
-        $envio = COSTO_ENVIO;
-        $costoenvio = '<tfoot>
-					<tr>
-						<th colspan="2" style="text-align: left;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">Envio</th>
-						<th style="text-align: left; font-weight:bold;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">$ ' . COSTO_ENVIO . '</th>
-					</tr>
-				</tfoot>';
-    }
-    if ($metodo == 'envio_2') {
-        $envio = COSTO_ENVIO;
-        $costoenvio = '<tfoot>
-					<tr>
-						<th colspan="2" style="text-align: left;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">Envio</th>
-						<th style="text-align: left; font-weight:bold;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">$ ' . COSTO_ENVIO . '</th>
-					</tr>
-				</tfoot>';
-    } else {
-        $costoenvio = '';
-        $envio = 0;
-    }
     $total = 0;
+    $totalProductos = 0;
     $it = '';
     foreach ($items as $item) {
         $it .= '<tr>
@@ -460,9 +440,34 @@ function notificarPedido($pedido, $items, $metodo)
 						<td style="text-align: left;padding: 10px 15px;">' . $item['cantidad'] . '</td>
 						<td style="text-align: left;padding: 10px 15px; font-weight:bold;">$ ' . $item['precio'] . '</td>
 					</tr>';
-        $total = $total + $item['precio'];
+        $totalProductos = $totalProductos + $item['precio'];
     }
-    $total = ($total + $envio);
+
+    
+    $total = $rowc['total'];
+    $envio = $rowc['total'] - $totalProductos;
+
+    if ($metodo == 'envio_1') {
+        $costoenvio = '<tfoot>
+					<tr>
+						<th colspan="2" style="text-align: left;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">Envio</th>
+						<th style="text-align: left; font-weight:bold;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">$ ' . $envio . '</th>
+					</tr>
+				</tfoot>';
+    }
+    if ($metodo == 'envio_2') {
+        $costoenvio = '<tfoot>
+					<tr>
+						<th colspan="2" style="text-align: left;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">Envio</th>
+						<th style="text-align: left; font-weight:bold;padding: 10px 15px;border-top: 1px solid #E6E6E6; ">$ ' . $envio . '</th>
+					</tr>
+				</tfoot>';
+    } else {
+        $costoenvio = '';
+        $envio = 0;
+    }
+
+
     $cuerpo = '<div style="display:block;position:relative; min-width:400px; max-width:700px;">
 		<div style="display:block; width: 100%; height:auto">
 			<img src="' . URL_SITIO . 'img/header.png" style="width:100%;">
