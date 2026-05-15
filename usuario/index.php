@@ -1,11 +1,18 @@
-<?php include ('header_usuario.php'); ?>
-<?php 
-include_once ('../conexion/conectar.inc.php');
+<?php
+
+include('header_usuario.php');
+include('../conexion/conectar.inc.php');
+
 global $conectar;
 
-$id= $ingresar->id;
-$sql="SELECT p.*,DATE_FORMAT(p.fecha, '%d-%m-%Y') as fecha ,(SELECT id_producto FROM pedidos_detalle WHERE id_pedido=p.id LIMIT 1) as idproducto,(SELECT thumb FROM pedidos_imagenes WHERE id_pedido=p.id ORDER BY id ASC LIMIT 1) as imagen FROM `pedidos` p WHERE p.id_cliente='$id' AND p.estado='1' ORDER BY p.id DESC";
-$pedidos=$conectar->query($sql);
+if (!$ingresar) {
+    header("Location: ../");
+    exit();
+}
+
+$id = $ingresar->id;
+$sql = "SELECT p.*,DATE_FORMAT(p.fecha, '%d-%m-%Y') as fecha ,(SELECT id_producto FROM pedidos_detalle WHERE id_pedido=p.id LIMIT 1) as idproducto,(SELECT thumb FROM pedidos_imagenes WHERE id_pedido=p.id ORDER BY id ASC LIMIT 1) as imagen FROM `pedidos` p WHERE p.id_cliente='$id' AND p.estado='1' ORDER BY p.id DESC";
+$pedidos = $conectar->query($sql);
 //echo $conectar->error.$sql;
 ?>
 <div class="container-fluid bg-black border-top border-white">
@@ -52,39 +59,43 @@ $pedidos=$conectar->query($sql);
                     <div class="tab-content" id="contenidoTabsAdmin">
                         <div class="tab-pane fade show active" id="misCompras" role="tabpanel" aria-labelledby="home-tab">
                             <div class="row mt-3">
-                            <?php while($row=$pedidos->fetch_assoc()){
-                                $repla=array('<','>');
-                                
-                                $idp=$row['idproducto'];
-                                if(!is_null($idp)){
-                                    $imag=$conectar->query("SELECT * FROM imagenes WHERE id_producto='$idp'");
-                                    $rowi=$imag->fetch_assoc();
-                                    $imagen=$rowi['imagen'];
-                                }else{
-                                    $imagen=$row['imagen'];
-                                }
-                                
-                                
-                                ?>    
+                                <?php while ($row = $pedidos->fetch_assoc()) {
+                                    $repla = array('<', '>');
 
-                                <div class="col-12 p-4 col-categoria my-2">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <img class="img-fluid w-100" src="<?php if(!empty($imagen)){echo '../'.$imagen; }else{echo '../img/placeholder.png';}?>" alt="">
-                                        </div>
-                                        <div class="col-md-9 d-block d-lg-flex flex-column justify-content-around">
-                                            <div class="d-block d-lg-flex detalles-pedido">
-                                                <p>Pedido <br> #<?php echo $row['id'];?> </p>
-                                                <p class="mx-0 mx-lg-4">Fecha <br> <?php echo $row['fecha'];?> </p>
+                                    $idp = $row['idproducto'];
+                                    if (!is_null($idp)) {
+                                        $imag = $conectar->query("SELECT * FROM imagenes WHERE id_producto='$idp'");
+                                        $rowi = $imag->fetch_assoc();
+                                        $imagen = $rowi['imagen'];
+                                    } else {
+                                        $imagen = $row['imagen'];
+                                    }
+
+
+                                ?>
+
+                                    <div class="col-12 p-4 col-categoria my-2">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <img class="img-fluid w-100" src="<?php if (!empty($imagen)) {
+                                                                                        echo '../' . $imagen;
+                                                                                    } else {
+                                                                                        echo '../img/placeholder.png';
+                                                                                    } ?>" alt="">
                                             </div>
-                                            <p class="descripcion-pedido"><?php echo str_replace($repla,'<br>',$row['descripcion']); ?></p>
-                                            <div class="d-block d-lg-flex align-items-center justify-content-between mt-5">
-                                                <a href="detallePedido.php?id=<?php echo $row['id']; ?>"><button class="btn btn-danger mb-3 mb-md-0">Más Info</button></a>                                                
+                                            <div class="col-md-9 d-block d-lg-flex flex-column justify-content-around">
+                                                <div class="d-block d-lg-flex detalles-pedido">
+                                                    <p>Pedido <br> #<?php echo $row['id']; ?> </p>
+                                                    <p class="mx-0 mx-lg-4">Fecha <br> <?php echo $row['fecha']; ?> </p>
+                                                </div>
+                                                <p class="descripcion-pedido"><?php echo str_replace($repla, '<br>', $row['descripcion']); ?></p>
+                                                <div class="d-block d-lg-flex align-items-center justify-content-between mt-5">
+                                                    <a href="detallePedido.php?id=<?php echo $row['id']; ?>"><button class="btn btn-danger mb-3 mb-md-0">Más Info</button></a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            <?php } ?>
+                                <?php } ?>
                             </div>
                         </div>
                         <!-- FIN .tab-pane.show -->
@@ -104,47 +115,47 @@ $pedidos=$conectar->query($sql);
 </script>
 
 <script>
-// Look for .hamburger
-var hamburger = document.querySelector(".hamburger");
-// On click
-hamburger.addEventListener("click", function() {
-    // Toggle class "is-active"
-    hamburger.classList.toggle("is-active");
-    // Do something else, like open/close menu
-});
+    // Look for .hamburger
+    var hamburger = document.querySelector(".hamburger");
+    // On click
+    hamburger.addEventListener("click", function() {
+        // Toggle class "is-active"
+        hamburger.classList.toggle("is-active");
+        // Do something else, like open/close menu
+    });
 </script>
 
 <!-- MOVER ESTO AL FOOTER -->
 <script>
-        var owl = $('.owl-carousel');
-        owl.owlCarousel();
-        // Go to the next item
-        $('.customNextBtn').click(function() {
-            owl.trigger('next.owl.carousel');
-        })
-        // Go to the previous item
-        $('.customPrevBtn').click(function() {
-            // With optional speed parameter
-            // Parameters has to be in square bracket '[]'
-            owl.trigger('prev.owl.carousel', [300]);
-        })
-        </script>
+    var owl = $('.owl-carousel');
+    owl.owlCarousel();
+    // Go to the next item
+    $('.customNextBtn').click(function() {
+        owl.trigger('next.owl.carousel');
+    })
+    // Go to the previous item
+    $('.customPrevBtn').click(function() {
+        // With optional speed parameter
+        // Parameters has to be in square bracket '[]'
+        owl.trigger('prev.owl.carousel', [300]);
+    })
+</script>
 
-        <script>
-        $(document).ready(function() {
-        	$('.cerrarSesion').click(function(e){
-            	e.preventDefault();
-            	$.post('../inc/salir.php');
-            	location.replace("/");	
-            });
-            $('.owl-carousel').owlCarousel();
-            $('.cerrarSesion').click(function(e){
-    			e.preventDefault();
-    			$.post('../inc/salir.php');
-    			window.location.reload();	
-    		});
-            
+<script>
+    $(document).ready(function() {
+        $('.cerrarSesion').click(function(e) {
+            e.preventDefault();
+            $.post('../inc/salir.php');
+            location.replace("/");
         });
+        $('.owl-carousel').owlCarousel();
+        $('.cerrarSesion').click(function(e) {
+            e.preventDefault();
+            $.post('../inc/salir.php');
+            window.location.reload();
+        });
+
+    });
 </script>
 
 </body>

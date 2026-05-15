@@ -1,6 +1,9 @@
 <?php
 if(session_status() === PHP_SESSION_NONE) session_start();
 include '../inc/seguridad.inc.php';
+
+$ingresar = null;
+
 if (isset($_SESSION['prontoFront']['token'])) {
     $token=$_SESSION['prontoFront']['token'];
     $key="Pronto";
