@@ -13,7 +13,7 @@ if (!$ingresar) {
 $id = $ingresar->id;
 $sql = "SELECT p.*,DATE_FORMAT(p.fecha, '%d-%m-%Y') as fecha ,(SELECT id_producto FROM pedidos_detalle WHERE id_pedido=p.id LIMIT 1) as idproducto,(SELECT thumb FROM pedidos_imagenes WHERE id_pedido=p.id ORDER BY id ASC LIMIT 1) as imagen FROM `pedidos` p WHERE p.id_cliente='$id' AND p.estado='1' ORDER BY p.id DESC";
 $pedidos = $conectar->query($sql);
-echo json_encode($pedidos);
+echo $id;
 ?>
 <div class="container-fluid bg-black border-top border-white">
     <div class="row">
