@@ -440,7 +440,7 @@ function notificarPedido($pedido, $items, $metodo)
 						<td style="text-align: left;padding: 10px 15px;">' . $item['cantidad'] . '</td>
 						<td style="text-align: left;padding: 10px 15px; font-weight:bold;">$ ' . $item['precio'] . '</td>
 					</tr>';
-        $totalProductos = $totalProductos + $item['precio'];
+        $totalProductos =  $item['precio'] + $totalProductos;
     }
 
     
