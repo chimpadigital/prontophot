@@ -44,7 +44,8 @@ try {
     //throw $th;
 }
 
-echo json_encode($row);
+$totalProductos = 0;
+//echo json_encode($row);
 ?>
 <div class="container-fluid bg-black border-top border-white">
     <div class="row">
@@ -260,8 +261,8 @@ echo json_encode($row);
                     <div class="row mt-4 datos-envio">
                         <div class="col-md-8 p-4 shadowBox" id="datosEnvio">
                             <?php
-                            echo '<script>console.log("' . $row['envio'] . '")</script>';
-                            echo '<script>console.log("' . $row['entrega'] . '")</script>';
+                            //echo '<script>console.log("' . $row['envio'] . '")</script>';
+                            //echo '<script>console.log("' . $row['entrega'] . '")</script>';
 
                             if ($row['envio'] == 'domicilio') {
                                 $titulo = 'Enviar a mi domicilio';
@@ -289,18 +290,18 @@ echo json_encode($row);
                                     break;
                                 case 'suc1':
                                     echo '<h5>Retiro Gratis por Sucursal</h5>
-                            <p>Sucursal 1</p>
-                            <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' - Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
+                                    <p>Sucursal 1</p>
+                                    <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' - Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
                                     break;
                                 case 'suc2':
                                     echo '<h5>Retiro Gratis por Sucursal</h5>
-                            <p>Sucursal 2</p>
-                            <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' - Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
+                                        <p>Sucursal 2</p>
+                                        <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' - Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
                                     break;
                                 case 'suc3':
                                     echo '<h5>Retiro Gratis por Sucursal</h5>
-                            <p>Sucursal 3</p>
-                            <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' - Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
+                                    <p>Sucursal 3</p>
+                                    <p>Calle 12 N°1108 e/55 y 56</p>' .  $titulo = '<strong>Datos de usuario</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' - Altura: ' . $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
                                     break;
                                 case 'urbano':
                                     echo $titulo = '<strong>Datos de envio casco urbano</strong><br>' . '<div> Nombre y Apellido:  ' . $nombre = $row['clientenombre'] . '</div>' . '<div> DNI:  ' . $dni = $row['clientedni'] . '</div>' . '<div>Ciudad:  ' . $ciudad = $row['clienteciudad'] . '</div>' . '<div>Dirección:  ' . $direccion = $row['clientedireccion'] . ' Altura: ' . $altura = $row['clientealtura'] . '</div>' . '<div> Provincia:  ' . $provincia = $row['clienteprovincia'] . '</div>' . '<div>Código Postal:  ' . $cp = $row['clientecp'] . '</div>' . '<div>Teléfono:  ' . $telefono = $row['clientetelefono'] . '</div>';
@@ -310,18 +311,18 @@ echo json_encode($row);
                                     break;
                                 case 'recibir':
                                     echo '<h5 class="mt-4">' . $titulo . '</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p>Nombre y Apellido :' . $nombre . '</p>
-                                    <p>DNI :' . $dni . '</p>
-                                    <p>Dirección :' . $direccion . '</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p>Provincia : ' . $provincia . '</p>
-                                    <p>CP : ' . $cp . '</p>
-                                    <p>Teléfono/Celular : ' . $telefono . '</p>
-                                </div>
-                            </div>';
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p>Nombre y Apellido :' . $nombre . '</p>
+                                                <p>DNI :' . $dni . '</p>
+                                                <p>Dirección :' . $direccion . '</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p>Provincia : ' . $provincia . '</p>
+                                                <p>CP : ' . $cp . '</p>
+                                                <p>Teléfono/Celular : ' . $telefono . '</p>
+                                            </div>
+                                        </div>';
                                     break;
                             } ?>
                         </div>
