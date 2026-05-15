@@ -91,6 +91,19 @@ if ($check_result->num_rows > 0) {
 
             notificarPago($order_id, $items, $metodo_entrega);
             error_log("GetNet Webhook: Payment notification sent for order: $order_id");
+        } else {
+            // Enviar notificación de pago al cliente
+            $items_query = $conectar->query("SELECT pd.cantidad, p.nombre as producto, (pd.cantidad * p.precio) as precio FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$order_id'");
+            $items = [];
+            while ($item_row = $items_query->fetch_assoc()) {
+                $items[] = $item_row;
+            }
+
+            $pedido_data = $conectar->query("SELECT entrega FROM pedidos WHERE id='$order_id'");
+            $pedido_info = $pedido_data->fetch_assoc();
+            $metodo_entrega = $pedido_info['entrega'];
+
+            notificarPedido($order_id, $items, $metodo_entrega);
         }
 
         http_response_code(200);

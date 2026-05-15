@@ -154,7 +154,7 @@ if($pedido->success){
         error_log("WARNING: No hay archivos en SESSION[archivos] para guardar");
     }
 
-    notificarPedido($idpedido, $items, $entrega);
+    //notificarPedido($idpedido, $items, $entrega);
     //
 
     $_SESSION['prontoFront']['pedido']=$idpedido;

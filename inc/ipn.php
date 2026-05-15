@@ -25,6 +25,18 @@ $paid_amount = 0;
 foreach ($merchant_order->payments as $payment) {
     if ($payment['status'] == 'approved'){
         $paid_amount += $payment['transaction_amount'];
+    } else {
+        $idpedido=$merchant_order->external_reference;
+        $items_query = $conectar->query("SELECT pd.cantidad, p.nombre as producto, (pd.cantidad * p.precio) as precio FROM pedidos_detalle pd LEFT JOIN productos p ON pd.id_producto=p.id WHERE pd.id_pedido='$idpedido'");
+        $items = [];
+        while ($item_row = $items_query->fetch_assoc()) {
+            $items[] = $item_row;
+        }
+
+        $pedido_data = $conectar->query("SELECT entrega FROM pedidos WHERE id='$idpedido'");
+        $pedido_info = $pedido_data->fetch_assoc();
+        $metodo_entrega = $pedido_info['entrega'];
+        notificarPedido($idpedido, $items, $metodo_entrega);
     }
 }
 file_put_contents("./test.log", $paid_amount.'//r//n', FILE_APPEND);

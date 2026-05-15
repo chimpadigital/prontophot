@@ -69,7 +69,7 @@ if($pedido->success){
     }
 
     pedidoImagenes($idpedido, $imagenes);
-    notificarPedido($idpedido, $items, $entrega);
+    //notificarPedido($idpedido, $items, $entrega);
     //
     
     $_SESSION['prontoFront']['pedido']=$idpedido;
