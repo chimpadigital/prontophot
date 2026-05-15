@@ -144,8 +144,8 @@ if ($pedido->success) {
         $imagenes = $_SESSION['archivos'];
         pedidoImagenes($idpedido, $imagenes);
     }
-    notificarPedido($idpedido, $items, $entrega);
-
+    
+    //notificarPedido($idpedido, $items, $entrega);
     // === GETNET INTEGRATION ===
 
     // Paso 1: Autenticación OAuth2
